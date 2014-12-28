@@ -1,0 +1,189 @@
+<?php
+$this->headScript();
+//$url   = $this->baseUrl() . '/' . 'cart/index/ajax/';
+$product = $this->productDetails['data'];
+$images = $this->productDetails['images'];
+$items = $this->productDetails['items'];
+$imgPath = $this->imgProductPath . $product['P_ID'] . '/';
+
+$config = Zend_Registry::get('config');
+$large = $config->catalog->image->original->maxWidth . 'x' . $config->catalog->image->original->maxHeight . '_';
+$medium = $config->catalog->image->medium->maxWidth . 'x' . $config->catalog->image->medium->maxHeight . '_';
+$small = $config->catalog->image->thumb->maxWidth . 'x' . $config->catalog->image->thumb->maxHeight . '_';
+$descr = $product['CCI_Description'];
+?>
+<div class="block catalog">
+    <?php echo $descr; ?>
+    <div class="caracteristics_top">
+        <?php if (!empty($product['P_Photo'])): ?>
+            <?php
+            echo $this->moduleImage(
+                'catalog', 'products/' . $product['P_ID'],
+                $product['P_Photo'],
+                'medium',
+                array('prettyPhoto' => array('size' => 'original', 'rel' => ''))
+            );
+            ?>
+            <?php
+        else:
+            echo $this->clientImage('pix.gif', array('alt' => ''));
+            ?>
+        <?php endif; ?>
+        <?php if (count($images) > 1): ?>
+        <div class="four_small_images">
+            <div class="small_images">
+                <?php
+                $bg = $this->moduleImage(
+                    'catalog', 'products/' . $product['P_ID'], $product['P_Photo'], 'thumb', array('getSource' => true)
+                );
+                ?>
+                <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;">
+                    <input class="imgName" type="hidden" value="<?php echo $product['P_Photo']; ?>" />
+                </p>
+            </div>
+            <?php foreach ($images as $image): ?>
+                <div class="small_images">
+                    <?php
+                    $bg = $this->moduleImage(
+                        'catalog', 'products/' . $product['P_ID'], $image['CPI_Img'], 'thumb', array('getSource' => true)
+                    );
+                    ?>
+                    <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;"><input class="imgName" type="hidden" value="<?php echo $image['CPI_Img']; ?>" /></p>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
+        <div class="clear_both"></div>
+        <?php if (!empty($product['PI_Options'])): ?>
+            <div class="title_products padding_top">
+                <?php echo $this->getCibleText('form_label_product_options'); ?>
+            </div>
+            <div class="liste">
+                <?php echo $product['PI_Options']; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    <div class="caracteristics_top_right">
+        <?php if (!empty($product['PI_Caracteristic'])): ?>
+            <div class="title_products">
+                <?php echo $this->getCibleText('form_label_product_caracteristic'); ?>
+            </div>
+            <div class="liste">
+                <?php echo $product['PI_Caracteristic']; ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (!empty($product['PI_Advantage'])): ?>
+            <div class="title_products padding_top">
+                <?php echo $this->getCibleText('form_label_product_advantage'); ?>
+            </div>
+            <div class="liste">
+                <?php echo $product['PI_Advantage']; ?>
+            </div>
+        <?php endif; ?>
+    </div>
+    <div class="clear_both"></div>
+    <!--</div>-->
+    <div class="caracteristics_bottom">
+        <?php $i = 0; ?>
+        <?php foreach ($items as $item): ?>
+
+        <?php endforeach; ?>
+        <div class="clear_both"></div>
+    </div>
+    <div class="clear_both" style="padding-bottom: 20px;"></div>
+
+</div>
+<script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+        //        $('.addCart a').click(function(e){
+        //            var options = new Array();
+        //            options.borderColor = "#BABE00";
+        //            $('#cible-tooltip-box').tooltip_appear(options);
+        //        });
+
+//        $('li[id^=itemId]').click(function(e){
+//            setSelectedItem(e.type, $(this));
+//        });
+        $('select[id^=itemId]').change(function(e){
+            setSelectedItem(e.type, $(this));
+        }).selectmenu();
+        $('.small_images p').click(function(e){
+            var large = '<?php echo $large; ?>'
+            var medium = '<?php echo $medium; ?>'
+            var small = '<?php echo $small; ?>'
+            var imgPath = '<?php echo $imgPath; ?>';
+            var imgDest = $('.picture-frame').find('img');
+            var thisImg = $(this).find('input');
+            var imgSrc = $(this).find('input').val();
+            var linkImg = $('.picture-frame').find('a');
+            var explode = imgDest.attr('src').split('/');
+            var tmp = explode[explode.length-1];
+            var src = tmp.replace(medium, '');
+            var tmpName = imgPath + large + imgSrc;
+            linkImg.attr('href', tmpName);
+            tmpName = imgPath + medium + imgSrc;
+            imgDest.attr('src', tmpName);
+            tmpName = 'url("' +imgPath + small + src + '")';
+//            $(this).css('backgroundImage', tmpName);
+//            thisImg.val(src);
+
+        });
+
+    });
+    $(window).load(function(e){
+        var items = $('li[id^=itemId]');
+//        var items = $('select[id^=itemId]');
+        var descr = $('div.caracteristics_bottom_right');
+        var selectedItem = setSelectedItem(e.type);
+        if (!selectedItem.length)
+        {
+            items.first().addClass('selected');
+            descr.first().fadeIn();
+        }
+    });
+
+    function setSelectedItem(event, elem){
+        var selected ={};
+        var id = 0;
+
+        switch (event){
+            case 'load':
+                var url = jQuery(location).attr('href');
+                var pattern = new RegExp("#[0-9]*$");
+                var findUrl = url.match(pattern);
+                if (findUrl != null)
+                {
+                    id = findUrl[0].replace('#', '');
+                    $('#itemId').val(id);
+                    $('#itemId').selectmenu();
+                    selected = $('#itemDetails-' + id).fadeIn();
+
+                }
+
+                break;
+            case 'click':
+                var current = $('li[id^=itemId].selected');
+                current.removeClass('selected');
+                elem.addClass('selected');
+                pattern = new RegExp("[0-9]*$")
+                id = elem.attr('id').match(pattern);
+                $('div.caracteristics_bottom_right').hide();
+                $('#itemDetails-' + id).fadeIn();
+                break;
+            case 'change':
+                var current = $('select[id^=itemId]');
+                id = current.val();
+                window.location.hash = "#" + id;
+                $('div.caracteristics_bottom_right').hide();
+                $('#itemDetails-' + id).fadeIn();
+                break;
+            default:
+                break;
+        }
+
+        return selected;
+    }
+    //]]>
+</script>

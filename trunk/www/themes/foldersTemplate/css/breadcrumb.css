@@ -1,0 +1,15 @@
+/* Version SVN: $Id: breadcrumb.css 1169 2013-03-01 20:37:27Z ssoares $*/
+
+/******************************************/
+/* BREADCRUMB */
+div#bread-crumb {
+    margin-bottom: 10px;
+    text-transform: uppercase;    
+}
+div#bread-crumb,
+div#bread-crumb a{
+    color: #666666;
+}
+div#bread-crumb a:hover {
+    color: #999999;
+}

@@ -1,0 +1,25 @@
+form button, input[type=button], input[type=submit], .btn-primary {
+    -webkit-appearance:none;
+    appearance:none;
+    border:0;
+    line-height:@input-height-base - @input-padding  !important;
+    height:@input-height-base  !important;
+    padding-left:16px;
+    padding-right:16px;
+    background:@brand-primary;
+    .font-weight('bold', 'serif');
+    color:@brand-white;
+    text-transform:uppercase;
+    .responsive-font(17px);    
+    &.grayish-button {  
+        background:none;
+        text-decoration:underline;
+        padding:0; 
+        color:@brand-primary;   
+        height:auto !important;
+        text-transform:none;
+        text-decoration:none;
+        .responsive-font(17px);
+        .font-weight('bold', 'sans-serif');        
+    }
+}

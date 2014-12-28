@@ -1,0 +1,45 @@
+<?php $controllerName = $this->request->getParam('controller'); ?>
+<?php
+$i = 1;
+$columns = 2;
+
+$this->headTitle($this->title);
+$this->pageTitle($this->title);
+
+?>
+
+<div id="contentCatalog" class="block catalog">
+    <?php foreach ($this->paginator as $name => $data): ?>
+        <?php
+        $url = $this->Url(array('action' => null)) . '/' . $this->stringUrl . '/' . $data['CCI_ValUrl'];
+        $catName = $data["CCI_Name"];
+        ($i % $columns == 0) ? $class = 'right' : $class = 'left';
+        ?>
+        <div class="list <?php echo $class; ?>">
+            <?php if (!empty($data['CC_imageCat'])):?>
+            <p class="picture">
+                <?php
+                    echo $this->link($url,
+                        $this->moduleImage(
+                            'catalog', 'categories/' . $data['CC_ID'], $data['CC_imageCat'], 'medium',
+                            array(
+                                'class' => '',
+                                'key' => 'category',
+                            )
+                        )
+                    );
+                ?>
+            </p>
+            <?php endif;; ?>
+            <p class="text">
+                <?php // echo $data['CCI_Description']; ?>
+                <?php echo $this->link($url, $catName, array('class' => '')); ?>
+            </p>
+        </div>
+        <?php
+        $i++;
+    endforeach;
+    ?>
+    <div class="clear_both"></div>
+    <?php echo $this->paginationControl($this->paginator,'sliding', 'partials/products.paginator.phtml'); ?>
+</div>

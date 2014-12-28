@@ -1,0 +1,483 @@
+/*
+    Document   : for crop related styles
+    Created on : 2011-09-27, 15:01:46
+    Author     : freynolds
+    Description:
+        Style for the statistics of the newsletter
+    $Id: quoterequest.css 7 2012-03-15 12:58:58Z freynolds $
+*/
+
+
+div.news_crop{
+    position: absolute;    
+    margin-left: 0px;
+}
+div.news_crop:hover{
+    cursor: pointer;
+    color: #82B8CE;
+}
+
+
+#boxes #dialog {
+    background-color: #FFFFFF;
+    height: 300px;
+    width: 450px;
+}
+#boxes .window {
+    display: none;
+    height: 200px;
+    padding: 20px;
+    position: absolute;
+    width: 440px;
+    z-index: 9999;
+}
+
+div#boxes{
+    display: none;
+}
+
+
+
+#quoterequest_headerField{
+    font-family: Arial;    
+    margin-top: 17px;
+    
+}
+
+div.hiddenUserID{
+    visibility: hidden;
+}
+
+#quoterequest_innerField{
+    margin-top: -50px
+}
+
+#quoterequest_innerField{
+    font-family: Arial;    
+}
+
+th.no_column{
+    width: 120px;
+}
+
+th.client_column{
+    width: 150px;
+}
+
+th.subject_column{
+    width: 400px;
+}
+
+th.city_column{
+     width: 160px;
+}
+
+th.status_column{
+    width: 180px;
+}
+
+th.lastActivity_column{
+    width: 100px;
+}
+
+#quoterequest_length{    
+    font-size: 14px;
+    color: #5A9CBE;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 386px;
+    width: 961px;
+    margin-left: -11px;
+    text-align: right;
+}
+
+#quoterequest_filter{    
+    font-size: 14px;
+    color: #5A9CBE;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    top: 331px;
+    width: 961px;
+    margin-left: -11px;
+    text-align: right;
+}
+
+#quoterequest_paginate{
+    margin-top: 20px;
+    text-align: center;
+    font-size: 15px;
+    letter-spacing: 5px;
+}
+
+span.paginate_button{
+    cursor: pointer;
+    color: #001dff;
+}
+
+td.td_keywords{
+    width: 180px;
+    font-size: 14px;    
+}
+
+td.td_between60{
+    width: 60px;
+}
+
+td.td_company{
+    width: 180px;
+    font-size: 14px;   
+}
+
+td.td_group{
+    width: 100px;
+    font-size: 14px;    
+}
+
+td.td_status{
+    width: 140px;
+    font-size: 14px;
+    
+}
+
+.bleuLabel{
+    color: #5A9CBE;
+}
+
+table#quoterequest th{
+    color: #5A9CBE;    
+}
+
+td.td_director{
+    width: 100px;
+    font-size: 14px;
+}
+
+td.td_director{
+    width: 100px;
+    font-size: 14px;   
+}
+
+tr.odd{
+    background-color: #ECECEC;
+    height: 25px;
+}
+
+tr.even{
+    height: 25px;
+}
+
+tr.oddP{
+    background-color: #ECECEC;
+    height: 25px;
+}
+
+tr.evenP{
+    height: 25px;
+}
+
+td.list_data{
+    height: 5px;
+}
+
+tr.even:hover,
+tr.odd:hover{
+    cursor: pointer;
+    background-color: #CBCFD4;
+}
+
+td.soumission_no_label{
+    width: 165px;
+    font-size: 14px;
+}
+
+td.soumission_deascription_label{
+    width: 340px;
+    font-size: 14px;
+}
+
+td.soumission_status_label{
+    /*width: 145px;*/
+    font-size: 14px;
+    
+}
+
+td.soumission_director_label{
+    width: 80px;
+    font-size: 14px;
+}
+
+td.soumission_company{
+    font-size: 14px;
+    width: 140px;
+}
+
+input.soumission_description_input{
+    width: 950px;
+    font-size: 14px;
+    margin-top: 3px;
+}
+
+#companySelect{
+    margin-top: 3px;
+}
+
+div.soumissionRightAlign{
+    width: 100%;
+    text-align: right;
+    padding-bottom: 30px;
+    font-size: 14px;
+}
+
+span.span_soumission_code_label{
+    color: #000000;
+    margin-top: 3px;
+}
+
+#companySelectHidden{
+    display: none;
+}
+
+div.soumission_director_label{
+    
+}
+
+td.action_delete_quoterequest{
+    background-image: url(../../../icons/action_icons_remove.png)
+}
+
+th.actionColumn{
+    width: 30px;
+}
+
+#fieldset-actions .disabledSubmit{
+    background-color:white!important;
+}
+
+#fieldset-actions .disabledSubmit:hover{
+    cursor: default !important;     
+}
+
+td#coordoneesCompany{    
+    width: 240px;
+}
+
+td.coordoneesBetween{
+    width: 40px;
+}
+
+td.coordoneesBetween20{
+    width: 20px;
+}
+
+td#coordoneesPerson{
+    width: 700px;
+}
+
+table#quoterequest th.title_column:hover{
+    cursor: pointer;
+}
+
+input.soumission_number_input{
+    width: 30px;
+    margin-top: 3px;
+}
+
+#directorSelect{
+    margin-top: 3px;
+}
+
+span#buttonNextNumber{
+    padding:3px 5px 3px 5px;   
+    cursor: pointer;
+    margin-left: 3px;  
+    background-color: #5A9CBE;
+    border-bottom: 1px solid #C4C4C4;
+    border: medium none;
+    color: #FFFFFF;
+}
+
+span#buttonNextNumber:hover{
+    border: none; 
+    background-color: #d4e2e8;
+    border: medium none;
+    color: #767676;
+}
+
+fieldset#reports{
+    border: #5A9CBE 1px solid;
+}
+
+fieldset#reports legend{
+    font-weight: normal;
+}
+
+div#numberQuoterequest{
+    width: 230px;
+    float: left;
+    text-align: left;
+    padding-left: 10px;
+    font-size: 20px;        
+}
+
+div#numberQuoterequestOld{
+    width: 200px;
+    float: left;
+    text-align: left;
+    padding-left: 10px;
+    font-size: 20px; 
+}
+
+td.quoterequestColumn{
+    padding-left: 5px;    
+}
+
+td.projectColumn{
+    padding-left: 5px;    
+}
+
+
+#accountDirectorSelect{
+    margin-top: 3px;
+    width: 100px;
+}
+
+#statusSelect{
+    width: 180px;
+    margin-top: 3px;
+}
+
+#groupSelect{
+    width: 100px;
+    margin-top: 3px;
+}
+
+#nameCompany{
+    width: 170px;
+    margin-top: 3px;
+}
+
+div#quoterequest_filter input{
+    width: 170px;
+    margin-top: 3px;
+}
+
+#reports legend{
+    margin-left: 0px;
+}
+
+div.quoterequestAddClassOuter{
+    background-color: #F0F0F0;
+    border-bottom: 1px solid #C4C4C4;
+    height: 40px;
+    line-height: 40px;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+div.quoterequestAddClass{
+    background: transparent url(../../../icons/button_add.png) no-repeat 10px 50%;
+    width: 180px;
+    height: 40px;   
+    line-height: 40px; 
+    float: right;
+    text-align: right;
+    padding-right: 10px;
+    cursor: pointer;
+    font-family: Arial;
+    font-size: 10px;
+}
+
+div.quoterequestAddClass:hover{
+    background-color: #D4E2E8;
+    border: medium none;
+}
+
+
+td.deleteJournal{
+     background-image: url(../../../icons/action_icons_remove.png)
+}
+
+#action_panel_{
+    cursor: pointer;
+}
+
+#mask {
+    position:absolute;
+    z-index:9000;
+    background-color: #666666;
+    display:none;
+}
+   
+#boxes .window {
+    position:absolute;
+    width:440px;
+    height:200px;
+    display:none;
+    z-index:9999;
+    padding:20px;
+}
+  
+/* Customize your modal window here, you can add background image too */
+#boxes #dialog {
+    width:450px; 
+    height:300px;
+    background-color: #FFFFFF;
+}
+
+#boxes #dialog #status_select{
+    width: 200px;
+}
+
+#boxes #dialog .close{
+    width: 80px;
+    height: 30px;
+    background: url("../../../icons/button_cancel.png") no-repeat scroll 5px 50% transparent;
+    text-align: right;
+    cursor: pointer;
+    background-color: #D4E2E8;
+    padding: 10px;
+    color: #767676;
+    background-color: transparent;
+}
+
+#boxes #dialog .close:hover{
+    background-color: #D4E2E8;
+}
+
+#boxes #dialog .close a,
+#boxes #dialog .close a:hover{
+     color: #767676;
+}
+
+#boxes #dialog .save{
+    width: 100px;
+    height: 30px;
+    background: url("../../../icons/button_save.png") no-repeat scroll 5px 50% transparent;
+    text-align: right;
+    cursor: pointer;
+    background-color: #D4E2E8;
+    padding: 10px;
+    color: #767676;
+    background-color: transparent;
+}
+
+#boxes #dialog .save:hover{
+    background-color: #D4E2E8;
+}
+
+#boxes #dialog .save a,
+#boxes #dialog .save a:hover{
+     color: #767676;
+}
+
+#boxes #dialog .spacing_activity{
+    width: 300px;
+    height: 30px;
+}
+
+table#quoterequest{
+    margin-top: 100px;
+}

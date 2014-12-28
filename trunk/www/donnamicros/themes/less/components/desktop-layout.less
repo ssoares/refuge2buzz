@@ -1,0 +1,180 @@
+///**
+//* style de layout ici
+//**/
+html, body {
+    height:100%;
+    background-repeat:no-repeat;
+    background-position:center top;
+}
+.wrapper {
+    position:relative;
+    overflow:hidden;
+}
+.site-main {
+    z-index:@z-index-main;
+    @media @mq-phone {
+        margin-top:@mobile-menu-height !important;
+    }
+}
+.site-parallax-wrapper {
+    height:878px;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    overflow:hidden;
+    @media @mq-phone {
+        height:420px;
+    }
+}
+.site-parallax {
+    background:none;
+    height:100%;
+    width:100%;
+    position:absolute;
+}
+.site-main-home-zone-1 {
+    padding-top:247px;
+    @media @mq-tablet {
+        padding-top:320px;
+    }
+    @media @mq-phone {
+        padding-top:@mobile-menu-height;
+    }
+}
+.site-main-home-zone-2-container {
+    position:relative;
+}
+.site-main-home-zone-2-content-wrapper {
+
+    .ie8 &, & {
+        float:right;
+    }
+    min-height:525px;
+    padding:130px 117px 0 @grid-gutter-width / 2;
+    &:before {
+        background:url(../../images/backgrounds/home-content-background.png);
+        width:522px;
+        height:525px;
+        content:"";
+        position:absolute;
+        bottom:0;
+        right:100%;
+        margin-right:52px;
+    }
+    @media @mq-desktop-below {
+        float:none;
+        padding-right: @grid-gutter-width / 2;
+        &:before {
+            display:none;
+        }
+    }
+}
+.site-main-home-zone-3 {
+    background:@brand-very-grey-dark;
+    padding-top:76px;
+    padding-bottom:70px;
+    .content {
+        & > h1, & > h2 {
+            text-align:center;
+            margin-bottom:70px;
+        }
+    }
+    @media @mq-desktop-below {
+        padding-top : 25px;
+        padding-bottom : 10px;
+    }
+}
+//common banner
+.site-banner {
+    height:630px;
+    position:relative;
+    overflow:hidden;
+    @media @mq-phone {
+        height:390px;
+    }
+}
+.site-banner-image {
+    .absolute-center-static();
+    bottom:0;
+}
+.site-banner-container {
+    height:100%;
+    position:relative;
+    .vertical-aligner();
+    text-align:center;
+    padding:0;
+    .font-0();
+}
+.site-banner-content {
+    .make-md-column(8);
+    white-space:normal;
+    margin-top:75px;
+    vertical-align:middle;
+    padding:58px 0 50px 0;
+    border-top:1px solid @brand-grey;
+    border-top:1px solid rgba(red(@brand-grey), green(@brand-grey), blue(@brand-grey), 0.5);
+    border-bottom:1px solid @brand-grey;
+    border-bottom:1px solid rgba(red(@brand-grey), green(@brand-grey), blue(@brand-grey), 0.5);
+    p {
+        margin:0;
+    }
+    html & {
+        float:none;
+        display:inline-block;
+        max-width:100%;
+    }
+    .banner-text-medium {
+        @media @mq-phone {
+            .responsive-font(24px);
+        }
+    }
+    .banner-text-large {
+        @media @mq-phone {
+            .responsive-font(24px);
+        }
+    }
+    @media @mq-tablet {
+        margin-top:230px;
+    }
+    @media @mq-phone {
+        margin-top:20px;
+    }
+}
+.site-common-zone-1 {
+    padding:80px 0 70px 0;
+    background:url(../../images/backgrounds/partenaires-zone-noir.png);
+    text-align:center;
+    .content {
+        .make-sm-column(9);
+        html & {
+            float:none;
+        }
+        h2 {
+            width:80%;
+            margin-left:auto;
+            margin-right:auto;
+        }
+        margin-left:auto;
+        margin-right:auto;
+    }
+}
+.site-common-zone-2 {
+    background:@brand-grey-very-light;
+    padding-top:98px;
+    padding-bottom:71px;
+}
+.site-common-no-black-zone-1 {
+    background:@brand-grey-very-light;
+    padding-top:51px;
+    padding-bottom:88px;
+}
+.site-contact-zone-1 {
+    .content {
+        .responsive-font(19px);
+    }
+}
+.site-contact-main {
+    background:@brand-grey-very-light;
+    padding:60px 0 120px 0;
+}

@@ -1,0 +1,146 @@
+<script>
+    $(document).ready(function() {
+        $("#ImageSrc_preview").load(function(){
+            var imageUrl = $("#imageUrl").val();
+            if($(this).attr('src') != imageUrl){
+                $("#isNewImage").val('true');
+            }
+        });
+        $.ajaxSetup ({
+            // Disable caching of AJAX responses
+            cache: false
+        });
+    });
+</script>
+<input type="hidden" id="imageUrl" value="<?php echo($this->imageUrl) ?>"/>
+<?php
+echo $this->partial('partials/header.pageDetails.phtml', array(
+    'pageTitle' => $this->getCibleText('header_edit_news_text'),
+    'pageDescription' => $this->getCibleText('header_edit_news_description'),
+    'breadcrumb' => ''
+));
+?>
+
+<div id="default_form">
+    <div id="form_panel">
+        <?php echo($this->form);?>
+    </div>
+</div>
+<div id="boxes">
+
+</div>
+<?php
+    $params = $this->request->getParams();
+?>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $(window).load(function () {
+            $('table#TD_DraftText_tbl').height(600);
+
+            $('td.mceIframeContainer').height(600);
+            $('td.mceIframeContainer').find('iframe').height(600);
+        });
+
+        $('.news_crop').hide();
+
+         <?php if($this->showCrop==1){?>
+
+        var splitST = $('#ImageSrc_preview').attr('src').search("image_non_ disponible.jpg");
+        if(splitST==-1){
+           $('.news_crop').show();
+        }
+        $('#ImageSrc_preview').load(function(){
+            var splitST = $('#ImageSrc_preview').attr('src').search("image_non_ disponible.jpg");
+            if(splitST==-1){
+               $('.news_crop').show();
+            }
+            else{
+                $('.news_crop').hide();
+            }
+        });
+
+        $('.news_crop').click(function(e){
+
+            var imageScr = $('#ImageSrc').attr('value');
+            var ImageSrc_original = $('#ImageSrc_original').attr('value');
+
+
+            if(imageScr!=""){
+                var dialogJ = $('#boxes');
+                if(ImageSrc_original!=""){
+                    var pathYN = '/news/index/cropeditimage/new/Y/newsID/';
+                    var myArray = ImageSrc_original.split('/');
+                    imageScr = myArray[myArray.length-1];
+                }
+                else{
+                    var pathYN = '/news/index/cropeditimage/new/N/newsID/';
+                    var myArray = imageScr.split('/');
+                    imageScr = myArray[myArray.length-1];
+                }
+
+                $('#cropImage').val(imageScr);
+                $.get('<?php echo $this->baseUrl() ?>' + pathYN + <?php echo $this->newsID; ?> +'/image/' + imageScr,{},function(html){
+
+                    dialogJ.html('');
+                    dialogJ.append(html);
+                    dialogJ.dialog({
+                        'modal':true,
+                        width:1200,
+                        height:1000,
+                        buttons:{
+                            'annuler':function(){$(this).dialog("close");
+                            $('.imgareaselect-outer').css('visibility','hidden');
+                                    $('.imgareaselect-selection').parent().css('visibility','hidden');
+                                },
+                            'crop':function(){
+                                $.post(
+                                '<?php echo $this->baseUrl() ?>/news/index/cropimage/',
+                                {
+                                    newsID:'<?php echo $this->newsID; ?>',
+                                    image: imageScr,
+                                    ImageSrc: $('form#imageCropForm input#ImageSrc').attr('value')  ,
+                                    ImageDestination: $('form#imageCropForm input#ImageDestination').attr('value'),
+                                    x1: $('form#imageCropForm input#x1').attr('value'),
+                                    x2: $('form#imageCropForm input#x2').attr('value'),
+                                    y1: $('form#imageCropForm input#y1').attr('value'),
+                                    y2: $('form#imageCropForm input#y2').attr('value'),
+                                    w: $('form#imageCropForm input#w').attr('value'),
+                                    h: $('form#imageCropForm input#h').attr('value'),
+                                    rh: $('form#imageCropForm input#rh').attr('value'),
+                                    rw: $('form#imageCropForm input#rw').attr('value'),
+                                    maxWShow: $('form#imageCropForm input#maxWShow').attr('value'),
+                                    maxHShow: $('form#imageCropForm input#maxHShow').attr('value'),
+                                    maxWPreShow: $('form#imageCropForm input#maxWPreShow').attr('value'),
+                                    maxHPreShow: $('form#imageCropForm input#maxHPreShow').attr('value'),
+                                    realHShow: $('form#imageCropForm input#realHShow').attr('value'),
+                                    realWShow: $('form#imageCropForm input#realWShow').attr('value'),
+                                    sizeXWanted: $('form#imageCropForm input#sizeXWanted').attr('value'),
+                                    sizeYWanted: $('form#imageCropForm input#sizeYWanted').attr('value'),
+                                    returnPage: $('form#imageCropForm input#returnPage').attr('value')
+                                },
+                                function(data){
+                                    dialogJ.dialog("close");
+                                    $('.imgareaselect-outer').css('visibility','hidden');
+                                    $('.imgareaselect-selection').parent().css('visibility','hidden');
+                                    if($('#ImageSrc_original').val()==""){
+                                        var prePath = "<?php echo $this->baseUrl() ?>/../data/images/news/<?php echo $this->newsID; ?>/";
+                                        $("#ImageSrc_preview").attr("src", prePath + "<?php echo $this->originalWidth; ?>x<?php echo $this->originalHeight; ?>_" + $('#ImageSrc').val() + "?timestamp=" + new Date().getTime());
+                                        //alert($('#ImageSrc_preview').attr("src"));
+                                    }
+                                    else{
+                                    $("#ImageSrc_preview").attr("src", $('#ImageSrc_original').val() + "?timestamp=" + new Date().getTime());
+                                    }
+                                    $("#ImageSrc_preview").attr("width","<?php echo $this->thumbWidth; ?>");
+                                    $("#ImageSrc_preview").attr("height","<?php echo $this->thumbHeight; ?>");
+                                })
+                            }
+                        }
+                    });
+                })
+            }
+        });
+        <?php } ?>
+    });
+</script>

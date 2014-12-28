@@ -1,0 +1,85 @@
+<?php 
+$class = 'class=""';
+$madeInClass     = 'class=""';
+$allOriginsClass = 'class=""';
+
+if (isset($this->filter['fabrication']) && $this->filter['fabrication'] == 'madeInQuebec')
+    $madeInClass = 'class="checked"';
+else
+    $allOriginsClass = 'class="checked"';
+?>
+<div id="fabrication" class="searchEngine">
+    <h2 class="criteriaTitle"><?php echo $this->getClientText('searchEngine_origin_label'); ?></h2>
+    <ul class="criterias">
+        <li id="allOrigins" <?php echo $allOriginsClass; ?>><?php echo $this->getClientText('searchEngine_allOrigins_label'); ?></li>
+        <li id="madeInQuebec" <?php echo $madeInClass; ?>><?php echo $this->getClientText('searchEngine_madeInQC_label'); ?></li>
+        
+    </ul>
+</div>
+<div id="collections" class="searchEngine">
+    <h2 class="criteriaTitle"><?php echo $this->getClientText('searchEngine_collections_label'); ?></h2>
+    <ul class="criterias">
+        <?php foreach ($this->collections as $key => $collec):?>
+            <?php 
+            if (isset($this->filter['collections']) && $this->filter['collections'] == $collec['SCI_ValUrl'])
+                $class = 'class="checked"';
+            else
+                $class = 'class=""';
+            ?>
+                <li id="<?php echo $collec['SCI_ValUrl']; ?>" <?php echo $class; ?>>
+                    <?php echo $collec['SCI_Name']; ?>
+                </li>
+        <?php endforeach; ?>
+        <li class="clearAll"><?php echo $this->getClientTExt('clear_selection_collection'); ?></li>
+    </ul>
+</div>
+<div id="clienteles" class="searchEngine">
+    <h2 class="criteriaTitle"><?php echo $this->getClientText('searchEngine_clientele_label'); ?></h2>
+    <ul class="criterias">
+        <?php foreach ($this->clientele as $key => $clientele):?>
+        <?php 
+            if (isset($this->filter['clienteles']) && $this->filter['clienteles'] == $clientele['CLI_ValUrl'])
+                $class = 'class="checked"';
+            else
+                $class = 'class=""';
+        ?>
+        <li id="<?php echo $clientele['CLI_ValUrl']; ?>" <?php echo $class; ?>>
+            <?php echo $clientele['CLI_Name']; ?>
+        </li>
+        <?php endforeach; ?>
+        <li class="clearAll"><?php echo $this->getClientTExt('clear_selection_clientele'); ?></li>
+    </ul>
+</div>
+<div id="typeVetements" class="searchEngine">
+    <h2 class="criteriaTitle"><?php echo $this->getClientText('searchEngine_types_label'); ?></h2>
+    <ul class="criterias last">
+        <?php foreach ($this->types as $key => $type):?>
+        <?php 
+            if (isset($this->filter['typeVetements']) && $this->filter['typeVetements'] == $type['TI_ValUrl'])
+                $class = 'class="checked"';
+            else
+                $class = 'class=""';
+            ?>
+        <li id="<?php echo $type['TI_ValUrl']; ?>" <?php echo $class; ?>>
+        <?php echo $type['TI_Name']; ?>
+        </li>
+        <?php endforeach; ?>
+        <li class="clearAll"><?php echo $this->getClientTExt('clear_selection_type'); ?></li>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+        var listPage = '<?php echo Cible_FunctionsPages::getPageLinkByID(14080); ?>';
+        checkBox.setListPage(listPage);
+        
+        $('ul.criterias li').click(function(){
+            checkBox.click($(this));
+        });
+        $(window).load(function(){
+            checkBox.setSelected();
+        });
+    });
+    //]]>
+</script>

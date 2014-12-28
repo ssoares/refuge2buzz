@@ -1,0 +1,27 @@
+<script type="text/javascript">
+    //<![CDATA[
+    $(document).ready(function(){
+        var locale = '<?php echo $this->locale ?>';
+        $('.decimal').live('blur', function (){
+            $(this).parse({format:"#,###.00", locale:locale});
+            $(this).format({format:"#,###.00", locale:locale});
+        });
+        $('.integer').live('blur',  function (){
+//            if ($(this).attr('id') != 'B_BuildYear')
+//            {
+                $(this).parse({format:"#,###", locale:locale});
+                $(this).format({format:"#,###", locale:locale});
+//            }
+        });
+
+        $('#fieldset-moreInfos dd.hasShortcut:first').before($('#B_Sprinkler-sprinkler'));
+    });
+    $(window).load(function(){
+        var locale = '<?php echo $this->locale ?>';
+        $('.decimal').parse({format:"#,###.00", locale:locale});
+        $('.decimal').format({format:"#,###.00", locale:locale});
+        $('.integer').not('#B_BuildYear').parse({format:"#,###", locale:locale});
+        $('.integer').not('#B_BuildYear').format({format:"#,###", locale:locale});
+    });
+    //]]>
+</script>

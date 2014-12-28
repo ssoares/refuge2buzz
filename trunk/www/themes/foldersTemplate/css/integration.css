@@ -1,0 +1,396 @@
+/* Version SVN: $Id: integration.css 1169 2013-03-01 20:37:27Z ssoares $*/
+
+#preview-box p,
+#compare-box p,
+.content-box p,
+.mceContentBody p, .previewText p{
+    font-family: Georgia,"Nimbus Roman No9 L",serif;
+    font-size: 12px;
+    color: #333333;
+
+    padding: 0px !important;
+    margin: 0px;
+    margin-bottom: 16px!important;
+}
+.previewText p span{
+    padding: 0px !important;
+}
+h1.home{
+    font-family: Georgia,"Nimbus Roman No9 L",serif;
+    font-size: 12px;
+    color: #333333;
+    padding: 0px;
+    margin: 0px;
+    font-weight: normal;
+    display: inline;
+}
+
+h2.h2_1,
+h2.h2_2,
+h2 .h2_1,
+h2 .h2_2{
+    font-family: Georgia,"Nimbus Roman No9 L",serif;
+    font-size: 12px;
+    padding: 0px;
+    margin:0px;
+}
+
+h2.h2_1,
+h2 .h2_1{
+    color: #81913C;
+}
+
+h2.h2_2,
+h2 .h2_2{
+    color: #333333;
+    font-weight: bold;
+}
+
+h2.h2_home,
+h2 .h2_home{
+    font-size: 30px;
+    color: #81913C;
+    font-weight: normal;
+    line-height: 32px;
+}
+
+
+#preview-box h2,
+#compare-box h2,
+.content-box h2,
+.mceContentBody h2, .previewText h2{
+    margin:0px;
+    padding: 0px;
+    margin-bottom: 25px;
+}
+
+/******** LINK ***********/
+#preview-box a,
+#compare-box a,
+.content-box a,
+.mceContentBody a,
+a.telechargement , .previewText a{
+    text-decoration: none;
+}
+
+#preview-box a,
+#compare-box a,
+.content-box a,
+.mceContentBody a, .previewText a
+{
+    color: #81913C !important;
+}
+
+#preview-box a:hover,
+#compare-box a:hover,
+.content-box a:hover,
+.mceContentBody a:hover, .previewText a:hover
+{
+    color: #000000 !important;
+}
+
+#preview-box a.telechargement,
+#compare-box a.telechargement,
+.content-box a.telechargement,
+.mceContentBody a.telechargement, .previewText a.telechargement
+{
+    font-family: Arial;
+    color:#333333 !important;
+}
+#preview-box a.telechargement:hover,
+#compare-box a.telechargement:hover,
+.content-box a.telechargement:hover,
+.mceContentBody a.telechargement:hover,
+.previewText a.telechargement:hover
+{
+    color:#000000 !important;
+}
+/************************/
+
+
+/******** LIST-IMAGE ***********/
+#preview-box ul,
+#compare-box ul,
+.content-box ul,
+.mceContentBody ul,
+.previewText ul
+{
+    /*border: solid 1px red;*/
+    margin-left: 15px;
+    padding: 0px;
+
+    font-family: Georgia;
+    font-size: 12px;
+    font-weight: normal;
+    color: #333333;
+}
+
+#preview-box ul li,
+#compare-box ul li,
+.content-box ul li,
+.mceContentBody ul li,
+.previewText ul li   {
+    list-style-image: url("../images/common/puce-content.jpg");
+    margin: 0px;
+    padding: 0px;
+    padding-bottom: 2px;
+    /*border: solid 1px red;*/
+}
+/************************/
+
+/******** HTML TABLE ***********/
+#preview-box table,
+#compare-box table,
+.content-box table,
+.mceContentBody table,
+.previewText table   {
+    width:100%;
+    padding: 0px;
+    margin: 0px;
+    border: 1px solid #333333;
+    border-collapse:collapse;
+    font-family: Georgia,"Nimbus Roman No9 L",serif;
+    font-size: 12px;
+    color: #333333;
+}
+
+#preview-box table tr.even td,
+#compare-box table tr.even td,
+.content-box table tr.even td,
+.mceContentBody table tr.even td,
+.previewText table tr.even td {
+    background-color : #E7E7E7;
+}
+
+#preview-box table tr.odd td,
+#compare-box table tr.odd td,
+.content-box table tr.odd td,
+.mceContentBody table tr.odd td,
+.previewText table tr.odd td {
+    background-color : #FFFFFF;
+}
+
+#preview-box table tr td,
+#compare-box table tr td,
+.content-box table tr td,
+.mceContentBody table tr td ,
+.previewText table tr td
+{
+    border: 1px solid #333333;
+    font-family: Georgia,"Nimbus Roman No9 L",serif;
+    font-size: 12px;
+    color: #333333;
+    margin:0px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    vertical-align: top;
+}
+
+
+.newsletter-table-main  {
+    /*width:605px !important;*/
+    padding: 0px !important;
+    margin: 0px !important;
+    border: none !important;
+    border-collapse:collapse !important;
+}
+.newsletter-table-main tr td    {
+    border: none !important;
+    font-family: Georgia,"Nimbus Roman No9 L",serif;
+    font-size: 12px;
+    color: #333333;
+    margin:0px;
+    padding: 0px !important;
+}
+
+
+/************************/
+
+#preview-box .number,
+#compare-box .number,
+.content-box .number,
+.mceContentBody .number , .previewText .number{
+    font-family: arial;
+}
+
+
+/* NEW TITLE CLASSES */
+#preview-box h2.h2_titre_georgia,
+#preview-box .h2_titre_georgia,
+#compare-box h2.h2_titre_georgia,
+#compare-box .h2_titre_georgia,
+.content-box h2.h2_titre_georgia,
+.content-box .h2_titre_georgia,
+.mceContentBody h2.h2_titre_georgia,
+.mceContentBody .h2_titre_georgia ,
+.previewText  .h2_titre_georgia{
+    font-family: Georgia,"Nimbus Roman No9 L",serif !important;
+}
+
+#preview-box h2.h2_titre_arial,
+#preview-box .h2_titre_arial,
+#compare-box h2.h2_titre_arial,
+#compare-box .h2_titre_arial,
+.content-box h2.h2_titre_arial,
+.content-box .h2_titre_arial,
+.mceContentBody h2.h2_titre_arial,
+.mceContentBody .h2_titre_arial,
+.previewText .h2_titre_arial{
+    font-family: Arial !important;
+}
+/* NEW TITLE CLASSES */
+
+#preview-box hr.ligne_rose,
+#compare-box hr.ligne_rose,
+.content-box hr.ligne_rose,
+.mceContentBody hr.ligne_rose,
+.previewText hr.ligne_rose,
+hr.ligne_rose{
+    color: #DC006B;
+    height: 1px;
+    border-bottom-style: dotted;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+}
+
+#preview-box p.newsletter_salutation,
+#compare-box p.newsletter_salutation,
+.content-box p.newsletter_salutation,
+.mceContentBody p.newsletter_salutation,
+.previewText p.newsletter_salutation,
+p.newsletter_salutation{
+   margin: 0px;
+   padding: 0px 0px 0px 10px;
+}
+
+td img {display: block;}
+
+td.imgTopLeft,
+td.imgTopMiddle,
+td.imgTopRight,
+td.imgLeftBorder,
+td.imgRightBorder,
+td.imgBottomLeft,
+td.imgBottomMiddle,
+td.imgBottomRight{
+    line-height: 14px;
+    padding:0px;
+}
+
+td.imgTopLeft,
+td.imgTopRight,
+td.imgBottomLeft,
+td.imgBottomRight{
+    width:14px;
+    height:14px;
+
+}
+
+td.imgTopMiddle,
+td.imgBottomMiddle{
+    height:14px;
+}
+
+td.imgLeftBorder,
+td.imgRightBorder{
+    width:14px;
+}
+
+td.imgTopLeft{
+    background: url("../images/common/imgTopLeft.png") no-repeat scroll top left transparent;
+}
+
+td.imgTopMiddle{
+    background: url("../images/common/imgTopMiddle.png") repeat-x scroll top left transparent;
+}
+
+td.imgTopRight{
+    background: url("../images/common/imgTopRight.png") no-repeat scroll top left transparent;
+}
+
+td.imgLeftBorder{
+    background: url("../images/common/imgLeftBorder.png") repeat-y scroll top left transparent;
+}
+
+td.imgRightBorder{
+    background: url("../images/common/imgRightBorder.png") repeat-y scroll top left transparent;
+}
+
+td.imgBottomLeft{
+    background: url("../images/common/imgBottomLeft.png") no-repeat scroll top left transparent;
+}
+
+td.imgBottomMiddle{
+    background: url("../images/common/imgBottomMiddle.png") repeat-x scroll top left transparent;
+}
+
+td.imgBottomRight{
+    background: url("../images/common/imgBottomRight.png") no-repeat scroll top left transparent;
+}
+
+td.imgCenter{
+    padding:0px;
+    background-color:#FFFFFF;
+}
+.decorator{
+    display: inline-block;
+}
+
+
+
+table.picture-frame
+{
+    border:0px;
+    width: auto;    
+}
+
+table.picture-frame tr td.picture-frame-background
+{
+    background-color: #ffffff;
+    padding:10px;
+    vertical-align:middle;
+    text-align: center;
+}
+            
+table.picture-frame tr td.picture-frame-left-shade
+{
+    background-image: url("../images/common/picture-frame-left-shade.png");    
+    background-repeat: no-repeat;
+    background-position: left top;
+    height:8px;
+    width: 50%;
+}
+
+
+table.picture-frame tr td.picture-frame-right-shade
+{
+    background-image: url("../images/common/picture-frame-right-shade.png");    
+    background-repeat: no-repeat;
+    background-position: right top;
+    height:8px;
+    width: 50%;
+}
+
+
+/* Large */
+table.picture-frame tr td.picture-frame-left-largeshade
+{
+    background-image: url("../images/common/picture-frame-left-shadelarge.png");    
+    background-repeat: no-repeat;
+    background-position: left top;
+    height:15px;
+    width: 50%;
+}
+
+
+table.picture-frame tr td.picture-frame-right-largeshade
+{
+    background-image: url("../images/common/picture-frame-right-shadelarge.png");    
+    background-repeat: no-repeat;
+    background-position: right top;
+    height:15px;
+    width: 50%;
+}

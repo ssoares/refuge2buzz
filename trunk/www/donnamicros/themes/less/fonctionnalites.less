@@ -1,0 +1,149 @@
+@import "desktop-base.less";
+.fonctionnalites {
+    .font-0();
+    text-align:left;
+}
+.fonc-element {
+    padding:@grid-gutter-width / 2;
+    .make-md-column(4);
+    @media @mq-tablet {
+        .make-sm-column(6);
+    }
+    @media @mq-phone {
+        display:block;
+    }
+    vertical-align:top;
+    display:inline-block;
+    text-align:center;
+    html & {
+        float:none;
+    }
+    .fonc-element-content {
+        .responsive-font(@font-size-base);
+        background:url(../images/backgrounds/collapse-background.png) no-repeat right bottom;
+        background-color:@brand-white;
+        background-color:rgba(red(@brand-white), green(@brand-white), blue(@brand-white), 0.5);
+        height:390px;
+        padding:50px 33px;
+        cursor:pointer; 
+        position:relative;
+        .fonc-element-image {
+            width:106px;
+            margin-bottom:20px;
+        }
+        .fonc-element-short {
+            .responsive-font(19px);
+            @media @mq-desktop {
+                .responsive-font(16px);
+            }
+            @media @mq-tablet {
+                .responsive-font(16px);
+            }
+        }
+        .fonc-element-title {
+            @media @mq-desktop {
+                .responsive-font(20px);
+            }
+            @media @mq-tablet {
+                .responsive-font(20px);
+            }
+        }
+        .fonc-element-subtitle {
+            display:none;
+        }
+        .fonc-element-description {
+            display:none;
+        }
+        &:after {
+            content:"";
+            height:100%;
+            width:100%;
+            position:absolute;
+            top:0;
+            left:0;
+            pointer-events:none;
+            background-color:transparent;
+            .transition(background-color 0.5s);
+        }
+    }
+    &.active {
+        .fonc-element-content {
+            &:after {
+                .ie8 & {
+                    background:url(../images/backgrounds/grey-90.png);
+                }
+                background:rgba(red(@brand-grey), green(@brand-grey), blue(@brand-grey), 0.9);
+            } 
+        }
+
+    }
+}
+.fonc-collapse-box {
+    display:none !important;
+    position:relative;
+    &.collapsing, &.in { 
+        &.fonc-collapse-box-1 {
+            @media @mq-phone {
+                display:block !important;
+            }
+        }
+        &.fonc-collapse-box-2 {
+            @media @mq-tablet {
+                display:block !important;
+            }
+        }
+        &.fonc-collapse-box-3 {
+            @media @mq-desktop-upward {
+                display:block !important;
+            }
+        }
+    }
+}
+.fonc-collapse-box-content     { 
+    margin:70px 0 40px 0;
+    position:relative;
+    opacity:0;
+    .transition(opacity 1s);
+    &.show-text {
+        opacity:1;
+    }
+    .fonc-collapse-box-close {
+        .import-icon(@icon-close,15px);
+        color:@brand-primary;
+        &:focus {
+            outline:0;
+        }
+        &:after {
+            position:absolute;
+            top:0;
+            left:0;
+        }
+        height:15px;
+        width:15px;
+        position:absolute;
+        top:0;
+        left:@grid-gutter-width;
+        padding:0;
+        border:0;
+        background:none;
+    }
+    .column-content-first {
+        text-align:center;
+        @media @mq-phone {
+            display:none;
+        }
+    }
+    &.content { 
+        .column-content-content {
+            @media @mq-phone {
+                padding:0 40px;
+            }
+        }
+    }
+    .fonc-collapse-box-title {
+        margin-bottom:6px;
+    }
+    .fonc-collapse-box-subtitle {
+        margin-bottom:22px;
+    }
+}

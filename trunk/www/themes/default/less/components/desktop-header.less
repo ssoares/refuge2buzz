@@ -1,0 +1,43 @@
+@header-line-height:76px;//dans ce cas-ci, le line-height devrait être de la même hauteur que le logo
+@header-menu-line-height:36px;//la hauteur de ligne du menu
+@header-padding-top:68px / 2;//padding top du header 
+@header-padding-bottom:68px / 2;//padding top du header 
+.site-header {
+    position:relative; 
+    background:@brand-white;
+    padding:@header-padding-top 0 @header-padding-bottom 0;
+    line-height:@header-line-height;
+}
+.site-header-container {
+    padding:0;
+}
+.site-name {
+    .make-md-column(4);
+    display:table;
+}
+.site-logo {
+    height:@header-line-height;
+    img {
+        max-width:100%;
+        vertical-align:middle;
+    }
+} 
+.site-baseline {
+    .responsive-font(@font-size-base + 6);
+    .font-weight("normal",'serif');
+    font-style:italic;
+    display:table-cell;
+    padding-left:@grid-gutter-width / 2;
+    line-height:@header-menu-line-height;
+    @media @mq-phone {  
+        .responsive-font(@font-size-base + 4);
+    }
+}
+.site-menu-principal { 
+    min-height:@header-line-height;
+    text-align:right;
+    .make-md-column(8);
+    @media @mq-tablet {
+        text-align:left;
+    }
+}

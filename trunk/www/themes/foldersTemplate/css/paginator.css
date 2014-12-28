@@ -1,0 +1,43 @@
+/* Version SVN: $Id: paginator.css 1169 2013-03-01 20:37:27Z ssoares $*/
+
+/***************************************/
+/* LIST WITH PAGINATOR */ 
+div.paginationControl {
+    clear: both;
+    padding-top: 10px;
+    text-align: center;    
+}
+
+div.paginationControl div#pagination-previous {
+    float: left;
+}
+
+div.paginationControl div#pagination-next {
+    float: right;
+    text-transform: uppercase;
+}
+
+div.paginationControl div#pagination-previous a {
+    margin-left: 5px;
+}
+
+div.paginationControl div#pagination-next a {
+    margin-right: 5px;
+}
+
+div.paginationControl div#pagination-previous a,
+div.paginationControl div#pagination-next a {
+    text-transform: uppercase;
+    display: block;
+}
+
+div.paginationControl div#page-list a,
+div.paginationControl div#page-list a:hover{
+    font-weight: bold;
+    color: #666666;
+}
+
+span.paginator_link_page_number{
+    font-weight: bold;
+    color: #ADBF21;
+}

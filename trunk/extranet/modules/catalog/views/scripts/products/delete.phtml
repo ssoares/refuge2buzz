@@ -1,0 +1,25 @@
+<?php
+    
+    $product  = $this->product;
+?>
+<div id="container_middle_full">    
+<?php if ($product):?>
+    <h3><?php echo($product['PI_Name']) ?></h3>
+       <p>
+        <?php echo $this->getCibleText('delete_catalog_products_confirmation')?>
+           <em><b><?php echo($product['PI_Name']); ?></b></em>?</p>
+        <form action="<?php echo $this->url(array('action'=>'delete')); ?>" method="post">
+            <div>
+                <input type="hidden" name="blockID" value="<?php echo $product['PI_Name']?>" />
+                <input type="submit" name="delete" value="<?php echo $this->getCibleText('button_yes') ?>" />
+                <input type="submit" name="cancel" value="<?php echo $this->getCibleText('button_no') ?>" />
+            </div>
+        </form>
+<?php else:?>
+        <p><?php echo $this->getCibleText('delete_catalog_products_noexist')?></p>
+        <a href="<?php echo ($this->return); ?>">
+            <?php echo $this->getCibleText('button_return')?>
+        </a>
+
+<?php endif;?>
+</div>

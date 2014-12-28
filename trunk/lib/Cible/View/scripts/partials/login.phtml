@@ -1,0 +1,17 @@
+
+<?php if ($this->message): ?>
+<span class="subtitles">
+    <?php echo $this->message ?>
+</span>
+<?php else: ?>
+<span class="subtitles">
+    <?php echo $this->getClientText('login_form_login_title') ?>
+</span>
+<?php endif; ?>
+<?php if( isset($this->error) ): ?>
+    <p id="login_error"><?php echo $this->error ?></p>
+<?php endif; ?>
+<?php echo $this->form; ?>
+<div id="forgot-password">
+    <?php echo $this->link('javascript:toggleLostPassword();', $this->getClientText('lost_password_link')) ?>
+</div>

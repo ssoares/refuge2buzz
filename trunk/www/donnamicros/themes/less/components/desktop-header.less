@@ -1,0 +1,93 @@
+@animation-height:150px;
+@mobile-menu-height:97px;
+
+.site-header {
+    margin-top:-@animation-height;
+    padding-top:74px + @animation-height;
+    position:absolute;
+    width:100%;
+    top:0;
+    left:0;
+    z-index:@z-index-header;
+    .transition(background-color 0.4s);
+    .site-logo {
+        padding-right:50px + @grid-gutter-width / 2;
+        @media @mq-tablet {
+            margin-bottom:30px;
+        }        
+        .site-logo-image {
+            width:220px;
+            display:block;
+        }
+        .site-logo-image-content {
+            padding-top:20px;
+            width:145px;
+            display:none;
+            margin: 0 auto;
+        }
+        img {
+            max-width:100%;
+        }
+    }
+    &.clinched, &.always-clinched {
+        .transition(margin 1s);
+        margin-top:0;
+        position:fixed;
+        padding-top:0;
+        background:@brand-white;
+        .site-logo {
+            padding-right:0;
+            .site-logo-image {
+                display:none;
+            }
+            .site-logo-image-content {
+                display:block;
+            }
+        }
+    }
+    @media @mq-phone {
+        &, &.clinched, &.always-clinched { 
+            margin-top:0;
+            position:fixed;
+            padding-top:0;
+            background:@brand-white;
+            min-height:@mobile-menu-height;
+            .site-logo {
+                line-height:@mobile-menu-height;
+                width:auto;
+                float:left;
+                .site-logo-image {
+                    display:none;
+                }
+                .site-logo-image-content {
+                    padding:0;
+                    display:inline-block;
+                }
+            }
+        }
+    }
+}
+
+
+
+.site-menu {
+    margin-top:8px;
+    @media @mq-tablet-upward {
+        display:block;
+        visibility:visible;
+        height:auto !important;
+    }
+    @media @mq-phone {
+        clear:both;
+    }
+}
+.site-header-collapse {
+    float:right;
+    line-height:@mobile-menu-height;
+    @media @mq-tablet-upward {
+        display:none;
+    }
+    button {
+        vertical-align:middle;
+    }
+}

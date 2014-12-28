@@ -1,0 +1,47 @@
+//quelques propriétés css3 préfixées
+.transition(@properties; @duration)  {
+    transition: @properties @duration;
+    -webkit-transition: @properties @duration; 
+    -moz-transition: @properties @duration; 
+    -ms-transition: @properties @duration; 
+}
+.transition(@properties)  {
+    transition: @properties;
+    -webkit-transition: @properties; 
+    -moz-transition: @properties; 
+    -ms-transition: @properties; 
+}
+.transform(@func)  {
+    transform: @func;
+    -ms-transform: @func;
+    -moz-transform: @func;
+    -webkit-transform: @func;
+}
+.transform-origin(@xorigin:50%;@yorigin:50%)  {
+    transform-origin: @xorigin @yorigin;
+    -ms-transform-origin: @xorigin @yorigin; 
+    -moz-transform-origin: @xorigin @yorigin; 
+    -webkit-transform-origin: @xorigin @yorigin; 
+}
+.transform-style(@style)  {
+    transform-style: @style;
+    -ms-transform-style: @style; 
+    -moz-transform-style: @style; 
+    -webkit-transform-style: @style; 
+}
+.perspective(@perspective:800px;@xorigin:50%;@yorigin:50%)  {
+    perspective: @perspective;
+    -ms-perspective: @perspective; 
+    -moz-perspective: @perspective; 
+    -webkit-perspective: @perspective; 
+    perspective-origin: @xorigin @yorigin;
+    -ms-perspective-origin: @xorigin @yorigin; 
+    -moz-perspective-origin: @xorigin @yorigin; 
+    -webkit-perspective-origin: @xorigin @yorigin; 
+}
+.animation(@func)  {
+    animation: @func;
+    -ms-animation: @func;
+    -moz-animation: @func;
+    -webkit-animation: @func;    
+}

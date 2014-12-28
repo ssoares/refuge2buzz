@@ -1,0 +1,125 @@
+/*
+    Document   : newsletterStats
+    Created on : 2011-09-27, 15:01:46
+    Author     : soaser
+    Description:
+        Style for the statistics of the newsletter
+    $Id: profile.css 1137 2012-12-03 16:18:33Z ssoares $
+*/
+#default_form #action_panel,
+#profilesTab #fieldset-actions{
+    background-color: inherit;
+}
+#default_form #action_panel{
+    border-bottom: 0;
+}
+#profilesTab #fieldset-actions #submitSave:disabled{
+    cursor: default;
+
+}
+#profilesTab #fieldset-actions input#submitSave:disabled{
+    cursor: default;
+    background-color: inherit !important;
+/*    color: #CCC;*/
+    font-style: italic;
+    opacity : 0.5;
+}
+#default_form #action_panel .profiles{
+    background-color: #fff;
+    border: 0;
+    border-bottom: 3px solid #CCCCCC;
+    display: none;
+    font-size: 11px;
+/*    margin: 40px 0 0 849px;*/
+    padding: 0 5px 0 0px;
+    position: absolute;
+    width: 108px;
+    z-index: 1000;
+}
+#default_form #action_panel ul.buttons ul.profiles li{
+    float: left;
+}
+#default_form #action_panel ul.buttons ul.profiles li a{
+    padding: 8px 0 8px 5px;
+}
+#default_form #action_panel ul.buttons ul.profiles li img{
+    float: left;
+    height: 26px;
+    margin: 7px 0px 7px 5px;
+    width : 26px;
+}
+
+#profilesTab, #infosTab{
+    float: left;
+    width: 100%;
+}
+#infosTab{
+    max-width: 425px;
+    margin-left: 10px;
+}
+.hidden{
+    display: none !important;
+}
+.btnHover{
+    background-color: #d4e2e8
+}
+#profilesTab li .deleteTab {
+    cursor: pointer;
+    height: 1.1428em;
+    padding: 0.5714em 1em 0.4285em 0;
+}
+#profilesTab li .deleteTab img{
+    height: 16px;
+    width: 16px;
+}
+
+#profilesTab #fieldset-retailerForm,
+#profilesTab #fieldset-retailerFormEn{
+    float: left;
+    width: 47%;
+}
+#profilesTab #fieldset-retailerFormEn{
+    margin-top: 76px;
+}
+#profilesTab #fieldset-retailerFormEn .formLanguage{
+    margin-bottom: 39px;
+}
+#profilesTab #fieldset-retailerForm .formLanguage,
+#profilesTab #fieldset-retailerFormEn .formLanguage{
+    font-weight: bold;
+    text-transform: uppercase;
+}
+#genericProfile dl dl{
+    float: left;
+    margin: -265px 0 0 520px;
+}
+.ui-tabs-nav .modified {
+    color: #cc0000 !important;
+    font-style: italic;
+    font-weight: bold;
+}
+
+#profilesTab ul.emptyModel{
+    display: none;
+    float: left;
+}
+
+.subFormClass{
+    min-height: 490px;
+}
+
+input.error{
+    border: 1px solid #e4222e;
+}
+.vertAlignRadio {
+    vertical-align: -20%;
+}
+.alert{
+    border: 2px solid #cc0000;
+    color: #cc0000;
+    padding: 5px;
+    margin: 5px;
+}
+#searchAgain{
+    margin-top: 5px;
+}

@@ -1,0 +1,53 @@
+<script type="text/javascript">
+    $(document).ready(function() {
+       /* $("#ImageSrc_preview").load(function(){
+            var imageUrl = $("#imageUrl").val();
+            if($(this).attr('src') != imageUrl){
+                $("#isNewImage").val('true');
+            }
+        });
+        $("#ImageSrc_preview").load(function(){
+            var imageUrl = $("#imageUrl").val();
+            if($(this).attr('src') != imageUrl){
+                $("#isNewImage").val('true');
+            }
+        });*/
+
+//        var specPublic = ($('#').val()).split('/');
+//        var specPro    = ($('#').val()).split('/');
+//        var specPro    = ($('#').val()).split('/');
+//            var toolPromo  = ($('#productFormBotPro-PI_OutilPromoPDF').val()).split('/');
+        $('#productFormBotPub-technicalSpecsName[type=hidden]').remove();
+        $('#productFormBotPro-technicalSpecsPro[type=hidden]').remove();
+//            $('#productFormBotPro-toolPromoName[type=hidden]').remove();
+
+//        $('#productFormBotPub-technicalSpecsName').val(specPublic.pop());
+//        $('#productFormBotPro-technicalSpecsPro').val(specPro.pop());
+//            $('#productFormBotPro-toolPromoName').val(toolPromo.pop());
+
+
+    });
+</script>
+<input type="hidden" id="imageUrl" value="<?php echo($this->imageUrl) ?>"/>
+<?php
+echo $this->partial('partials/header.pageDetails.phtml', array(
+    'pageTitle' => $this->getCibleText('header_edit_products_text'),
+    'pageDescription' => $this->getCibleText('header_edit_products_description'),
+    'breadcrumb' => ''
+));
+?>
+
+<div id="default_form">
+    <div id="form_panel">
+        <?php echo $this->partial(
+                'partials/products.add-update.phtml',
+                array(
+                    'form'=>$this->form,
+                    'collectionData' => $this->collectionData,
+                    'collectionChoice' => $this->collectionChoice
+                )
+            );
+        echo $this->renderItemsList;
+        ?>
+    </div>
+</div>

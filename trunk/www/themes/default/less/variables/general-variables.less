@@ -1,0 +1,104 @@
+//Général
+@icon-font-path:          "../fonts/";
+@icon-font-name:          "glyphicons-halflings-regular";
+
+@body-bg:white;//couleur de l'arrière-plan ici
+@text-color: @brand-very-grey-dark;//couleur du texte ici
+@text-color-inverted: @brand-white;
+@link-color: @brand-primary;//couleur des liens
+@link-hover-color:#858585;
+
+@font-family-sans-serif:  @font-family-normal-sans-serif;//font sans empatement
+@font-family-normal-sans-serif:  'nexaregular', sans-serif;//font sans empatement
+@font-family-normal-sans-serif-mobile:  @font-family-sans-serif;//font sans empatement
+@font-family-light-sans-serif:  'nexa-light', sans-serif;//font sans empatement
+@font-family-light-sans-serif-mobile:  @font-family-light-sans-serif;//font sans empatement
+@font-family-bold-sans-serif:  'nexa-bold', sans-serif;//font sans empatement
+@font-family-bold-sans-serif-mobile:  @font-family-bold-sans-serif;//font sans empatement
+@font-family-serif:       'nexaslab-bold', serif;//font avec empatements
+@font-family-normal-serif:       @font-family-serif;//font avec empatements
+@font-family-normal-serif-mobile:       @font-family-serif;//font avec empatements
+@font-family-bold-serif:       'nexaslab-bold', serif;//font avec empatements
+@font-family-bold-serif-mobile:       @font-family-bold-serif;//font avec empatements
+@font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;//monochasse
+@font-family-icons:'donna', Arial, sans-serif;
+
+@font-family-print: "Times New Roman", Georgia, serif;
+
+@font-size-h1:18px;
+@font-size-h2:25px;
+@font-size-h3:18px;
+@font-size-h4:22px;
+@font-size-h5:20px;
+@font-size-h6:18px;
+
+@screen-xs-min:480px;//width mobile
+@screen-sm-min:769px;//width tablet
+@screen-md-min:992px;//width normal
+@screen-lg-min:1200px;//width large
+
+@screen-xs-max:767px;//width mobile
+@screen-sm-max:991px;//width tablet
+@screen-md-max:1199px;//width normal
+
+@font-size-base:16px;//taille de base du texte
+@line-height-base:1.2;//hauteur de ligne de base (mettre en unité, pas en em)
+
+@headings-font-weight:    500;
+@headings-line-height:    1.1;
+@headings-color:          inherit;
+
+@grid-columns:              12;//nombre de colonnes
+@grid-gutter-width:         20px;//taille des goutières
+@grid-float-breakpoint:     769px;//lorsque la largeur de la fenêtre est plus petite, les colonnes commencent à floater
+
+@container-tablet:             ((720px + @grid-gutter-width));//largeur conteneur tablette
+@container-desktop:            ((940px + @grid-gutter-width));//largeur conteneur normal
+@container-large-desktop:      ((1180px + @grid-gutter-width));//largeur conteneur large
+
+@brand-primary: #009ee0;
+@brand-secondary: #DDD100;
+
+@some-kind-of-blue: #5cc5ed;
+
+@brand-success: #5cb85c;
+@brand-warning: #f0ad4e;
+@brand-danger: #d9534f;
+@brand-info: #5bc0de;
+
+@brand-black: #000000;
+@brand-very-grey-dark: #3d3c3f;
+@brand-grey-dark: #353535;
+@brand-grey: #4b575f;
+@brand-grey-light: #b9b9b9;
+@brand-grey-very-light: #dfe4e6;
+@brand-white: #FFFFFF;
+
+@navbar-height: 42px;
+@menu-secondaire-height:32px;
+
+@menu-side-width: 200px;
+
+@mq-large: ~'(min-width: @{screen-lg-min})';
+@mq-desktop: ~'(min-width: @{screen-md-min}) and (max-width: @{screen-md-max})';
+@mq-tablet: ~'(min-width: @{screen-sm-min}) and (max-width: @{screen-sm-max})';
+@mq-phone: ~'(max-width: @{screen-xs-max})';
+
+@mq-desktop-below:~'(max-width: @{screen-md-max})';
+@mq-tablet-below:~'(max-width: @{screen-sm-max})';
+
+@mq-desktop-upward: ~'(min-width: @{screen-md-min})';
+@mq-tablet-upward: ~'(min-width: @{screen-sm-min})';
+
+@mq-phone-height: ~'(max-width: @{screen-xs-max}) and (max-height: 420px)';
+@mq-desktop-phone: ~'(min-width: @{screen-md-min}) and (max-width: @{screen-md-max}), (max-width: @{screen-xs-max})';
+
+@print: ~'print';
+
+@mobile-divider: 0.5;
+@mobile-divider-text: 1;
+@mobile-gutter-width: 71px;
+
+@mq-landscape: ~'screen and (orientation:landscape)';
+@mq-large-mobile: ~'(min-width: @{screen-sm-min})';
+@mq-small-mobile: ~'(max-width: 480px)';

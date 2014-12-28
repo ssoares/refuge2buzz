@@ -1,0 +1,88 @@
+<?php
+    $releaseData = $this->releaseData;
+    $releasesSendInfo = $this->members;
+    $rsDataMembers = $this->rsDataMembers;
+?>
+<?php
+echo $this->partial('partials/header.pageDetails.phtml', array(
+    'pageTitle' => $this->getCibleText('header_manage_send_newsletter_text'),
+    'pageDescription' => $this->getCibleText('header_manage_send_newsletter_description'),
+    'breadcrumb' => ''
+));
+
+// Reconstruction de l'url
+$URL = $_SERVER['REQUEST_URI'];
+$arrayUrl = explode("/", $URL);
+
+if($arrayUrl[count($arrayUrl)-2] != "listeID")
+    $newUrl = $URL . "/listeID/";
+else
+    $newUrl = substr($URL, 0, strripos($URL, "/")) . "/";
+?>
+
+<div id="default_form">
+    <div id="form_panel">
+        <?php echo($this->form);?>
+
+        <dl class="zend_form">
+
+        <dt><label class="Listing_patient">Liste :</label></dt><dd></dd>
+
+        <?
+        if(count($rsDataMembers) > 0)
+        {
+
+            foreach($rsDataMembers as $key=>$value)
+            {
+                if($key % 2 == 0)
+                    $tmp_class= 'row_list_1';
+                else
+                    $tmp_class= 'row_list_0';
+
+                echo "<dt class='firstcol " . $tmp_class . "'>" . $value['GP_FirstName'] . " " . $value['GP_LastName'] . "</dt>";
+                echo "<dd class='secondcol " . $tmp_class . "'>" . $value['GP_Email'] . "</dd>";
+            }
+
+
+        }
+
+        ?>
+        </dl>
+    </div>
+</div>
+
+<script type='text/javascript'>
+
+$(document).ready(function()
+{
+    $('#NR_CollectionFiltersID').change(function()
+    {
+        var NewUrl = "<?php echo $newUrl ?>" + $('#NR_CollectionFiltersID').val();
+        window.location.href = NewUrl;
+    });
+    
+    
+    
+    if($('#NR_Status').val()==1){
+        $('input#newsletter_send').css("opacity","0.5");
+        $('input#newsletter_send').css("cursor","inherit");
+        $('input#newsletter_send').attr('disabled','disabled');            
+    }
+    $('#NR_Status').change(function( event ) {
+        if($('#NR_Status').val()==1){
+            $('input#newsletter_send').css("opacity","0.5");
+            $('input#newsletter_send').css("cursor","inherit");
+            $('input#newsletter_send').attr('disabled','disabled');            
+        }
+        else{
+            $('input#newsletter_send').css("opacity","1");
+            $('input#newsletter_send').css("cursor","pointer");
+            $('input#newsletter_send').removeAttr('disabled');           
+        }
+    });
+    
+    
+
+});
+
+</script>

@@ -1,0 +1,16 @@
+/* Version SVN: $Id: site.css 1169 2013-03-01 20:37:27Z ssoares $*/
+/**
+ * @version $Id: site.css 1169 2013-03-01 20:37:27Z ssoares $
+ */
+@import url("../../default/css/site.css");
+@import url("header.css");
+@import url("menu.css");
+
+a{
+    color: #000F10;
+    text-decoration: none;
+}
+
+a:hover{
+    color: #FF00FF;
+}

@@ -1,0 +1,95 @@
+<?php
+$random = rand(1, 100000);
+?>
+
+
+<section class="featured banners module content">
+    <?php echo $this->showBlockTitle('h2', array('class' => 'content-h1-style')); ?>
+    <div class="featured-slider"  id="featured-<?php echo $random ?>">
+        <?php
+        foreach ($this->imgFeat as $image):
+            $ID = $image['IF_ID'];
+            $img = $image['IF_Img'];
+            $color = $image['IFI_Color'];
+            $titre = $image['IFI_Title'];
+            $titre2 = $image['IFI_Label'];
+            $url = $image['IFI_Url'];
+            $text = $image['IFI_TextA'];
+            $imageID = $image['IF_DataID'];
+            $imagePath = $this->imgPath . $imageID;
+
+            $imagePath .= "/" . $this->imgCfg['original']['maxWidth'] . 'x' . $this->imgCfg['original']['maxHeight'] . '_';
+            $imagePath .= $img;
+            ?>
+
+            <div class="featured-slide featured-slide-<?php echo $color; ?> content">
+                <div class="featured-slide-container">
+                    <h3 class="featured-title"><?php echo $titre ?><span class="featured-title-subtitle"><?php echo $titre2 ?></span></h3>
+                    <div class="columns featured-columns">
+                        <div class="column-content-1x2 column-content column-content-logo">
+                            <a href="<?php echo $url ?>">
+                                <img src="<?php echo $imagePath; ?>" alt="logo">    
+                            </a>
+                        </div>
+                        <div class="column-content-1x2 column-content column-content-list">
+                            <?php echo $text; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <?php
+        endforeach;
+        ?>        
+    </div>
+    <div id="featured-left-cycle-<?php echo $random; ?>" class="featured-left-cycle left-cycle"></div>
+    <div id="featured-right-cycle-<?php echo $random; ?>" class="featured-right-cycle right-cycle"></div>
+    <div class="featured-nav-fake" id="featured-nav-<?php echo $random; ?>"></div>
+    <div class="featured-nav row">
+        <?php
+        foreach ($this->imgFeat as $image):
+            $img = $image['IF_Img'];
+            $imageID = $image['IF_DataID'];
+            $imagePath = $this->imgPath . $imageID;
+
+            $imagePath .= "/" . $this->imgCfg['medium']['maxWidth'] . 'x' . $this->imgCfg['medium']['maxHeight'] . '_';
+            $imagePath .= $img;
+            ?>
+
+            <div class="featured-nav-item col-sm-3">
+                <img src="<?php echo $imagePath; ?>" alt="logo">
+            </div>
+            <?php
+        endforeach;
+        ?>
+    </div>
+</section>
+<?php $this->placeholder('footerScript')->captureStart(); ?>
+<script type="text/javascript">
+//<![CDATA[
+    $(window).load(function() {
+        var $featured = $('#featured-<?php echo $random; ?>');
+        $featured.cycle({
+            autoHeight:'calc',
+            fx: "fade",
+            prev: '#featured-left-cycle-<?php echo $random; ?>',
+            next: '#featured-right-cycle-<?php echo $random; ?>',
+            slides: "> .featured-slide",
+            pager: '#featured-nav-<?php echo $random; ?>',
+            speed: 1000,
+            timeout: 0,
+            manualTrump: false,
+            log: true
+        });
+        $featured.on('cycle-before', function(e,a) {
+            var navItems = $('#featured-nav-<?php echo $random; ?>').next().find('.featured-nav-item');
+            navItems.removeClass('active');
+            navItems.eq(a.nextSlide).addClass('active');
+        })
+        $('#featured-nav-<?php echo $random; ?>').next().find('.featured-nav-item').click(function() {
+            var ind = $(this).index();
+            $('#featured-nav-<?php echo $random; ?>').find('span').eq(ind).trigger('click');
+        })
+    }).resize();
+//]]>
+</script>
+<?php $this->placeholder('footerScript')->captureEnd(); ?>

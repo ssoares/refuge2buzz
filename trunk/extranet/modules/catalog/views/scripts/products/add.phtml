@@ -1,0 +1,30 @@
+<?php
+echo $this->partial('partials/header.pageDetails.phtml', array(
+    'pageTitle' => $this->getCibleText('header_add_products_text'),
+    'pageDescription' => $this->getCibleText('header_add_products_description'),
+    'breadcrumb' => ''
+));                
+?>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $('#productFormBotPub-technicalSpecsName[type=hidden]').remove();
+        $('#productFormBotPro-technicalSpecsPro[type=hidden]').remove();
+//        $('#productFormBotPro-toolPromoName[type=hidden]').remove();
+
+    });
+</script>
+<div id="default_form">
+    <div id="form_panel">
+        <?php
+        echo $this->partial(
+                'partials/products.add-update.phtml',
+                array(
+                    'form'=>$this->form,
+                    'collectionData' => $this->collectionData,
+                    'collectionChoice' => $this->collectionChoice
+                )
+            );
+        ?>
+    </div>                    
+</div>

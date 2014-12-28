@@ -1,0 +1,249 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf8">
+        <base href="<?php echo Zend_Registry::get('absolute_web_root'); ?>" />
+        <style type="text/css">
+            table {
+
+            }
+            table td a,
+            #container a{
+                color: #393939;
+            }
+            table td a:hover,
+            table td a:visited,
+            #container a:hover,
+            #container a:visited{
+                color: #0098a9;
+                text-decoration: none;
+
+            }
+            table td p{
+                margin: 0;
+            }
+            table td p.artTitle{
+                margin-bottom: 5px;
+            }
+            ul li{
+                margin-left: 0px;
+
+            }
+            ul{
+                margin-top: 0;
+                padding-left: 1px;
+            }
+            ul li{
+                padding: 0px;
+            }
+
+            table{
+                color: #393939;
+                font-family: arial;
+                font-size: 14px;
+            }
+            div.previewMail{
+
+            }
+        </style>
+        <?php
+        // Liste des styles à composer
+            $padding16L = ' padding-left: 16px;';
+            $padding16R = ' padding-right: 16px;';
+            $padding30B = ' padding-Bottom: 15px;';
+            $padding0 = ' padding: 0;';
+            $txtAlignR = ' text-align: right;';
+            $nlTitle = ' color: #0098a9;text-transform:uppercase;';
+            $nlLink = ' text-transform:uppercase;';
+            $font20 = ' font-size: 20px;';
+            $font12 = ' font-size: 11px;';
+            $padSeparFooter = ' padding: 5px 10px;';
+            $bgFooter = ' background-color: #DAF4F6;';
+            $previewEmail = 'color: #393939;
+                background-color: #585D61;
+                padding: 15px 0;
+                text-align: center;
+                width: 100%;';
+            $table = 'background-color: #fff;
+                border-collapse: collapse;
+                border-spacing: 0;
+                text-align: left;
+                margin: 0 auto;';
+            $title = $txtAlignR.$nlTitle.$font20;
+        ?>
+
+    </head>
+    <?php
+    $domain = 'http://' . $_SERVER['SERVER_NAME'];
+    $date_string = $this->dateString;
+    $date_string_url = $this->parutionDate;
+    $titleParution = $this->newsletterTitle;
+    $NR_ModelID = $this->NR_ModelID;
+
+    $tplFirstZone = 'partials/articles/tplOneArticleFirst.phtml';
+    $tplZones = 'partials/articles/tplOneArticles.phtml';
+
+    $absolute_web_root = Zend_Registry::get('absolute_web_root');
+    $themeImgPath = $absolute_web_root . "themes/default/images/common/";
+    $imgHeader = 'header.jpg';
+
+    if (isset($this->imageHeader))
+        $sourceHeader = $this->imageHeader;
+    else
+        $sourceHeader = $themeImgPath . "header-{$this->moduleId}-{$this->newsletterID}-{$this->memberId}.jpg";
+
+    $imageFleche = $themeImgPath . "linkReadMore.jpg";
+    $imgHeaderBottom = $themeImgPath . "roundBottom.jpg";
+    $btnPlus = $themeImgPath . "btnPlus.jpg";
+    $dotLineLargeShort = $themeImgPath . 'dotLineLargeShort.jpg';
+    $dotLineLargeLong = $themeImgPath . 'dotLineLargeLong.jpg';
+    $dotLineSmallShort = $themeImgPath . 'grayDottedLine.jpg';
+    $dotLineSmallLong = $themeImgPath . 'dotLineSmallLong.jpg';
+
+    $subscribeLink = $this->subscribeLink . '/uid/' . $this->memberId . '/newsletterID/' . $this->newsletterID;
+    $unsubscribeLink = $this->unsubscribeLink . '/uid/' . $this->memberId . '/newsletterID/' . $this->newsletterID;
+    $countA = $countB = $countC = 0;
+
+    foreach ($this->articles as $article)
+    {
+        if ($article['NA_ZoneID'] == 1)
+            $countA++;
+        if ($article['NA_ZoneID'] == 2)
+            $countB++;
+        if ($article['NA_ZoneID'] == 3)
+            $countC++;
+
+        $articles[$article['NA_ZoneID']][] = $article;
+    }
+    ?>
+    <body>
+        <!--    Links and intro-->
+        <div class="previewMail" style="<?php echo $previewEmail; ?>">
+            <table width="650" style="<?php echo $table?>">
+            <tr>
+                <td style="<?php echo $padding16L . $padding16R; ?>">
+                    <?php
+                    if ($this->isOnline != 2)
+                    {
+                        echo $this->getCibleText('email_not_show_go_online1', $this->languageRelease);
+                        echo "<a style='text-decoration: underline;' href='" ;
+                        echo Zend_Registry::get('absolute_web_root') . $this->details_release;
+                        echo "'>";
+                        echo $this->getCibleText('email_not_show_go_online2', $this->languageRelease);
+                        echo "</a>";
+                    }
+                    ?>
+                </td>
+            </tr>
+            </table>
+        <!--    Email content-->
+            <table cellpadding="0" cellspacing="0" width="650" style="<?php echo $table?>">
+                <!--     header img-->
+    <!--            <tr>
+                    Texte de salutations
+                    <td colspan="3" style="<?php echo $padding16L . $padding16R; ?>">
+                        <?php echo $this->intro;?>
+                    </td>
+                </tr>-->
+                <!--    Title-->
+                <tr>
+                    <td height="45" style="<?php echo $padding16L.$padding16R.$title; ?>"  colspan="3" >
+                        <?php echo $titleParution; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <img src="<?php echo $sourceHeader ?>" alt="" border="0" width="650">
+                    </td>
+                </tr>
+                <!--    Title and date-->
+                <tr>
+                    <td height="36" style="<?php echo $padding16L . $padding16R.$txtAlignR.$nlTitle; ?>"  colspan="3">
+                        <?php echo $date_string; ?>
+                    </td>
+                </tr>
+                    <!--        Articles 1-->
+                <tr>
+                    <td style="<?php echo $padding16L . $padding16R . $padding30B; ?>" valign="top" colspan="3">
+                        <?php
+                        if (isset($articles[1]))
+                            echo $this->partial(
+                                $tplFirstZone, array(
+                                    'articles' => $articles[1],
+                                    'currentSite' => $this->currentSite,
+                                    'newsletterID' => $this->newsletterID,
+                                    'details_page' => $this->details_page,
+                                    'dateStringUrl' => $date_string_url,
+                                    'parutionValUrl' => $this->parutionValUrl,
+                                    'memberId' => $this->memberId,
+                                )
+                            );
+                        ?>
+                    </td>
+                </tr>
+                    <!--            articles 1 2-->
+                <tr>
+                    <td style="<?php echo $padding16L; ?>" valign="top" width="298">
+                        <?php
+                        if (isset($articles[2]))
+                            echo $this->partial(
+                                $tplZones, array(
+                                    'articles' => $articles[2],
+                                    'dotLineSmallLong' => $dotLineSmallLong,
+                                    'currentSite' => $this->currentSite,
+                                    'newsletterID' => $this->newsletterID,
+                                    'details_page' => $this->details_page,
+                                    'dateStringUrl' => $date_string_url,
+                                    'parutionValUrl' => $this->parutionValUrl,
+                                    'memberId' => $this->memberId,
+                                )
+                            );
+                        ?>
+                    </td>
+                    <td width="20">&nbsp;</td>
+                    <td width="300" valign="top" style="<?php echo $padding16R; ?>">
+                        <?php
+                        if (isset($articles[3]))
+                            echo $this->partial(
+                                $tplZones, array(
+                                    'articles' => $articles[3],
+                                    'dotLineSmallLong' => $dotLineSmallLong,
+                                    'currentSite' => $this->currentSite,
+                                    'newsletterID' => $this->newsletterID,
+                                    'details_page' => $this->details_page,
+                                    'dateStringUrl' => $date_string_url,
+                                    'parutionValUrl' => $this->parutionValUrl,
+                                    'memberId' => $this->memberId,
+                                )
+                            );
+                        ?>
+                    </td>
+                </tr>
+                <!--footer -->
+                <tr>
+                    <td style="<?php echo $padding16L . $padding16R . $bgFooter; ?>" colspan="3" height="40">
+                        <a style="<?php echo $nlLink . $font12; ?>" href="<?php echo Zend_Registry::get('absolute_web_root') . $subscribeLink; ?>">
+                            <?php echo($this->getCibleText('newsletter_button_archives', $this->languageRelease)); ?>
+                        </a>
+                        <span style="<?php echo $padSeparFooter; ?>"> // </span>
+                        <a style="<?php echo $nlLink . $font12; ?>" href="<?php echo Zend_Registry::get('absolute_web_root') . $unsubscribeLink; ?>">
+                            <?php echo($this->getCibleText('newsletter_button_unsubscribe', $this->languageRelease)); ?>
+                        </a>
+                        <span style="<?php echo $padSeparFooter; ?>"> // </span>
+                        <a style="<?php echo $nlLink . $font12; ?>" href="mailto:email@usimm.ca">
+                            <?php echo($this->getClientText('contact_form_notification_admin_title', $this->languageRelease)); ?>
+                        </a>
+                        <span style="<?php echo $padSeparFooter; ?>"> // </span>
+                        <a style="<?php echo $nlLink . $font12; ?>" href="<?php echo Zend_Registry::get('absolute_web_root'); ?>">usimm.ca</a>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <a class="level-1" href="#"><img alt="Facebook" src="<?php echo $domain. $this->locateFile('icoLinkedin.png',null, 'front', 'default'); ?>"></a>&nbsp;
+                        <a class="level-1" href="#"><img alt="Linkedin" src="<?php echo $domain. $this->locateFile('icoLinkedin.png',null, 'front', 'default'); ?>" /></a>&nbsp;
+                        <a class="level-1" href="#"><img alt="Youtube" src="<?php echo $domain. $this->locateFile('icoYoutube.png',null, 'front'); ?>"/></a>&nbsp;
+                        <a class="level-1" href="#"><img alt="Pinterest" src="<?php echo $domain. $this->locateFile('icoPinterest.png',null, 'front'); ?>"/></a>&nbsp;
+                        <a class="level-1" href="#"><img alt="Twitter" src="<?php echo $domain. $this->locateFile('icoTwitter.png',null, 'front'); ?>"/></a>&nbsp;
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>

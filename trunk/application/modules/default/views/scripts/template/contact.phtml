@@ -1,0 +1,27 @@
+<?php
+// loads the placeholders according to the number of zones
+$emptyPlaceholders = $this->zonesBlocks(array('nbZones' => $this->nbZones));
+?>
+<div class="site-banner" role="banner">  
+    <?php if ($this->imgHeader != '') echo $this->image($this->imgHeader, array('class' => 'site-banner-image', 'direct' => true)); ?>
+    <div class="site-banner-container container ">
+        <div class="site-banner-content content">
+            <p><span class="banner-text-medium"><?php echo $this->bannerTitle; ?></span></p>
+            <p><span class="banner-text-large"><?php echo $this->bannerSubtitle ?></span></p>
+        </div>
+    </div>
+</div>
+<div class="site-contact-main">
+    <div class="site-main-contact-container container "> 
+        <div class="site-contact-zone-1 col-md-4">
+            <?php if (!isset($emptyPlaceholders[1])): ?>
+                <?php echo $this->placeholder('zone1') ?>
+            <?php endif; ?>
+        </div>
+        <main class="site-contact-zone-2 col-md-8">
+            <?php if (!isset($emptyPlaceholders[2])): ?>
+                <?php echo $this->placeholder('zone2') ?>
+            <?php endif; ?>
+        </main>
+    </div>
+</div>

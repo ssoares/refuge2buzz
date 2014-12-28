@@ -1,0 +1,28 @@
+/* Version SVN: $Id: site-ie.css 1169 2013-03-01 20:37:27Z ssoares $*/
+/***************************************/
+/* HTML FORM CLASSES */
+div.form form dl.zend_form div fieldset legend    {
+    /*padding: 10px 3px 12px 3px;*/
+    padding: 0 3px 0 3px;
+    margin: 0 0 10px 0;
+}
+
+.stdTextInput,
+.smallTextInput,
+.mediumTextInput,
+/*.stdSelect,
+.stdTextarea,*/
+span.detailOptions input,
+.dateTextInput   {
+    padding-top: 2px;
+    height: 18px;
+}
+.stdTextarea    {
+    padding-top: 2px;
+}
+.stdSelect  {
+    height: 22px;    
+    padding-top: 0px;
+}
+/* HTML FORM CLASSES */
+/***************************************/

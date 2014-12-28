@@ -1,0 +1,64 @@
+<script type="text/javascript" src="<?php echo Zend_Registry::get("www_root") . "/extranet/js/imgareaselect/scripts/jquery.imgareaselect.pack.js" ?>"></script>
+<link rel="stylesheet" type="text/css" href="<?php echo Zend_Registry::get("www_root") . "/extranet/js/imgareaselect/css/imgareaselect-default.css" ?>" />
+<?php
+echo $this->partial('partials/header.pageDetails.phtml', array(
+    'pageTitle' => $this->getCibleText('header_crop_header_text'),
+    'pageDescription' => $this->getCibleText('header_crop_header_description'),
+    'breadcrumb' => ''
+));
+?>
+
+
+<div id="default_form">
+    <div id="form_panel">
+        <?php echo($this->form);?>        
+    </div>                    
+</div>
+
+    <div class="frame" style="margin: 0 0.3em;">       
+        
+      <img id="photo" src="<?php echo $this->zendPath . $this->imageFile; ?>" width="<?php echo ($this->widthImage/2); ?>" height="<?php echo ($this->heightImage/2); ?>"/>
+    </div>
+    <div class="frame" style="margin: 0 1em; width: <?php echo ($this->widthImage/5); ?>px; height: <?php echo ($this->heightImage/5); ?>px;">
+      <div id="preview" style="width: <?php echo ($this->widthImage/5); ?>px; height: <?php echo ($this->heightImage/5); ?>px; overflow: hidden;">
+        <img src="<?php echo $this->zendPath . $this->imageFile; ?>" width="<?php echo ($this->widthImage/5); ?>" height="<?php echo ($this->heightImage/5); ?>" />
+      </div>
+    </div>
+
+<script type="text/javascript">
+   //<![CDATA[
+$(document).ready(function() {
+    
+    $('#ImageSrc').val("<?php echo $this->imageFile; ?>"); 
+    $('#ImageSrc').val("<?php echo $this->imageFile; ?>");
+    
+    function preview(img, selection) {
+        if (!selection.width || !selection.height)
+            return;
+
+        var scaleX = 100 / selection.height;
+        var scaleY = 100 / selection.width;
+
+        $('#preview img').css({
+            width: Math.round(scaleX * 200),
+            height: Math.round(scaleY * 100),
+            marginLeft: -Math.round(scaleX * selection.x1),
+            marginTop: -Math.round(scaleY * selection.y1)
+        });
+
+        $('#x1').val(selection.x1);
+        $('#y1').val(selection.y1);
+        $('#x2').val(selection.x2);
+        $('#y2').val(selection.y2);
+        $('#w').val(selection.width);
+        $('#h').val(selection.height); 
+    }
+
+    $(function () {
+        $('#photo').imgAreaSelect({ aspectRatio:'2:1', handles: true,
+            fadeSpeed: 200, onSelectChange: preview });
+    });
+
+//]]>
+});
+</script>

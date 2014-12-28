@@ -1,0 +1,50 @@
+<?php $this->headScript()->appendFile($this->locateFile('tinymce.min.js', 'tinymce')); ?>
+<?php $this->headScript()->appendFile($this->locateFile('associationSet.js')); ?>
+<?php $form = $this->form; ?>
+<?php $collectionData = $this->collectionData; ?>
+<?php $collectionChoice = $this->collectionChoice; ?>
+
+<input type="hidden" id="ajaxLink" value="<?php echo($this->baseUrl())?>/catalog/products/ajax"/>
+<input type="hidden" id="linkDeleteAssociation" value="<?php echo($this->getCibleText('link_delete_association')); ?>"/>
+
+<div id="default_form">
+    <div id="form_panel">
+        <form enctype="application/x-www-form-urlencoded" method="post" action="">
+            <dl style="margin: 0px; padding: 0px;">
+                <?php echo($form->actions); ?>
+            </dl>
+            <div style="float:left; width:500px;">
+                <dl>
+                    <?php echo($form->getSubForm('productFormLeft')); ?>
+                </dl>
+            </div>
+            <div style="float:right; width:280px;">
+                <dl>
+                    <?php echo($form->getSubForm('productFormRight')); ?>
+                </dl>
+            </div>
+            <hr style="border:0px;height:0px;clear:both;"/>
+            <div>
+                <dl>
+                    <?php echo($form->getSubForm('productFormBotPub')); ?>
+                </dl>
+            </div>
+            <hr style="border:0px;height:0px;clear:both;"/>
+            <div>
+                <dl>
+                    <?php echo($form->getSubForm('productFormBotPro')); ?>
+                </dl>
+            </div>
+            
+        <?php echo Cible_FunctionsAssociationElements::getNewAssociationSetBox(
+                'collection',
+                'P_',
+                'PI_Name',
+                '1',
+                'Produits associés',
+                $collectionData,
+                $collectionChoice);
+        ?>
+        </form>
+    </div>
+</div>
