@@ -1,0 +1,17 @@
+.errors {
+    color:@brand-primary;
+    line-height:1.2em;
+    margin:0;
+    li {
+        padding-top:4px;
+        &:before {
+            display:none;
+        }
+    }
+     & when (@device-type = 'desktop') {
+        .responsive-font(16px);
+    }
+     & when (@device-type = 'mobile') {
+        .responsive-font((16px) * @mobile-divider-text);
+    }
+}

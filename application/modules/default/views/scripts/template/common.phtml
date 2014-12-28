@@ -1,0 +1,44 @@
+<?php
+// One place_holder template, so grab only the first place_holder elements
+$emptyPlaceholders = $this->zonesBlocks(array('nbZones' => $this->nbZones));
+
+$tree = $this->subMenu(array('id' => 'submenu', 'class' => 'open'));
+$menu = $this->menu(
+        $tree, array(
+    'id' => 'submenu',
+    'startLevel' => 2,
+    'maxLevel' => 2,
+    'parentIdAlt' => 'subMenu-',
+    'parentId' => $tree['MID_ParentId'],
+    'class' => 'nav nav-pills nav-stacked')
+);
+$withLeftMenu = 'col-md-12 site-main-without-menu';
+?>
+<?php if (isset($tree[0])): ?>
+    <?php $withLeftMenu = 'col-md-9 site-main-with-menu'; ?>
+<?php endif; ?>
+
+<div class="site-banner" role="banner">  
+    <?php if ($this->imgHeader != '') echo $this->image($this->imgHeader, array('class' => 'site-banner-image', 'direct' => true)); ?>
+    <div class="site-banner-container container ">
+        <div class="site-banner-content content">
+            <p><span class="banner-text-medium"><?php echo $this->bannerTitle; ?></span></p>
+            <p><span class="banner-text-large"><?php echo $this->bannerSubtitle ?></span></p>
+        </div>
+    </div>
+</div>
+
+<?php if (!isset($emptyPlaceholders[1])): ?>
+    <div class="site-common-zone-1 inverted">
+        <div class="site-common-zone-1-container container">
+            <?php echo $this->placeholder('zone1') ?>
+        </div>
+    </div>
+<?php endif; ?>
+<?php if (!isset($emptyPlaceholders[2])): ?>
+    <div class="site-common-zone-2">
+        <div class="site-common-zone-2-container container">
+            <?php echo $this->placeholder('zone2') ?>
+        </div>
+    </div>
+<?php endif; ?>

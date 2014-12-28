@@ -1,0 +1,146 @@
+/*
+    Document   : references
+    Created on : 2012-07-17, 14:16:32
+    Author     : soaser
+    Description:
+        Purpose of the stylesheet follows.
+*/
+@import url("dataTable.css");
+#form_panel form dd.hasShortcut label{
+    width: 140px;
+}
+.shortcutC,
+.shortcut{
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    height: 22px;
+    line-height: 22px;
+    position: relative;
+    width: 25px;
+    z-index: 1;
+}
+.shortcut {
+    background: url("../../../icons/action_icons_add.png") no-repeat scroll 0 0 transparent;
+    padding-left: 30px;
+}
+.hasShortcut {
+    display: inline-block;
+}
+.shortcutC:hover,
+.shortcut:hover{
+    color: #82B8CE;
+}
+#repertoire .shortcut{
+    margin: -32px 77% 0 0;
+}
+
+#form_panel form#repertoire dd.hasShortcut label{
+    width: 140px;
+}
+.ui-dialog-title{
+    text-transform: capitalize;
+}
+.hidden{
+    display: none;
+}
+#valuesList{
+    width: 100%
+}
+.allowChange{
+    width: 190px;
+}
+#valuesList td, th {
+    background-color: #fff;
+    padding-left: 5px;
+    text-align: left;
+}
+#valuesList td.center, th.center {
+    text-align: center;
+}
+#valuesList td.indent {
+  padding-left: 20px;
+}
+#valuesList td.right {
+  text-align: right;
+}
+#valuesList td.last{
+    height: 30px;
+    width: 80px;
+    text-align: center;
+}
+/*#valuesList input.stdInput{
+    width: 110px;
+}*/
+th.allSel{
+    width: 145px;
+}
+.deleteBtn, .removeBtn{
+    background: transparent url('../../../icons/button_remove_16x16.png') no-repeat 0 5px;
+    cursor: pointer;
+    padding: 3px 6px;
+}
+.removeBtn{
+    background: transparent url('../../../icons/button_cancel_16x16.png') no-repeat 0 5px;
+}
+.addValueDisplayLine{
+    background: url("../../../icons/button_add_16x16.png") no-repeat scroll 0 5px transparent;
+    float: right;
+    line-height: 23px;
+    padding-left: 20px;
+    text-align: left;
+    width: 155px;
+}
+.addValueDisplayLine:hover{
+    background-color: #d4e2e8;
+}
+.addBtn{
+    background: transparent url('../../../icons/successValid_16x16.png') no-repeat 0 5px;
+    cursor: pointer;
+    padding: 3px 6px;
+}
+.ui-dialog .ui-dialog-title{
+    text-transform: none;
+}
+.ui-state-highlight{
+    border: 2px solid #ABC6DD;
+    height: 23px;
+    line-height: 23px;
+}
+
+#valuesList th.white {
+    color: #fff;
+}
+.ui-dialog{
+    z-index: 100002 !important;
+}
+
+#ILK_RefId-album{
+    float: none;
+    margin-bottom: -40px;
+}
+
+#RefId_Labels{
+    float: none;
+    padding-top: 20px;
+}
+
+label.firstExt,
+input#address-AI_FirstExt,
+label.secondExt,
+input#address-AI_SecondExt{
+    margin-left: 160px;
+/*    margin-top: -30px;
+    position: absolute;*/
+    width: 50px;
+}
+label.firstExt,
+label.secondExt{
+    margin-top: -50px;
+
+}
+
+input#address-AI_SecondTel,
+input#address-AI_FirstTel{
+    width: 120px;
+}

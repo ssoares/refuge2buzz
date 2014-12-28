@@ -1,0 +1,114 @@
+<?php
+echo $this->partial('partials/header.pageDetails.phtml', array(
+    'pageTitle' => $this->getCibleText('header_newsletter_statistic_title'),
+    'pageDescription' => $this->getCibleText('header_newsletter_statistic_description'),
+    'breadcrumb' => ''
+));
+$dateSend = $this->data['latestSend']['NR_MailingDateTimeEnd'];
+$time = substr($dateSend, strstr($dateSend, ' ') - 3);
+$dateSend = Cible_FunctionsGeneral::dateToString($dateSend);
+?>
+
+<div id="default_form">
+    <fieldset id="summary" class="statFieldset">
+        <legend><?php echo $this->getCibleText('newsletter_statistic_latest_activity_label'); ?></legend>
+        <div id="summaryContainer" class="container">
+            <table id="summaryTable">
+                <tbody>
+                    <tr>
+                        <td class="left"><?php echo $this->getCibleText('newsletter_statistic_subscription_label'); ?> : <a id="linkSubscribe" href="#"><?php echo $this->data['subscription']; ?></a></td>
+                        <td class="middle"><?php echo $this->getCibleText('newsletter_statistic_unsubscription_label'); ?> : <a id="linkUnsubscribe" href="#"><?php echo $this->data['unsubscribe']; ?></a></td>
+                        <td class="right"></td>
+                    </tr>
+                    <tr>
+                        <td class="left" colspan="3"><?php echo $this->getCibleText('newsletter_statistic_lastmailing_label'); ?>
+                            <a id="linkSummaryConsult-<?php echo $this->data['latestSend']['NR_ID']; ?>" >
+                                <?php echo $dateSend . $time; ?> &ndash; <?php echo $this->data['latestSend']['NR_Title']; ?></td>
+                            </a>
+                        <td class="middle"> </td>
+                        <td class="right"> </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </fieldset>
+    <fieldset id="reports" class="statFieldset">
+        <legend><?php echo $this->getCibleText('newsletter_statistic_reports_label'); ?></legend>
+        <div id="filters" class="container">
+            <table id="filtersTable">
+                <tbody>
+                    <tr>
+                        <td class="left borderRight">
+                            <p id="releasesFilter">
+                                <span class=""><?php echo $this->getCibleText('newsletter_statistic_releases_label'); ?></span>
+                            <select id="releases" class="">
+                                <option value="0"><?php echo $this->getCibleText('newsletter_statistic_allreleases_label'); ?></option>
+                                <?php foreach ($this->data['newsletters'] as $nlId => $nlData):?>
+                                <option value="<?php echo $nlId; ?>"><?php echo $nlData['NR_Title']; ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                            </p>
+                            <p id="categoriesFilter">
+                                <span class=""><?php echo $this->getCibleText('newsletter_statistic_categories_label'); ?></span>
+                                <select id="categories" class="">
+                                    <option value="0"><?php echo $this->getCibleText('newsletter_statistic_allcategories_label'); ?></option>
+                                    <?php foreach ($this->data['categories'] as $catId => $catData):?>
+                                    <option value="<?php echo $catId; ?>"><?php echo $catData['CI_Title']; ?></option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </p>
+                        </td>
+                        <td class="middle borderRight">
+                            <p class="mainLabel"><?php echo $this->getCibleText('newsletter_statistic_datefilter_label'); ?></p>
+
+                            <label for="startDate"><?php echo $this->getCibleText('newsletter_statistic_startdate_label'); ?> </label>
+                            <?php
+                            echo $this->datePicker(
+                                "startDate",
+                                '',
+                                array(
+                                    'defaultDate' => '+7',
+//                                    'minDate' => '+7',
+                                    'dateFormat' => 'dd/mm/yy',
+                                    'onClose' => new Zend_Json_Expr('myJsonFuncCechkingValidity')
+                                    )
+                                );
+                            ?>
+                            <br />
+
+                            <label for="startDate"><?php echo $this->getCibleText('newsletter_statistic_enddate_label'); ?></label>
+                            <?php
+                            echo $this->datePicker(
+                                "endDate",
+                                '',
+                                array(
+//                                    'defaultDate' => '+14',
+//                                    'minDate' => '+7',
+                                    'dateFormat' => 'dd/mm/yy',
+                                    'onClose' => new Zend_Json_Expr('myJsonFuncCechkingValidity')
+                                    )
+                                );
+                            ?>
+                            <a id="dateFilter" href="#" class="button">Filtrer</a>
+                            <a id="clearDate" href="#" class="button">Annuler</a>
+                        </td>
+                        <td class="right"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+            <?php
+            $path = $this->baseUrl() . '/' . $this->params['module'] . '/' . $this->params['controller'] . '/ajax';
+            $this->tabPane("tabContainer", $this->view1, array('title' => $this->getCibleText('newsletter_statistic_consultations_label') , 'id' => 'tab-releases', 'contentUrl' =>  $path . '/report/releases'));
+            $this->tabPane("tabContainer", $this->view2, array('title' => $this->getCibleText('newsletter_statistic_subscription_label'), 'id' => 'tab-subscribe', 'contentUrl' =>  $path . '/report/subscribe'));
+            $this->tabPane("tabContainer", $this->view3, array('title' => $this->getCibleText('newsletter_statistic_unsubscription_label'), 'id' => 'tab-unsubscribe', 'contentUrl' => $path . '/report/unsubscribe'));
+
+            echo $this->tabContainer(
+                'tabContainer',
+                array('selected' => 0),
+                array('class' => 'start', 'width' => '300')
+            );
+            ?>
+    </fieldset>
+</div>
+<?php echo $this->partial('partials/jsStatistic.phtml', array('view' => $this)); ?>

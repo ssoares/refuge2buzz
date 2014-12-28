@@ -1,0 +1,28 @@
+<?php $this->headScript()->appendFile($this->locateFile('tinymce.min.js', 'tinymce')); ?>
+<?php $form = $this->form; ?>
+
+<div id="default_form">
+    <div id="form_panel">
+        <form enctype="application/x-www-form-urlencoded" method="post" action="">
+            <dl style="margin: 0px; padding: 0px;">
+                <?php echo($form->actions); ?>
+            </dl>
+            <div style="float:left; width:500px;">
+                <dl>
+                    <?php echo($form->getSubForm('formTop')); ?>
+                </dl>
+            </div>
+            <div style="float:left; width:500px;">
+                <dl>
+                    <?php echo($form->getSubForm('formItemPrices')); ?>
+                </dl>
+            </div>
+            <hr style="border:0px;height:0px;clear:both;"/>
+            <div>
+                <dl>
+                    <?php echo($form->getSubForm('formBottom')); ?>
+                </dl>
+            </div>
+        </form>
+    </div>
+</div>

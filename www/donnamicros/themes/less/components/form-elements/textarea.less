@@ -1,0 +1,33 @@
+textarea {
+    .form-control();
+    border:1px solid @brand-grey;
+    color:@brand-grey;
+    height:auto;  
+    background:none;
+    .font-weight('light', 'sans-serif');
+    .border-radius(2px);
+    resize:none;
+    position:relative;
+    &.empty {
+        color:@brand-grey-light;
+        border-color:@brand-grey-light;
+    }
+     & when (@device-type = 'desktop') {
+        padding-top:18px;
+        padding-left:18px;
+        margin-bottom:12px;  
+        .responsive-font(19px);
+    }
+     & when (@device-type = 'mobile') {
+        margin-bottom:12px * @mobile-divider-text;
+        padding-top:10px * @mobile-divider-text;
+        padding-left:12px * @mobile-divider-text;
+        .responsive-font((@font-size-base + 8) * @mobile-divider-text);
+        .box-sizing(border-box);
+    }
+    .required-field & {
+        background-image:url(../../../images/backgrounds/input-madatory.png);
+        background-position:top right;
+        background-repeat:no-repeat;
+    }
+}

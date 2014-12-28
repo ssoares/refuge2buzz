@@ -1,0 +1,10 @@
+.errors {
+    color:@brand-danger;
+    line-height:1.2em;
+     & when (@device-type = 'desktop') {
+        .responsive-font(@font-size-base + 8);
+    }
+     & when (@device-type = 'mobile') {
+        .responsive-font((@font-size-base + 8) * @mobile-divider-text);
+    }
+}

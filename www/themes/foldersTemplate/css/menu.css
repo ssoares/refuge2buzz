@@ -1,0 +1,310 @@
+/* Version SVN: $Id: menu.css 1169 2013-03-01 20:37:27Z ssoares $*/
+/***********************************/
+/* TOP MENU PRINCIPAL CLASSES */
+div#top-menu-container    {    
+    margin-bottom: 25px;
+}
+div#top-menu-container ul.top-menu li{
+    display: inline-block;
+    margin: 0 0 5px 2%;
+    min-width: 80px;
+    text-align: center;
+    width: 10.4384%;
+}
+.imgMenuCont,
+.imgTitle{
+    width: 100%;
+}
+
+div#top-menu-container ul.top-menu li a {
+    text-transform: uppercase;
+}
+div#top-menu-container ul.top-menu li a:hover,
+div#top-menu-container ul.top-menu li.selected  {
+    color: #999999;    
+}
+
+/* Cacher les sous-menus */
+div#top-menu-container ul.top-menu li ul li    {
+    display: none;
+}
+
+div#top-menu-container ul.top-menu li ul    {
+    background-color: #CCCCCC;
+    display: block;
+    position: absolute;
+    text-align: left;
+    width: 16.7014614%;
+    visibility: hidden;
+    z-index: 90000;
+    
+    border: solid 1px blue;
+}
+div#top-menu-container ul.top-menu li ul li    {
+    padding: 5px 5px 5px 22px;
+    width: 133px;
+    display: inline;
+    background: none;
+}
+div#top-menu-container ul.top-menu li.selected ul li a    {
+    padding: 0px;
+    margin: 0px;
+    
+    background: none;
+}
+div#top-menu-container ul.top-menu li ul li a   {
+    color: #003366;
+    display: inline;
+    font-weight: normal;
+    text-transform: none;
+}
+div#top-menu-container ul.top-menu li ul li a:hover {
+    background: none;
+    color: #1FA5D2;
+    display: inline;
+}
+div#top-menu-container ul.top-menu li ul li.first  {
+    padding-top: 10px;
+}
+div#top-menu-container ul.top-menu li ul li.last   {
+    padding-bottom: 10px;
+}
+div#top-menu-container ul.top-menu li ul li.selected   {
+    background: none;
+}
+div#top-menu-container ul.top-menu li ul li.selected a {
+    color: #1FA5D2;
+}
+/* TOP MENU PRINCIPAL CLASSES */
+/***********************************/
+
+
+
+/*********************************************/
+/* LEFT COLUMN COMMON MENU CLASSES */
+
+div#content-left ul#ul_submenu ul {
+    display: none;
+}
+div#content-left #ul_submenu ul.open {
+    display: block;
+}
+
+/* Niveau 1 */
+div#content-left ul#ul_submenu li.level-1,
+div#content-left ul#ul_submenu li.level-1 a {
+    display: none;    
+}
+div#content-left ul#ul_submenu li.level-1    {
+}
+/* Niveau 1 */
+
+
+/* Niveau 2 */
+div#content-left ul#ul_submenu li.level-2 ul {
+    padding-left: 18px;
+}                                 
+
+div#content-left ul#ul_submenu li.level-2,
+div#content-left ul#ul_submenu li.level-2 a {
+    color: #003366;
+    text-decoration: none;    
+}
+div#content-left ul#ul_submenu li.level-2 a    {
+    padding: 8px 0;    
+}
+div#content-left ul#ul_submenu li.level-2 a:hover {
+    background-color: #CCCCCC;
+}
+
+div#content-left ul#ul_submenu li.level-2    {
+}
+/* Niveau 2 */
+
+
+/* Niveau 3 */
+div#content-left ul#ul_submenu li.level-3,
+div#content-left ul#ul_submenu li.level-3 a,
+div#content-left ul#ul_submenu li.level-3 li,
+div#content-left ul#ul_submenu li.level-3 li a {
+}
+div#content-left ul#ul_submenu li.level-3 a  {
+    padding: 4px 0 4px 0;
+}
+div#content-left ul#ul_submenu li.level-3 a:hover,
+div#content-left ul#ul_submenu li.level-3 li a:hover {
+    color: #00BEF0 !important;
+}
+/* Niveau 3 */
+
+
+
+
+div#content-left ul#ul_submenu li.selected {
+    display: block;        
+}
+
+div#content-left ul#ul_submenu li.selected ul {
+    
+}
+
+div#content-left ul#ul_submenu li.selected li a,
+div#content-left ul#ul_submenu li.open_li li a {
+    display: block;    
+}
+
+div#content-left ul#ul_submenu li ul li.selected a  {
+    color: #00BEF0;    
+}
+
+
+/* Adds the bottom green dotted border to all open lis */
+div#content-left ul#ul_submenu ul.open li.first    {
+}
+div#content-left ul#ul_submenu ul.open li {
+}
+/* Removes the bottom green dotted border to all open sub lis */
+div#content-left ul#ul_submenu ul.open li li {
+}
+/* Removes the bottom green dotted border of the last li */
+div#content-left ul#ul_submenu ul.open li.last {    
+    border: solid 0px transparent;
+}
+
+li.doNotShow{
+    display: none !important;
+}
+
+
+/* all level-2 links should be gray */
+div#content-left ul#ul_submenu li.level-1 li a {
+    color: #003366;
+}
+
+/* all level-2 links should be gray */
+/*div#content-left-inside-content ul#ul_submenu li.level-1 li.selected a, */
+div#content-left ul#ul_submenu li.level-1 li.open_li a,
+div#content-left ul#ul_submenu li.level-1 li a:hover {
+    color: #00BEF0;
+}
+div#content-left ul#ul_submenu li.level-1 li.selected a,
+div#content-left ul#ul_submenu li.level-1 li.open_li a   {
+    font-weight: normal;
+}
+
+/* all level-3 links should be gray */
+div#content-left ul#ul_submenu li.level-2 li a {
+    color: #00517F!important;
+}
+div#content-left ul#ul_submenu li.level-2 li a:hover {
+    background-color: #CCCCCC;       
+}
+
+/* level-3 selected links should be green */
+div#content-left ul#ul_submenu li.level-1 li.selected a.level-2,
+div#content-left ul#ul_submenu li.level-2 li.selected a.level-3,
+div#content-left ul#ul_submenu li.level-3 li.selected a.level-4 {
+    background-color: #CCCCCC;
+    color: #00BEF0 !important;
+}
+
+
+div#content-left ul#ul_submenu li ul li.level-3 a {
+}
+div#content-left ul#ul_submenu li ul li ul li.level-4 a {
+    color: #404040 !important;
+}
+/* LEFT COLUMN COMMON MENU CLASSES */
+/*********************************************/
+
+
+/*   BOTTOM MENU ALL PAGES      */
+/*********************************/
+div#footer-container div#footer-menu-div ul{
+    color: #DC006B;
+    width: 69.7916667%;
+    text-decoration: none;
+    display: block;
+    text-align: right;
+}
+
+div#footer-container div#footer-menu-div ul li{
+    padding: 0 10px;
+    color: #DC006B;
+    text-decoration: none;
+    display: inline;
+    border-right: solid 1px #3F2619;
+}
+
+div#footer-container div#footer-menu-div ul li.last{
+    border-right: solid 0px #3F2619;
+    padding-right: 0px;
+}
+
+div#footer-container div#footer-menu-div ul.footer-menu-1{
+}
+
+div#footer-container div#footer-menu-div ul.footer-menu-1 li.first{
+    padding-left: 94px;
+}
+
+div#footer-container div#footer-menu-div ul li a {
+    color: #DC006B;
+    text-decoration: none;
+}
+
+div#footer-container div#footer-menu-div ul li a:hover{
+    text-decoration: underline;
+}
+/*************************************/
+
+/********* TOP MENU TOP  **********************/
+
+div#header-right-top ul.top-menu-top  {
+    display: block;
+    width: auto;
+    color: #DC006B;
+}
+div#header-right-top ul.top-menu-top li   {
+    padding: 0px 10px;
+    float: left;
+    color: #DC006B;
+    border-right: solid 1px #DC006B;
+}
+div#header-right-top ul.top-menu-top li  a {
+}
+div#header-right-top ul.top-menu-top li.last   {
+    padding: 0 0 0 10px;
+    float: left;
+    color: #DC006B;
+    border-right: solid 0px #DC006B;
+}
+div#header-right-top ul.top-menu-top li a {
+    color: #DC006B;
+    display: block;
+    text-decoration: none;
+}
+div#header-right-top ul.top-menu-top li a:hover,
+div#header-right-top ul.top-menu-top li.selected a {
+    color: #DC006B;
+    text-decoration: underline;
+}
+/*********TOP MENU TOP ************************/
+
+div#headerRightTop{
+    position: relative;
+    width: 475px;
+    height: 20px;
+}
+
+div#headerRightTop ul.topMenu2{
+    width: 100%;
+    position: relative;
+}
+
+div#headerRightTop ul.topMenu2 li{    
+    margin: 0 0 0 15px;
+    padding: 0 0 0 0;
+    float:right;        
+    height: 15px;
+}

@@ -1,0 +1,77 @@
+<?php
+$x = 1;
+// Liste des styles à composer
+    $padding0 = ' padding: 0;margin:0;';
+    $paddingBox = ' padding: 26px 10px 19px 24px;';
+    $colorBg = ' background-color: #E7E9EA;';
+    $nlTitle = ' color: #0098a9;text-transform:uppercase;';
+    $font15 = ' font-size: 15px;';
+    $reseth = ' height:5px;';
+    $title = $nlTitle.$font15;
+    $txtZone1 = $colorBg . $paddingBox;
+    $styleBtn = 'background-color: #abafb2;padding: 3px 10px 2px;margin-top:10px;text-transform: uppercase;width: 95px;font-size: 11px;font-weight: bold;';
+
+foreach ($this->articles as $article):
+    if (!empty($article['NA_ImageSrc']))
+    {
+        $config = Zend_Registry::get('config')->toArray();
+        $thumbMaxHeight = $config['newsletter']['image']['thumb']['maxHeight'];
+        $thumbMaxWidth = $config['newsletter']['image']['thumb']['maxWidth'];
+        $imgPath = Zend_Registry::get('absolute_web_root') . $this->currentSite . "/data/images/newsletter/"
+            . $this->newsletterID.'/'.$article['NA_ID'].'/'
+            . $thumbMaxWidth . 'x' . $thumbMaxHeight . '_' . $article['NA_ImageSrc'];
+    }
+    $tmpSrc = Zend_Registry::get('absolute_web_root') . $this->currentSite . '/data/images/';
+    $padding = "";
+    if ($x > 1) $padding = 'style="margin-top:20px;"';
+    $articleLink = '';
+    if ($article['NA_TextLink'] == 1)
+        $articleLink = Zend_Registry::get('absolute_web_root') . $this->details_page . "/" . $this->dateStringUrl . "/" . $this->parutionValUrl . "/" . $article['NA_ValUrl'] . '-uid-' . $this->memberId;
+    elseif ($article['NA_TextLink'] == 2)
+        $articleLink = $article['NA_URL'];
+    ?>
+        <table width="100%" <?php echo $padding; ?>>
+            <tr>
+                <?php if (!empty($article['NA_ImageSrc'])): ?>
+                    <td valign="top" style="padding-right:0px;width: 177px">
+                        <p style="<?php echo $padding0; ?>">
+                            <?php $show = true; ?>
+                            <?php $img = $this->image($imgPath, array('style' => 'width:177px;', 'alt' => $article['NA_ImageAlt'], 'width' => '177')); ?>
+                            <?php
+                            if (!empty($articleLink)):
+                                $link = $this->link($articleLink, $img);
+                                echo $link;
+                            else:
+                                echo $img;
+                            endif;
+                            ?>
+                            <br />
+                            <span style=""><?php echo $article['NA_ImageAlt']; ?></span>
+                        </p>
+                    </td>
+                    <td width="15" style="">&nbsp;</td>
+                <?php endif; ?>
+                    <td valign="top" style="<?php echo $txtZone1; ?>">
+                        <p class="" style="<?php echo $padding0 . $title; ?>">
+                            <?php echo($article['NA_Title']); ?>
+                        </p>
+                        <span class="artTitle" style="<?php echo $padding0 . $title . $reseth; ?>">-</span>
+                        <?php
+                        if ($article['NA_Resume']){
+                            $search = array('src="/data/images/', '##uid##');
+                            $replace = array('src="' . $tmpSrc, $this->memberId);
+                           echo str_replace($search, $replace , $article['NA_Resume']);
+                        }
+                        ?>
+                        <?php
+                        if (!empty($articleLink)):
+                            $imgLink = $this->image($this->locateFile('linkReadMore.jpg', null,'front'), array('style' => 'margin-top:15px;', 'direct' => true, 'alt' => $this->getClientText('see_details_news_text')));
+                            $link = $this->link($articleLink, $imgLink, array('alt' => $this->getClientText('see_details_news_text')));
+                        ?>
+                        <?php echo $link; ?>
+                        <?php endif; ?>
+                </td>
+            </tr>
+        </table>
+    <?php $x++; ?>
+<?php endforeach; ?>

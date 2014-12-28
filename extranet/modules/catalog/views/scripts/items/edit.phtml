@@ -1,0 +1,22 @@
+<?php
+echo $this->partial('partials/header.pageDetails.phtml', array(
+    'pageTitle' => $this->getCibleText('header_edit_realisations_home_text'),
+    'pageDescription' => $this->getCibleText('header_edit_realisations_home_description'),
+    'breadcrumb' => ''
+));                
+?>
+
+<div id="default_form">
+    <div id="form_panel">
+        <?php echo $this->form ?>
+        <?php /*echo $this->partial(
+                'partials/products.add-update.phtml',
+                array(
+                    'form'=>$this->form,
+                    'collectionData' => $this->collectionData,
+                    'collectionChoice' => $this->collectionChoice
+                )
+            );*/
+        ?>
+    </div>                    
+</div>

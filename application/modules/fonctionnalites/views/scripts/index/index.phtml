@@ -1,0 +1,67 @@
+<?php
+$array = $this->stock;
+$varModule = "fonctionnalites";
+
+$config = Zend_Registry::get("config");
+$max_height = $config->$varModule->image->original->maxHeight;
+$max_width = $config->$varModule->image->original->maxWidth;
+$mediumWidth = $config->$varModule->image->medium->maxWidth;
+$mediumHeight = $config->$varModule->image->medium->maxHeight;
+$size = $mediumWidth . "x" . $mediumHeight . "_";
+$imagePath = $this->imagePath;
+
+//echo $imagePath;
+?>
+<div class="fonctionnalites module row">   
+    <?php
+    foreach ($this->fonctionnalites as $key => $value) {
+        ?>
+        <div class="fonc-element">
+            <div class="fonc-element-content content fonc-element-button">
+                <img class="fonc-element-image" src="<?php echo $imagePath . $value['FD_ID'] . "/" . $size . $value['FD_Image']; ?>" alt="<?php echo $value['FI_Title']; ?>" />
+                <h2 class="fonc-element-title content-h1-style"><?php echo $value['FI_Title']; ?></h2>
+                <h3 class="fonc-element-subtitle"><?php echo $value['FI_SubTitle']; ?></h3>
+                <div class="fonc-element-short"><?php echo $value['FI_SmallDescription']; ?></div>
+                <div class="fonc-element-description"><?php echo $value['FI_Description']; ?></div>
+            </div>
+        </div>
+        <?php
+    }
+    ?>
+
+</div>
+
+<script type="text/javascript">
+    //<![CDATA[   
+    $(document).ready(function() {
+        var $container = $('.fonctionnalites');
+        $container.cibleCollapseList({'delegate': '.fonc-element', isIE: $('html').is('.ie8')});
+        $container.on('generate.cibleCollapseList', function(e, data) {
+            var col1 = $('<div class="column-content column-content-first column-content-1x3">');
+            var image = data.current.find('.fonc-element-image').clone();
+            image.attr('class', 'fonc-collapse-box-image');
+            col1.append(image);
+            col1.append('<button class="fonc-collapse-box-close"></button>')
+
+            var col2 = $('<div class="column-content column-content-2x3 column-content-content">');
+            col2.append('<h2 class="fonc-collapse-box-title content-h1-style">' + data.current.find('.fonc-element-title').html() + '</h2>')
+            col2.append('<h3 class="fonc-collapse-box-subtitle content-h2-style">' + data.current.find('.fonc-element-subtitle').html() + '</h3>')
+            col2.append('<div class="fonc-collapse-box-description">' + data.current.find('.fonc-element-description').html() + '</div>')
+            data.created.html('<div class="fonc-collapse-box-content content"><div class="columns"></div></div>');
+            data.created.find('.content .columns').append(col1);
+            data.created.find('.content .columns').append(col2);
+            data.created.find('.fonc-collapse-box-close').on('click', function() {
+                $('.fonc-element.active').click();
+            });
+        })
+        $container.on('activating.cibleCollapseList', function(e, data) {
+            data.collapseBoxes.find('.fonc-collapse-box-content').addClass('show-text')
+        })
+        $container.on('desactivated.cibleCollapseList', function(e, data) {
+            data.collapseBoxes.find('.fonc-collapse-box-content').removeClass('show-text')
+        })
+
+    });
+    //]]>
+</script>
+

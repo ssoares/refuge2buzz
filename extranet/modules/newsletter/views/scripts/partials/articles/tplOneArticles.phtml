@@ -1,0 +1,86 @@
+<?php $x = 1; ?>
+<?php
+// Liste des styles à composer
+$padding0 = ' padding: 0;margin:0;';
+$padding15T = ' padding-top: 15px;';
+$colorBg = ' background-color: #E7E9EA;';
+$nlTitle = ' color: #0098a9;text-transform:uppercase;';
+$font15 = ' font-size: 15px;';
+$reseth = ' height:5px;margin-top:-5px;';
+$borderB = ' border: 0; border-bottom:2px solid #0098a9; padding: 10px 0;';
+
+$title = $nlTitle.$font15;
+$styleBtn = 'background-color: #abafb2;padding: 3px 10px 2px;text-transform: uppercase;width: 95px;font-size: 11px;font-weight: bold;';
+
+foreach ($this->articles as $article):
+    if (!empty($article['NA_ImageSrc'])):
+
+        $config = Zend_Registry::get('config')->toArray();
+        $thumbMaxHeight = $config['newsletter']['image']['thumb']['maxHeight'];
+        $thumbMaxWidth = $config['newsletter']['image']['thumb']['maxWidth'];
+        $imgPath = Zend_Registry::get('absolute_web_root') . $this->currentSite . "/data/images/newsletter/"
+            .$this->newsletterID.'/'.$article['NA_ID'].'/'
+            . $thumbMaxWidth . 'x' . $thumbMaxHeight . '_' . $article['NA_ImageSrc'];
+    endif;
+    $tmpSrc = Zend_Registry::get('absolute_web_root') . $this->currentSite . '/data/images/';
+    $borderB = ($x < count($this->articles)) ? $borderB : ' padding-bottom:18px;';
+    $articleLink = '';
+    if ($article['NA_TextLink'] == 1)
+        $articleLink = Zend_Registry::get('absolute_web_root') . $this->details_page . "/" . $this->dateStringUrl . "/" . $this->parutionValUrl . "/" . $article['NA_ValUrl'] . '-uid-' . $this->memberId;
+    elseif ($article['NA_TextLink'] == 2)
+        $articleLink = $article['NA_URL'];
+    ?>
+    <table border="0" cellpadding="0" cellspacing="0">
+        <?php if ($article['NA_Category'] != "" && $x < 2): ?>
+            <tr>
+                <td height="15" width="298" style="<?php echo $title; ?>">
+                    <?php echo($article['NA_Category']); ?>
+                </td>
+            </tr>
+        <?php endif; ?>
+            <tr style="">
+            <?php if (!empty($article['NA_ImageSrc'])): ?>
+            <td valign="top" style="width:90px;<?php echo $borderB; ?>">
+                <p style="<?php echo $padding0; ?>">
+                    <?php $show = true; ?>
+                    <?php $img = $this->image($imgPath, array('style' => 'width:90px;', 'alt' => $article['NA_ImageAlt'], 'width' => '90')); ?>
+                    <?php
+                    if (!empty($articleLink)):
+                        $link = $this->link($articleLink, $img);
+                        echo $link;
+                    else:
+                        echo $img;
+                    endif;
+                    ?>
+                    <br />
+                    <span style="">
+                        <?php echo $article['NA_ImageAlt']; ?>
+                    </span>
+                </p>
+            </td>
+            <td width="15" style="<?php echo $borderB; ?>">&nbsp;</td>
+            <?php endif; ?>
+            <td valign="top" style="<?php echo $padding15T.$borderB; ?>" >
+                <p class="" style="<?php echo $padding0 . $title; ?>">
+                <?php echo($article['NA_Title']); ?>
+                </p>
+                <span class="artTitle" style="<?php echo $padding0 . $title . $reseth; ?>">-</span>
+                <?php
+                if ($article['NA_Resume']){
+                    $search = array('src="/data/images/', '##uid##');
+                    $replace = array('src="' . $tmpSrc, $this->memberId);
+                    echo str_replace($search, $replace, $article['NA_Resume']);
+                }
+                ?>
+                <?php
+                if (!empty($articleLink)):
+                    $imgLink = $this->image($this->locateFile('linkReadMore.jpg', null,'front'), array('style' => 'margin-top:15px;', 'direct' => true, 'alt' => $this->getClientText('see_details_news_text')));
+                    $link = $this->link($articleLink, $imgLink, array('style' => 'color:#fff;text-decoration:none;', 'title' => $this->getClientText('see_details_news_text')));
+                ?>
+                <?php echo $link; ?>
+                <?php endif; ?>
+            </td>
+        </tr>
+    </table>
+    <?php $x++; ?>
+<?php endforeach; ?>
