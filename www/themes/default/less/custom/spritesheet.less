@@ -1,0 +1,8 @@
+.sprite {display:inline-block;overflow:hidden;background-repeat:no-repeat;font-size:0;background-image:url(../../images/common/spritesheet.png) }
+
+.banner-bullet-active { width:16px; height:16px; background-position: -0px -0px } 
+.banner-bullet { width:16px; height:16px; background-position: -16px -0px } 
+.import-sprite(@name) when(@name = 'banner-bullet-active') {.sprite;.banner-bullet-active;}
+.import-sprite-only(@name) when(@name = 'banner-bullet-active') {.banner-bullet-active;}
+.import-sprite(@name) when(@name = 'banner-bullet') {.sprite;.banner-bullet;}
+.import-sprite-only(@name) when(@name = 'banner-bullet') {.banner-bullet;}

@@ -57,9 +57,9 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
     protected $_whereClause;
     protected $_associationIds = array();
     protected $_getActionParams = false;
-    
+
     protected $_imagesLst = array();
-    
+
 
     /**
      * Set some properties to redirect and process actions.
@@ -70,7 +70,7 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
      */
     public function init()
     {
-     
+
         // Sets the called action name. This will be dispatched to the method
         $this->_currentAction = $this->_getParam('action');
 
@@ -84,22 +84,22 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
         $this->view->locale = Cible_FunctionsGeneral::getLanguageSuffix($this->_defaultEditLanguage);
     }
 
-    public function fonctionnalitesAction($getParams = false){       
-       
+    public function fonctionnalitesAction($getParams = false){
+
         if ($this->view->aclIsAllowed($this->_moduleTitle, 'edit', true))
-        {    
-      
+        {
+
             $this->view->headLink()->appendStylesheet($this->view->locateFile('references.css'), 'all');
             $this->view->headScript()->appendFile($this->view->locateFile('manageRefValues.js', null, 'back'));
-            
+
             $this->_moduleTitle = $this->_moduleTitle;
             $this->_colTitle = array(
                 'FD_ID'    => array('width' => '150px'),
                 'FI_Title' => array('width' => '150px', 'useFormLabel' => true),
                 'FI_SubTitle' => array('width' => '150px', 'useFormLabel' => true)
                 );
-            
-           
+
+
 
             if ($this->_isXmlHttpRequest)
             {
@@ -120,7 +120,7 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
         }
     }
 
-    
+
     /**
      * Add action for the current object.
      *
@@ -129,7 +129,7 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
      * @return void
      */
     public function addAction(){
-       
+
         $returnAction = $this->_getParam('return');
         $baseDir = $this->view->baseUrl() . "/";
         $oDataName = $this->_objectList[$this->_currentAction];
@@ -154,14 +154,14 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
                 $this->_ID => null
             )));
 
-        
-      
+
+
         if ($this->view->aclIsAllowed($this->_moduleTitle, 'edit', true))
         {
 
-            
-            
-            
+
+
+
             // generate the form
             $options = array(
                 'moduleName' => $this->_moduleTitle,
@@ -178,63 +178,63 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
                 'id' => $this->_currentAction,
                 'isNewImage' => $isNewImage
             );
-            
-           
+
+
 
             $form = new $this->_formName($options);
             $this->view->form = $form;
 
-            
+
             if ($this->_request->isPost())
             {
                 $moreImages = array();
                 $formData = $this->_request->getPost();
-                
-               
+
+
                 if ($form->isValid($formData)){
-                                        
-                    
+
+
                     if($formData['DI_Url']!=""){
                         $tmpArray = explode("/",$formData['DI_Url']);
                         $urlFile = end($tmpArray);
                         $formData['DI_Url'] = $urlFile;
-                    } 
+                    }
 
-                    $recordID = $oData->insert($formData, $this->_defaultEditLanguage);                    
-                     
-                    
-                    
-                
-                    
-                    
+                    $recordID = $oData->insert($formData, $this->_defaultEditLanguage);
+
+
+
+
+
+
                     if (!is_dir($this->_imagesFolder . $recordID)){
                         mkdir($this->_imagesFolder . $recordID)
                             or die("Could not make directory");
                         mkdir($this->_imagesFolder . $recordID . "/tmp")
                             or die("Could not make directory");
-                    }                    
-                    
-                  
+                    }
+
+
                     if (!empty($this->_imageSrc)){
                         if (!empty($formData[$this->_imageSrc])){
-                            //$this->_imgIndex = $this->_imageSrc;       
-                          
+                            //$this->_imgIndex = $this->_imageSrc;
+
                             $this->_setImage($this->_imageSrc, $formData, $recordID);
-                            
-                           
-                            
-                        }                        
+
+
+
+                        }
                     }
-                            
-                    
-                    
+
+
+
                     if (isset($formData['submitSaveClose']))
                         $this->_redirect($returnUrl);
                     else
                         $this->_redirect(str_replace($this->view->baseUrl(), '', $this->view->url(array(
                             'actionKey' => 'edit',
                             $this->_ID => $recordID))));
-                }                
+                }
             }
         }
     }
@@ -248,7 +248,7 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
      */
     public function editAction()
     {
-        
+
         $imageSrc = "";
         $isNewImage = false;
         $id = (int) $this->_getParam($this->_ID);
@@ -282,19 +282,19 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
             $oData = new $oDataName();
             // Get data details
             $data = $oData->populate($id, $this->_currentEditLanguage);
-            
+
             $config = Zend_Registry::get('config')->toArray();
-            
+
             $thumbMaxHeightBanner = $config[$this->_moduleTitle]['image']['thumb']['maxHeight'];
             $thumbMaxWidthBanner = $config[$this->_moduleTitle]['image']['thumb']['maxWidth'];
             $thumbMaxHeightSquare = $config[$this->_moduleTitle]['imageNewsletter']['thumb']['maxHeight'];
             $thumbMaxWidthSquare = $config[$this->_moduleTitle]['imageNewsletter']['thumb']['maxWidth'];
-              
-            
+
+
             if ($this->_request->isPost())
             {
                 $formData = $this->_request->getPost();
-                
+
                 if ($formData['FD_Image'] <> $data['FD_Image'])
                 {
                     if ($formData['FD_Image'] == "")
@@ -321,9 +321,9 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
                                         . $thumbMaxHeightBanner . '_'
                                         . $data['FD_Image'],
                                         $data['FD_Image']);
-                }              
-                
-                             
+                }
+
+
             }
             else
             {
@@ -339,12 +339,9 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
                                     . $thumbMaxHeightBanner . '_'
                                     . $data['FD_Image'],
                                     $data['FD_Image']);
-                
-                
-                //var_dump($post_image);
-                //sandboxes.ciblesolutions.com/fr/donna/www/donnamicros/data/images/fonctionnalites/31
-                
-            } 
+
+
+            }
             // generate the form
             $options = array(
                 'moduleName' => $this->_moduleTitle,
@@ -352,7 +349,7 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
                 'baseDir' => $baseDir,
                 'cancelUrl' => $cancelUrl,
                 'imageSrc' => $post_image,
-                'FD_Image'   => $post_image,                
+                'FD_Image'   => $post_image,
                 'imgField' => $this->_imageSrc,
                 'imgBasePath' => $imgBasePath,
                 'nameSize' => $nameSize,
@@ -361,38 +358,38 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
                 'id' => $this->_currentAction,
                 'isNewImage' => $isNewImage
             );
-                        
+
             $form = new $this->_formName($options);
             $this->view->form = $form;
             $moreImages = array();
 
             // action
             if (!$this->_request->isPost())
-            {                   
+            {
                 $form->populate($data);
             }
             else
             {
                 $formData = $this->_request->getPost();
-                
-                if ($form->isValid($formData)){                    
-                        
-                    /*if (!empty($this->_imagesLst)){   
+
+                if ($form->isValid($formData)){
+
+                    /*if (!empty($this->_imagesLst)){
                         foreach ($this->_imagesLst as $src){
                             if (!empty($formData[$src])){
-                                $this->_imgIndex = $src;                                
-                                $this->_setImage($this->_imageSrc, $formData, $id);                                
+                                $this->_imgIndex = $src;
+                                $this->_setImage($this->_imageSrc, $formData, $id);
                             }
                         }
                     }      */
                     if (!empty($this->_imageSrc)){
                         if (!empty($formData[$this->_imageSrc])){
                             $this->_setImage($this->_imageSrc, $formData, $id);
-                        }                        
+                        }
                     }
-                    
-                    
-                    $formData['AI_Url'] = Cible_FunctionsGeneral::formatValueForUrl($formData['AI_Name']);                                       
+
+
+                    $formData['AI_Url'] = Cible_FunctionsGeneral::formatValueForUrl($formData['AI_Name']);
                     $oData->save($id, $formData, $this->getCurrentEditLanguage());
 
                     if (!isset($formData['submitSaveClose']))
@@ -404,7 +401,7 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
                     }
 
                     $this->_redirect($returnUrl);
-                }                
+                }
             }
         }
     }
@@ -590,7 +587,7 @@ class Fonctionnalites_IndexController extends Cible_Controller_Block_Abstract
         switch ($this->_actionKey)
         {
             case 'add':
-                $this->addAction();                
+                $this->addAction();
                 $this->_helper->viewRenderer->setRender('add');
                 break;
             case 'edit':
