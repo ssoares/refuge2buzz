@@ -25,14 +25,14 @@ if (in_array('sandboxes', $host) || in_array('localhost', $host))
     $envVar = $devUri[1] . '-dev';
     define('ISDEV', true);
 }
-elseif (in_array('dev', $host)||in_array('devld', $host)){
+elseif (in_array('dev', $host)){
 //    $envVar = str_replace(array(''), array(''), $host[0]) . '-dev';
     $envVar = $host[0] . '-dev';
     define('ISDEV', true);
 }
 elseif (in_array('staging', $host))
 {
-    $envVar = str_replace(array('donna'), array('donnamicros'), $host[0]) . '-staging';
+    $envVar = str_replace(array(''), array(''), $host[0]) . '-staging';
     define('ISDEV', true);
 }
 else
