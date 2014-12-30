@@ -2266,7 +2266,7 @@ To delete a profile, in particular, go through the profile editing.", 'cible', '
 
 REPLACE INTO `Static_Texts` (`ST_Identifier`, `ST_LangID`, `ST_Value`, `ST_Type`, `ST_Desc_backend`, `ST_Editable`, `ST_ModuleID`) VALUES
 ('dashboard_administration_video_description', '1', 'Liste de vidéos', 'cible', '', '0', 21),
-(
+('dashboard_administration_video_description', '2', 'List of videos', 'cible', '', '0', 21),
 ('list_column_V_Alias', '1', 'Alias', 'cible', '', '0', 21),
 ('list_column_V_Alias', '2', 'Alias', 'cible', '', '0', 21),
 ('list_column_VI_Description', '1', 'Description', 'cible', '', '0', 21),

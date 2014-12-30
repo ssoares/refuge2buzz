@@ -23,32 +23,36 @@ class Cible_Form_Element_Editor extends Zend_Form_Element_Textarea {
     protected $_themeAdvancedBlockFormats = "p,h2,h3";
     protected $_themeAdvancedButtons1 = "bold,italic,underline,strikethrough,|,alignleft aligncenter alignright alignjustify,|,##PARAMS##fontsizeselect,|,forecolor,backcolor";
     protected $_iconList = array(
-        "icon-close" => 'Fermer',
-        "icon-dons" => 'Dons',
-        "icon-finance" => 'Finance',
-        "icon-import" => 'Importer',
-        "icon-key" => 'Clé',
-        "icon-lock" => 'Cadenat',
-        "icon-news" => 'Nouvelles',
-        "icon-stats" => 'Statistiques',
-        "icon-table" => 'Table',
-        "icon-team" => 'Équipe',
-        "icon-newsletter" => 'Infolettre',
-        "icon-arrow-left" => 'Flèche gauche',
-        "icon-arrow-right" => 'Flèche droite',
-        "icon-dropdown-arrow" => 'Flèche bas',
-        "icon-dropdown-arrow-inverted" => 'Flèche haut',
-        "icon-banner-previous" => 'Flèche bannière gauche',
-        "icon-banner-next" => 'Flèche bannière droite',
-        "icon-linkedin" => 'LinkedIn',
-        "icon-instagram" => 'Instagram',
-        "icon-google" => 'Google',
-        "icon-facebook" => 'Facebook',
-        "icon-twitter" => 'Twitter',
-        "icon-youtube" => 'YouTube',
-        "icon-video-play" => 'Jouer vidéo',
-        "icon-options" => 'Options',
-        "icon-plus" => 'Plus',
+        "arrow-left" => 'Flèche gauche',
+        "arrow-right" => 'Flèche droite',
+        "banner-previous" => 'Flèche gauche encerclée',
+        "banner-next" => 'Flèche droite encerclée',
+        "banners-bullet-full" => 'Bullet Plein',
+        "banners-bullet-openl" => 'Bullet Ouvert',
+        "cart" => 'Panier',
+        "dropdown-arrow" => 'Flèche bas',
+        "dropdown-arrow-inverted" => 'Flèche haut',
+        "video-play" => 'Vidéo play',
+        "add-user" => 'Ajouter utilisateur',
+        "email" => 'Courriel',
+        "windows" => 'Windows',
+        "hourglass" => 'Sablier',
+        "upload-cloud" => 'Nuage',
+        "cart" => 'Panier',
+        "graph" => 'Graphique',
+        "mobile" => 'Mobile',
+        "monitor" => 'Moniteur',
+        "laptop" => 'Portable',
+        "tablet" => 'Tablette',
+        "steam" => 'Steam',
+        "plus" => 'Plus',
+        "options" => 'Options',
+        "facebook" => 'Facebook',
+        "google" => 'Google',
+        "instragram" => 'Instagram',
+        "linkedin" => 'LinkedIn',
+        "twitter" => 'Twitter',
+        "youtube" => 'YouTube'
     );
 
     public function setProperties($options) {
@@ -79,7 +83,7 @@ class Cible_Form_Element_Editor extends Zend_Form_Element_Textarea {
             if ($iconInsertList != "")
                 $iconInsertList .= ',';
             $iconInsertList .= <<< EOS
-                    {text: '{$title}' , onclick: function() {ed.insertContent('&nbsp;<span class="icon {$class}">&nbsp;</span>&nbsp;');} }
+                    {text: '{$title}' , onclick: function() {ed.insertContent('&nbsp;<span class="icon icon-{$class}">&nbsp;</span>&nbsp;');} }
 EOS;
         }
         parent::__construct($spec, $options);
@@ -163,29 +167,23 @@ EOS;
                 style_formats : [
                         {title : 'Bannières', items: [
                             {title : 'Texte gros', inline : 'span', classes : 'banner-text-large'},
-                            {title : 'Texte normal', inline : 'span', classes : 'banner-text-medium'}
-//                            {title : 'Icône dans gros cercle blanc', selector : '.icon', classes : 'banner-white-circle'},
-//                            {title : 'Icône jaune', selector: 'span', classes : 'banner-secondary-icon'}
+                            {title : 'Texte normal', inline : 'span', classes : 'banner-text-medium'},
+                            {title : 'Icône dans gros cercle blanc', selector : '.icon', classes : 'banner-white-circle'},
+                            {title : 'Icône jaune', selector: 'span', classes : 'banner-secondary-icon'}
+                        ]},
+                        {title : 'Background bleu acceuil', items: [
+                            {title : 'Texte', block : 'p', classes : 'blue-quote'},
+                            {title : 'Image centrée', selector : 'img', classes : 'blue-image'}
                         ]},
                         {title : 'Contenu', items: [
-                            {title : 'Style identique au h1', inline : 'span', classes : 'content-h1-style'},
-                            {title : 'Style identique au h1 - bleu', inline : 'span', classes : 'content-h1-style'},
                             {title : 'Style identique au h2', inline : 'span', classes : 'content-h2-style'},
-                            {title : 'Style identique au h2 - bleu', inline : 'span', classes : 'content-h2-style content-h2-style-primary'},
                             {title : 'Style identique au h3', inline : 'span', classes : 'content-h3-style'},
-                            {title : 'Style identique au h3 - bleu', inline : 'span', classes : 'content-h3-style content-h3-style-primary'},
-                            {title : 'Titre footer', selector : 'h2,h3', classes : 'title-footer'},
-                            {title : 'Texte majuscule', inline : 'span', classes : 'content-caps'},
                             {title : 'Transformer un lien en bouton', selector : 'a', classes : 'link-button'},
-                            {title : 'Transformer un lien en bouton suivant', selector : 'a', classes : 'link-button link-plus'},
-                            {title : 'Liste de crochets', selector : 'ul', classes : 'check-list'},
-                            {title : 'Gras bleu', inline : 'strong', classes : 'strong-primary'},
-                            {title : 'Icône dans cercle gris', selector : '.icon', classes : 'icon-circle icon-circle-grey'},
-                            {title : 'Icône dans cercle blue', selector : '.icon', classes : 'icon-circle icon-circle-blue'},
+                            {title : 'Transformer un lien en bouton suivant', selector : 'a', classes : 'link-button link-plus'},    
+                            {title : 'Icône dans cercle gris', selector : '.icon', classes : 'grey-circle'},
                             {title : 'Vidéo play', selector : 'a', classes : 'video-play'},
-                            {title : 'Image centrée', selector : 'img', classes : 'img-vertical-align'},
+                            {title : 'Colonne centrée Accueil', selector : '.column-content', classes : 'column-content-home'},
                             {title : 'Image ronde', selector : 'img', classes : 'rounded-image'},
-                            {title : 'Image responsive', selector : 'img', classes : 'responsive-image'},
                             {title : 'Ajouter de l\'espace en haut de l\'élément', selector : 'p,h1,h2,h3,h4,img,blockquote', classes : 'super-margin-top'},
                             {title : 'Ajouter de l\'espace en bas de l\'élément', selector : 'p,h1,h2,h3,h4,img,blockquote', classes : 'super-margin-bottom'}
                         ]},
@@ -193,8 +191,8 @@ EOS;
 
                         //{title : 'Padding'},
                         //{title : 'Padding 5 haut et bas', block : 'p', classes : 'paddingTopBottom'},
-           ],
-
+           ],     
+                        
 
                 formats : {
 //                        alignleft : {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'left'},
@@ -235,7 +233,7 @@ EOS;
                             type: 'menubutton',
                             text: 'Icons',
                             icon: false,
-                            menu: [
+                            menu: [                               
                                 {$iconInsertList}
                             ]
                         });
@@ -288,32 +286,32 @@ EOS;
                             ed.selection.setContent('Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam ali');
                         }
                     });
-
+                       
                     ed.addButton('googlemap', {
                         title : 'Google Maps',
                         image : '{$iconGMaps}',
                         onclick : function() {
                             ed.windowManager.open( {
                                 title: 'Insérer une carte Google',
-                                body: [
+                                body: [                                    
                                         {
                                                 type: 'textbox',
                                                 name: 'latitudeBox',
                                                 label: 'Latitude',
                                                 value: ''
-                                        },
+                                        },                                       
                                         {
                                                 type: 'textbox',
                                                 name: 'longitudeBox',
                                                 label: 'Longitude',
                                                 value: ''
-                                        },
+                                        },                                       
                                         {
                                                 type: 'textbox',
                                                 name: 'zoomBox',
                                                 label: 'Zoom',
                                                 value: ''
-                                        },
+                                        },                                       
                                         {
                                                 type: 'listbox',
                                                 name: 'colorList',
@@ -325,13 +323,13 @@ EOS;
                                         }
                                 ],
                                 onsubmit: function( e ) {
-                                    var color = e.data.colorList || 'plain';
+                                    var color = e.data.colorList || 'plain';                        
                                     ed.insertContent('<div class="google-map" data-latitude="'+e.data.latitudeBox+'" data-longitude="'+e.data.longitudeBox+'" data-zoom="'+e.data.zoomBox+'" data-color="'+color+'"></div>&nbsp;');
                                 }
                             });
                         }
                     });
-
+                        
                 },
 
                 // Example content CSS (should be your site CSS)

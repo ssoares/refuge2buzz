@@ -34,17 +34,19 @@ class BannerFeaturedImageObject extends DataObject
     public function getData($langId = null, $bannerId = null, $hasVideos = false)
     {
         $select = parent::getAll($langId, false);
+
         $select->order('IF_ImgID ASC');
+
         if($hasVideos)
         {
         $select->join('Videos','Videos.V_ID = IFI_Video' );
         $select->join('VideosIndex','Videos.V_ID = VideosIndex.VI_ID' );
             $select->where('VI_LanguageID = ?', $langId);
         }
+
         if ($bannerId)
             $select->where('IF_DataID = ?', $bannerId);
 
-        
         $data = $this->_db->fetchAll($select);
         return $data;
     }

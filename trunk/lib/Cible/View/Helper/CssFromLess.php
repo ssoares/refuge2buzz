@@ -9,7 +9,7 @@
  * @subpackage Cible_View_Helper
  * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
  *             (http://www.ciblesolutions.com)
- * @version    $Id: CssFromLess.php 1683 2014-09-08 20:59:58Z ldrapeau $
+ * @version    $Id: CssFromLess.php 1741 2014-12-10 18:05:21Z ssoares $
  */
 
 /**

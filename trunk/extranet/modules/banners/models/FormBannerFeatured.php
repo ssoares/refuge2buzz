@@ -27,9 +27,11 @@ class FormBannerFeatured extends Cible_Form_Multilingual {
     protected $_numberImageFeature;
     protected $_isNewImage;
     protected $_imageSrc;
+
     protected $_dataId;
     protected $_moduleName;
     protected $_filePath;
+
     protected $_listVideo;
 
     /**
@@ -37,7 +39,8 @@ class FormBannerFeatured extends Cible_Form_Multilingual {
      *
      * @return void
      */
-    public function __construct($options, $listVideo) {
+    public function __construct($options,$listVideo)
+    {
         $this->_addSubmitSaveClose = true;
         parent::__construct($options);
 
@@ -53,42 +56,45 @@ class FormBannerFeatured extends Cible_Form_Multilingual {
         // Name of the banner
         $name = new Zend_Form_Element_Text('BF_Name');
         $name->setLabel(
-                        $this->getView()->getCibleText('form_label_name'))
-                ->setRequired(true)
-                ->addFilter('StripTags')
-                ->addFilter('StringTrim')
-                ->addValidator(
-                        'NotEmpty', true, array(
+                $this->getView()->getCibleText('form_label_name'))
+            ->setRequired(true)
+            ->addFilter('StripTags')
+            ->addFilter('StringTrim')
+            ->addValidator(
+                'NotEmpty',
+                true,
+                array(
                     'messages' => array(
                         'isEmpty' => $this->getView()->getCibleText(
-                                'validation_message_empty_field')
+                            'validation_message_empty_field')
                     )
-                        )
                 )
-                ->setDecorators(
+            )
+            ->setDecorators(
+                array(
+                    'ViewHelper',
+                    'Errors',
+                    array('label', array('placement' => 'prepend')),
+                    array(
+                        array('row' => 'HtmlTag'),
                         array(
-                            'ViewHelper',
-                            'Errors',
-                            array('label', array('placement' => 'prepend')),
-                            array(
-                                array('row' => 'HtmlTag'),
-                                array(
-                                    'tag' => 'dd',
-                                    'class' => 'form_title_inline',
-                                    'id' => 'title')
-                            ),
-                        )
+                            'tag' => 'dd',
+                            'class' => 'form_title_inline',
+                            'id' => 'title')
+                    ),
                 )
-                ->setAttrib('class', 'stdTextInput');
+            )
+            ->setAttrib('class', 'stdTextInput');
 
         $this->addElement($name);
 
         $listVideos = array();
-        for ($xx = 0; $xx < count($listVideo); $xx++) {
+        for($xx=0; $xx<count($listVideo);$xx++)
+        {
             $listVideos[$listVideo[$xx]['V_ID']] = $listVideo[$xx]['V_Alias'];
         }
 
-        for ($x = 1; $x <= $this->_numberImageFeature; $x++) {
+        for($x=1; $x<=$this->_numberImageFeature;$x++){
 
             $isNewImage = 'isNewImage' . $x;
 
@@ -110,115 +116,98 @@ class FormBannerFeatured extends Cible_Form_Multilingual {
             $imageOrg->removeDecorator('Label');
             $this->addElement($imageOrg);
 
-            $imageView = new Zend_Form_Element_Image($IF_Img_preview, array('onclick' => 'return false;')
+            $imageView= new Zend_Form_Element_Image($IF_Img_preview,
+                    array('onclick' => 'return false;')
             );
 
 
             $imageView->setImage($this->_imageSrc[$x])->removeDecorator('Label')
-                    ->setDecorators(
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array(
+                            array('row' => 'HtmlTag'),
                             array(
-                                'ViewHelper',
-                                array(
-                                    array('row' => 'HtmlTag'),
-                                    array(
-                                        'tag' => 'dd',
-                                        'class' => 'alignLeft')
-                                ),
-                            )
-            );
+                                'tag' => 'dd',
+                                'class' => 'alignCenter')
+                        ),
+                    )
+                );
 
             $this->addElement($imageView);
             //echo $IF_Img . $pathTmp . "<br />";
-            $imagePicker = new Cible_Form_Element_ImagePicker($IF_Img, array(
-                'onchange' => "document.getElementById('" . $IF_Img . "').src = document.getElementById('" . $IF_Img . "').value",
-                'associatedElement' => $IF_Img_preview,
-                'pathTmp' => $pathTmp,
-                'contentID' => $this->_dataId
-            ));
+            $imagePicker = new Cible_Form_Element_ImagePicker($IF_Img,
+                    array(
+                        'onchange' => "document.getElementById('" . $IF_Img . "').src = document.getElementById('" . $IF_Img . "').value",
+                        'associatedElement' => $IF_Img_preview,
+                        'pathTmp' => $pathTmp,
+                        'contentID' => $this->_dataId
+                ));
             $imagePicker->setLabel('')
-                    ->setDecorators(
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array(
+                            array('row' => 'HtmlTag'),
                             array(
-                                'ViewHelper',
-                                array(
-                                    array('row' => 'HtmlTag'),
-                                    array(
-                                        'tag' => 'dd',
-                                        'class' => 'alignLeft')
-                                ),
-                            )
-            );
+                                'tag' => 'dd',
+                                'class' => 'alignCenter')
+                        ),
+                    )
+                );
 
             $imagePicker->removeDecorator('Label');
             $this->addElement($imagePicker);
-
-
-
-            // label for the title
-            $IFI_Title = 'IFI_Title' . $x;
-            $TitleX = new Zend_Form_Element_Text($IFI_Title);
-            $TitleX->setLabel(
-                            $this->getView()->getCibleText('form_label_title'))
-                    ->setDecorators(
-                            array(
-                                'ViewHelper',
-                                array('label', array('placement' => 'prepend')),
-                                array(
-                                    array('row' => 'HtmlTag'),
-                                    array(
-                                        'tag' => 'dd',
-                                        'class' => 'form_title_inline')
-                                ),
-                            )
-                    )
-                    ->setAttrib('class', 'stdTextInput');
-
-            $label = $TitleX->getDecorator('Label');
-            $label->setOption('class', $this->_labelCSS);
-
-            $this->addElement($TitleX);
-
-
-
 
             // label for the image
             $IFI_Label = 'IFI_Label' . $x;
             $labelX = new Zend_Form_Element_Text($IFI_Label);
             $labelX->setLabel(
-                            $this->getView()->getCibleText('form_label_label'))
-                    ->setDecorators(
+                $this->getView()->getCibleText('form_label_label'))
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array('label', array('placement' => 'prepend')),
+                        array(
+                            array('row' => 'HtmlTag'),
                             array(
-                                'ViewHelper',
-                                array('label', array('placement' => 'prepend')),
-                                array(
-                                    array('row' => 'HtmlTag'),
-                                    array(
-                                        'tag' => 'dd',
-                                        'class' => 'form_title_inline')
-                                ),
-                            )
+                                'tag' => 'dd',
+                                'class' => 'form_title_inline')
+                        ),
                     )
-                    ->setAttrib('class', 'stdTextInput');
+                )
+                ->setAttrib('class', 'stdTextInput');
 
             $label = $labelX->getDecorator('Label');
             $label->setOption('class', $this->_labelCSS);
 
             $this->addElement($labelX);
-
-            $IFI_Color = "IFI_Color" . $x;
-            $colorX = new Zend_Form_Element_Select($IFI_Color);
-            $colorX->setLabel($this->_view->getCibleText('banners_color_block_page'))
-                    ->setAttrib('class', 'largeSelect');
-            $colors = array(
-                'edith' => 'Turquoise Edith',
-                'sendy' => 'Vert Sendy',
-                'maxim' => 'Orange Maxim',
-                'sally' => 'Bleu Sally'
-            );
-            $colorX->addMultiOptions($colors);
-
-            $this->addElement($colorX);
-
             // label for the link
+
+            $IFI_UrlVideo = 'IFI_UrlVideo' . $x;
+            $optionUrlVideo = new Zend_Form_Element_Radio($IFI_UrlVideo);
+            $optionUrlVideo->setRequired(false)
+                ->removeDecorator('DtDdWrapper')
+                ->addMultiOption('0', $this->getView()->getCibleText('extranet_form_label_url'),'number1')
+                ->addMultiOption('1', $this->getView()->getCibleText('extranet_form_label_video'),'number2')
+                ->setSeparator('')
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array('label', array('placement' => 'prepend')),
+                        array(
+                            array('row' => 'HtmlTag'),
+                            array(
+                                'tag' => 'dd',
+                                'class' => 'radioMediaSrc')
+                        ),
+                    )
+                )
+            ;
+            if ($options['hasVideo'])
+                $this->addElement($optionUrlVideo);
+
+
             $IFI_Url = 'IFI_Url' . $x;
 
             $classUrl = 'urlImg';
@@ -227,85 +216,159 @@ class FormBannerFeatured extends Cible_Form_Multilingual {
 
             $urlX = new Zend_Form_Element_Text($IFI_Url);
             $urlX->setLabel(
-                            $this->getView()->getCibleText('form_label_url'))
-                    ->removeDecorator('DtDdWrapper')
-                    ->setDecorators(
+                $this->getView()->getCibleText('form_label_url'))
+                ->removeDecorator('DtDdWrapper')
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array('label', array('placement' => 'prepend')),
+                        array(
+                            array('row' => 'HtmlTag'),
                             array(
-                                'ViewHelper',
-                                array('label', array('placement' => 'prepend')),
-                                array(
-                                    array('row' => 'HtmlTag'),
-                                    array(
-                                        'tag' => 'dd',
-                                        'class' => $classUrl)
-                                ),
-                            )
+                                'tag' => 'dd',
+                                'class' => $classUrl)
+                        ),
                     )
-                    ->setAttrib('class', 'stdTextInput');
+                )
+                ->setAttrib('class', 'stdTextInput');
 
             $label = $urlX->getDecorator('Label');
             $label->setOption('class', $this->_labelCSS);
 
             $this->addElement($urlX);
 
-            /* $optionUrlVideo = new Zend_Form_Element_Radio($IFI_UrlVideo);
-              $optionUrlVideo->setRequired(false)
+           /* $optionUrlVideo = new Zend_Form_Element_Radio($IFI_UrlVideo);
+            $optionUrlVideo->setRequired(false)
 
-              ->addMultiOption('1', $this->getView()->getCibleText('extranet_newsletter_option_text_url_url'))
-              ;
-              $this->addElement($optionUrlVideo); */
+                ->addMultiOption('1', $this->getView()->getCibleText('extranet_newsletter_option_text_url_url'))
+            ;
+            $this->addElement($optionUrlVideo);*/
 
 
+            $IFI_Video = 'IFI_Video' . $x;
 
+            $video = new Zend_Form_Element_Select($IFI_Video);
+            $video->setLabel($this->getView()->getCibleText('form_label_video'))
+                ->setAttrib('class', 'largeSelect')
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array('label', array('placement' => 'prepend')),
+                        array(
+                            array('row' => 'HtmlTag'),
+                            array(
+                                'tag' => 'dd',
+                                'class' => 'selectVideo')
+                        ),
+                    )
+                );
+
+            $video->addMultiOptions($listVideos);
+            if ($options['hasVideo'])
+                $this->addElement($video);
 
             $IFI_Text1 = 'IFI_TextA' . $x;
             $IFI_Text2 = 'IFI_TextB' . $x;
 
-            $IFI_Text1X = new Cible_Form_Element_Editor($IFI_Text1);
+            $IFI_Text1X = new Zend_Form_Element_Text($IFI_Text1);
             $IFI_Text1X->setLabel(
-                            $this->getView()->getCibleText('form_label_text_1'))
-                    ->setDecorators(
+                $this->getView()->getCibleText('form_label_text_1'))
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array('label', array('placement' => 'prepend')),
+                        array(
+                            array('row' => 'HtmlTag'),
                             array(
-                                'ViewHelper',
-                                array('label', array('placement' => 'prepend')),
-                                array(
-                                    array('row' => 'HtmlTag'),
-                                    array(
-                                        'tag' => 'dd',
-                                        'class' => 'form_title_inline')
-                                ),
-                            )
+                                'tag' => 'dd',
+                                'class' => 'form_title_inline')
+                        ),
                     )
-                    ->setAttrib('class', 'stdTextInput');
+                )
+                ->setAttrib('class', 'stdTextInput');
 
             $label = $IFI_Text1X->getDecorator('Label');
             $label->setOption('class', $this->_labelCSS);
 
             $this->addElement($IFI_Text1X);
 
+            $IFI_Text2X = new Zend_Form_Element_Text($IFI_Text2);
+            $IFI_Text2X->setLabel(
+                $this->getView()->getCibleText('form_label_text_2'))
+                ->setDecorators(
+                    array(
+                        'ViewHelper',
+                        array('label', array('placement' => 'prepend')),
+                        array(
+                            array('row' => 'HtmlTag'),
+                            array(
+                                'tag' => 'dd',
+                                'class' => 'form_title_inline')
+                        ),
+                    )
+                )
+                ->setAttrib('class', 'stdTextInput');
+
+            $label = $IFI_Text2X->getDecorator('Label');
+            $label->setOption('class', $this->_labelCSS);
+
+            $this->addElement($IFI_Text2X);
 
 
+            $IF_Style = 'IF_Style' . $x;
+            $style = new Zend_Form_Element_Select($IF_Style);
+            $style->setLabel($this->getView()->getCibleText('form_style_label'))
+                ->setAttrib('class', 'largeSelect')
+                ;
 
+            $listStyles = array(
+                'style1' => 'Style 1',
+                'style2' => 'Style 2',
+                'style3' => 'Style 3',
+            );
+            $style->addMultiOption('', $this->getView()->getCibleText('form_select_default_label'));
+            $style->addMultiOptions($listStyles);
 
+            $this->addElement($style);
+
+            $IF_Effect = 'IF_Effect' . $x;
+            $effect = new Zend_Form_Element_Select($IF_Effect);
+            $effect->setLabel($this->getView()->getCibleText('form_effect_label'))
+                ->setAttrib('class', 'largeSelect')
+                ;
+
+            $listEffect = array(
+                'sec0' => 'Style over 0 secondes',
+                'sec1' => 'Style over 1 secondes',
+                'secUp1' => 'Style up 1 secondes',
+            );
+            $effect->addMultiOption('', $this->getView()->getCibleText('form_select_default_label'));
+            $effect->addMultiOptions($listEffect);
+
+            $this->addElement($effect);
 
             $imageDisplay = 'imageDisplay' . $x;
             $this->addDisplayGroup(
-                    array(
-                $isNewImage,
-                $IF_Img_tmp,
-                $IF_Img_original,
-                $IF_Img_preview,
-                $IF_Img,
-                $IFI_Title,
-                $IFI_Label,
-                $IFI_Color,
-                $IFI_Url,
-                $IFI_Text1), $imageDisplay);
+                array(
+                    $isNewImage,
+                    $IF_Img_tmp,
+                    $IF_Img_original,
+                    $IF_Img_preview,
+                    $IF_Img,
+                    $IFI_Label,
+                    $IFI_UrlVideo,
+                    $IFI_Url,
+                    $IFI_Video,
+                    $IFI_Text1,
+                    $IFI_Text2,
+                    $IF_Style,
+                    $IF_Effect),
+                $imageDisplay);
 
             $this->getDisplayGroup($imageDisplay)
-                    ->setLegend('Image ' . $x)
-                    ->setAttrib('class', 'imageGroup first')
-                    ->removeDecorator('DtDdWrapper');
+                ->setLegend('Image ' .$x)
+                ->setAttrib('class', 'imageGroup first')
+                ->removeDecorator('DtDdWrapper');
         }
     }
 
@@ -316,17 +379,21 @@ class FormBannerFeatured extends Cible_Form_Multilingual {
      *
      * @return void
      */
-    public function setParameters($params = array()) {
-        foreach ($params as $property => $value) {
+    public function setParameters($params = array())
+    {
+        foreach ($params as $property => $value)
+        {
             if ($property == 'BlockID')
                 $property = 'blockID';
 
             $propertyName = '_' . $property;
 
-            if (property_exists($this, $propertyName)) {
+            if (property_exists($this, $propertyName))
+            {
                 $this->$propertyName = $value;
             }
         }
     }
-
 }
+
+

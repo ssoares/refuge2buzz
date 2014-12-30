@@ -25,19 +25,16 @@ if (in_array('sandboxes', $host) || in_array('localhost', $host))
     $envVar = $devUri[1] . '-dev';
     define('ISDEV', true);
 }
-elseif (in_array('dev', $host)){
-//    $envVar = str_replace(array(''), array(''), $host[0]) . '-dev';
-    $envVar = $host[0] . '-dev';
-    define('ISDEV', true);
-}
+elseif (in_array('dev', $host))
+    $envVar = str_replace(array('-fr', '-portail2013', '-cp'), array('', '', ''), $host[0]) . '-dev';
 elseif (in_array('staging', $host))
 {
-    $envVar = str_replace(array(''), array(''), $host[0]) . '-staging';
+    $envVar = str_replace(array('csss-iugs'), array('c3s'), $host[0]) . '-staging';
     define('ISDEV', true);
 }
 else
 {
-    $envVar = str_replace(array('v2'), array('refugebuzz'), $host[0]);
+    $envVar = str_replace(array('demo'), array('edith'), $host[0]);
     define('ISDEV', false);
 }
 

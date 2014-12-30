@@ -44,13 +44,13 @@ EOS;
         // email
         $regexValidate = new Cible_Validate_Email();
         $regexValidate->setMessage($this->getView()->getCibleText('validation_message_emailAddressInvalid'), 'regexNotMatch');
-        
+
         $email = new Zend_Form_Element_Text('newsletter-email');
         $email->setLabel($this->getView()->getCibleText('form_label_newsletter_email'))
                 //->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_field_required'))))
                 //->addValidator('EmailAddress', true, array('messages' => Cible_Translation::getCibleText('validation_message_emailAddressInvalid')))
                 //->setRequired(true)
-                ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_newsletter_email'))
+                ->setAttrib('placeholder', $this->getView()->getClientText('forms_label_placeholder_email'))
                 ->setAttrib('class', 'forms-input-newsletter-email');
 
         $this->addElement($email);
@@ -61,6 +61,7 @@ EOS;
         // Submit button
         $submit = new Zend_Form_Element_Submit('newsletter-submit');
         $submit->setLabel($this->getView()->getCibleText('button_submit_newsletter_footer'))
+                ->setAttrib('class', 'link-button')
                 ->removeDecorator('DtDdWrapper');
         $submit->addDecorators(array(
             array(array('row' => 'HtmlTag'), array('tag' => 'div', 'class' => 'form-div'))

@@ -4,7 +4,7 @@
     @container-margin:(@first-width - @width) / 2;
     @child-width:(@container-width + @container-margin * 2) / @cols;
     @child-margin:(@child-width - @width) / 2;
-    
+
     margin-left:-@container-margin + @grid-gutter-width / 2;
     margin-right:-@container-margin + @grid-gutter-width / 2;
     @{child} {
@@ -21,8 +21,8 @@
     }
     @media @mq-tablet {
         .format-margin(@container-tablet * @container-percentage,@width,@child,@cols-tablet);
-    }    
+    }
     @media @mq-phone {
         .format-margin(@container-tablet * @container-percentage,@width,@child,@cols-tablet);
-    }    
+    }
 }

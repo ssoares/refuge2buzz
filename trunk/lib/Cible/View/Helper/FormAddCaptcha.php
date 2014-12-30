@@ -31,8 +31,8 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
     protected $_captchaOptions = array(
         'captcha' => 'Word',
         'wordLen' => 6,
-        'height'  => 100,
-        'width'   => 200,
+        'height'  => 55,
+        'width'   => 150,
         'timeout' => 600,
         'dotNoiseLevel' => 0,
         'lineNoiseLevel' => 0,
@@ -67,8 +67,6 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
      */
     public function formAddCaptcha(Zend_Form $form = null, array $options = array())
     {
-        
-        
         $this->_captchaOptions['imgUrl']  = rtrim($this->view->baseUrl(), '/') ."/captcha/tmp";
         if (isset($options['getCaptcha']) && $options['getCaptcha'])
             return $this->_getCaptchaImage();
@@ -129,8 +127,6 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
 EOS;
 
         $this->view->headScript()->appendScript($script);
-        
-        
     }
 
     private function _getCaptchaImage()

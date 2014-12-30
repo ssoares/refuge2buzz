@@ -36,28 +36,19 @@ class AdministratorController extends Cible_Extranet_Controller_Module_Action
             )
         );
         $administratorData = new ExtranetUsers();
-        $admins = array();
-        try
+
+        $dbs = Zend_Registry::get('dbs');
+        $db = $dbs->getDb('admins');
+        $adminCible = new ExtranetUsers(array('db' => $db));
+        $adminsCible = $adminCible->getAdminEqualOrOver($this->view->IsAdministrator(), true);
+        foreach ($adminsCible as $key => $value)
         {
-            $dbs = Zend_Registry::get('dbs');
-            $db = $dbs->getDb('admins');
-            $adminCible = new ExtranetUsers(array('db' => $db));
-            $adminsCible = $adminCible->getAdminEqualOrOver($this->view->IsAdministrator(),
-                true);
-            foreach($adminsCible as $key => $value)
-            {
-                $admins[$value['EU_ID']] = $value;
-                $data = $administratorData->setId($value['EU_ID'])->populate();
-                if(empty($data))
-                {
-                    $admins[$value['EU_ID']]['disabled'] = true;
-                }
+            $admins[$value['EU_ID']] = $value;
+            $data = $administratorData->setId($value['EU_ID'])->populate();
+            if (empty($data)){
+                $admins[$value['EU_ID']]['disabled'] = true;
             }
         }
-        catch(Exception $exc)
-        {
-        }
-
         $select = $administratorData->getAdminEqualOrOver($this->view->IsAdministrator());
         $adminData = $administratorData->getAdminEqualOrOver($this->view->IsAdministrator(), true);
 
@@ -376,15 +367,15 @@ class AdministratorController extends Cible_Extranet_Controller_Module_Action
         $select = $users->select()
         ->where("EU_ID = ?", $authID);
 
-
+        
         $userData = $users->fetchRow($select);
 
         if($userData==""){
             echo "<br /><font style='font-size:18px;'> Vous êtes un super utilisateur.<br />Vous ne pouvez gérer vos informations ici.<br/>"
             . "Vous pouvez modifier vos informations dans la base 'cible_admin'</font> ";
-
+             
         }
-        else{
+        else{      
         /********** ACTIONS ***********/
         $form = new FormExtranetUser(array(
             'baseDir'   => $this->view->baseUrl(),

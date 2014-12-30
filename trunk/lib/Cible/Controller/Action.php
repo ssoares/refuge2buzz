@@ -236,9 +236,6 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 
         $this->view->showBlockTitle = $this->_showBlockTitle;
         $this->view->assign('request', $_request);
-        
-        
-       
     }
 
     public static function getDefaultEditLanguage() {
@@ -1425,11 +1422,8 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                     $this->_deviceType = self::IS_MOBILE;
                     if ($this->_device->getCapability('is_tablet') == 'true') {
                         $this->_deviceType = self::IS_TABLET;
-                    } else {
-                        //Zend_Registry::set('isMobile', true);
-                        //pête le site présentement parce que les styles n'embarquent pas correctement dans le thème
-                        Zend_Registry::set('isMobile', false);
-                    }
+                    } else
+                        Zend_Registry::set('isMobile', true);
                     break;
             }
         }else {

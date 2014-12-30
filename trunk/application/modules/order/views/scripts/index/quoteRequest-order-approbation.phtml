@@ -1,0 +1,8 @@
+<div id="quoteRequest" class="block quoteRequest">
+    <?php echo $this->getClientText('quoteRequest_order_approbation_thankyou_message') ?>
+    <?php if( $this->return ): ?>
+        <div id="last-search-result-link">
+            <?php echo $this->link("{$this->return}", $this->getClientText("quoteRequest_return_to_previous_page")); ?>
+        </div>
+    <?php endif; ?>
+</div>

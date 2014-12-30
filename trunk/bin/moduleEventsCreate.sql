@@ -6,7 +6,7 @@
 -- Generation Time: Sep 24, 2010 at 03:55 PM
 -- Server version: 5.0.70
 -- PHP Version: 5.2.10-pl0-gentoo
--- Version SVN: $Id: moduleEventsCreate.sql 1738 2014-12-05 18:42:05Z freynolds $
+-- Version SVN: $Id: moduleEventsCreate.sql 1737 2014-12-05 18:40:41Z freynolds $
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 
@@ -232,5 +232,4 @@ REPLACE INTO `Static_Texts` (`ST_Identifier`,`ST_LangID`,`ST_Value`,`ST_Type`,`S
 ('shortLongEvents',1,'Texte court*','cible','',0,7),
 ('shortLongEvents',2,'Short text*','cible','',0,7),
 ('see_details_events_text', 1, 'En savoir plus', 'cible', '', 0, 7),
-('see_details_events_text', 2, 'More', 'cible', '', 0, 7)
-;
+('see_details_events_text', 2, 'More', 'cible', '', 0, 7);

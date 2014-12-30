@@ -1,0 +1,265 @@
+<?php if( !$this->shipToADifferentAddress ): ?>
+
+    <?php $this->headStyle()->captureStart() ?>
+
+        table#shipToADifferentAddress {
+            display: none;
+        }
+
+        table.client-informations td,
+        table.client-informations td label {
+            font-size: 12px !important;
+        }
+
+        td.checkbox-alignment {
+            width: 20px !important;
+        }
+        
+    <?php $this->headStyle()->captureEnd() ?>
+    
+<?php endif; ?>
+
+
+<script>
+    $(document).ready(function(){
+        $('#shippingShipToADifferentAddress').click(function(){
+            if( $(this).is(':checked') )
+                $('#shipToADifferentAddress').css('display','block');
+            else
+                $('#shipToADifferentAddress').css('display','none');
+        });
+        
+        
+
+        $('table.client-informations').each(function(){
+            $('td:even',this).addClass('labels');
+        });
+        
+        window.onbeforeunload = function saveOrderInformations(){
+            /* SHIPPING INFO */
+            var shippingShipperName     = $('#shippingShipperName').val();
+            var shippingMethod          = $('#shippingMethod').val();
+            var shippingAccountNumber   = $('#shippingAccountNumber').val();
+            var shippingComment         = $('#shippingComment').val();
+            
+           /* DIFFERENT ADDRESS */
+           if($('#shippingShipToADifferentAddress').is(':checked'))
+                var shippingShipToADifferentAddress = 1;
+           else
+                var shippingShipToADifferentAddress = 0;
+           var lastName     = $('#lastName').val();
+           var firstName    = $('#firstName').val();
+           var company      = $('#company').val();
+           var address      = $('#address').val();
+           var city         = $('#city').val();
+           var state        = $('#state').val();
+           var country      = $('#country').val();
+           var zipCode      = $('#zipCode').val();
+           var phone        = $('#phone').val();
+           
+           /* OTHER INFOS */   
+           var poNumber     = $('#poNumber').val();
+           var projectName  = $('#projectName').val();
+           
+           if($('#contactMe').is(':checked'))
+                var contactMe = 1;
+           else
+                var contactMe = 0;
+           
+           if($('#newsletterSubscription').is(':checked'))
+                var newsletterSubscription = 1;
+           else
+                var newsletterSubscription = 0;
+           
+           if($('#termsAgreement').is(':checked'))
+                var termsAgreement = 1;
+           else
+                var termsAgreement = 0;
+           
+           url = $('#quoteRequest_ajax_link').val();
+           $.getJSON(url,{actionAjax : 'updateSessionVar', "shippingShipperName" : shippingShipperName, 
+                                                           "shippingMethod" : shippingMethod, 
+                                                           "shippingAccountNumber" : shippingAccountNumber, 
+                                                           "shippingComment" : shippingComment,
+                                                           "shippingShipToADifferentAddress" : shippingShipToADifferentAddress,
+                                                           "lastName" : lastName,
+                                                           "firstName" : firstName,
+                                                           "company" : company,
+                                                           "address" : address,
+                                                           "city" : city,
+                                                           "state" : state,
+                                                           "country" : country,
+                                                           "zipCode" : zipCode,
+                                                           "phone" : phone,
+                                                           "poNumber" : poNumber,
+                                                           "projectName" : projectName,
+                                                           "contactMe" : contactMe,
+                                                           "newsletterSubscription" : newsletterSubscription,
+                                                           "termsAgreement" : termsAgreement},
+                function(data){
+                    //alert('done');
+                }
+            );
+        }
+        
+        function init(){
+            if( $('#shippingShipToADifferentAddress').is(':checked') )
+                $('#shipToADifferentAddress').css('display','block');    
+        }
+        
+        init();    
+    });
+    
+    
+
+</script>
+
+<input id="quoteRequest_ajax_link" type="hidden" value="<?php echo($this->baseUrl() . "/quoteRequest/index/ajax"); ?>"/>
+
+<form method="post" style="margin-top: 0px;">
+    <div class="information-block">
+        <span class="subtitle"><?php echo $this->getClientText('quoteRequest_account_information_title') ?></span>
+        <table class="client-informations" cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td id="email" class="labels"><?php echo $this->getCibleText('form_label_email') ?></td>
+                <td><?php echo $this->memberInfos['email'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_fName') ?></td>
+                <td><?php echo $this->memberInfos['firstName'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_lName') ?></td>
+                <td><?php echo $this->memberInfos['lastName'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_title_occupation') ?></td>
+                <td><?php echo $this->getClientText("ab_occupations_{$this->memberInfos['occupation']}") ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_company') ?></td>
+                <td><?php echo $this->memberInfos['company'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_address') ?></td>
+                <td><?php echo $this->memberInfos['address'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_city') ?></td>
+                <td><?php echo $this->memberInfos['city'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_state') ?></td>
+                <td><?php echo AB_FunctionsGeneral::getStateByCode($this->memberInfos['country'], $this->memberInfos['state']) ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_country') ?></td>
+                <td><?php echo AB_FunctionsGeneral::getCountryByCode($this->memberInfos['country']) ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_zip_code') ?></td>
+                <td><?php echo $this->memberInfos['zipCode'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_phone_1') ?></td>
+                <td><?php echo $this->memberInfos['phone'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_fax') ?></td>
+                <td><?php echo $this->memberInfos['fax'] ?></td>
+            </tr>
+            <tr>
+                <td class="labels"><?php echo $this->getCibleText('form_label_language') ?></td>
+                <td><?php echo Cible_FunctionsGeneral::getLanguageTitle($this->memberInfos['language']) ?></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="information-block" style="margin-bottom: 0px">
+        <span class="subtitle"><?php echo $this->getClientText('quoteRequest_shipping_information_title') ?></span>
+        <div style="padding-bottom: 18px;"><?php echo $this->getClientText("quoteRequest_order_form_shipping_text_{$this->cartTypeName}") ?></div>
+        <table class="client-informations" cellpadding="0" cellspacing="0" border="0">
+            
+            <?php //$this->element->shippingShipperName->setValue($this->memberInfos['shippingShipperName']); ?>
+            <?php echo $this->element->shippingShipperName->render() ?>
+            
+            <?php //$this->element->shippingMethod->setValue($this->memberInfos['shippingMethod']); ?>
+            <?php echo $this->element->shippingMethod->render() ?>
+            
+            <?php //$this->element->shippingAccountNumber->setValue($this->memberInfos['shippingAccountNumber']); ?>
+            <?php echo $this->element->shippingAccountNumber->render() ?>
+            
+            <?php echo $this->element->shippingComment->render() ?>
+            <tr>
+                <td colspan="2" style="width: 457px;">
+                    <div style="float: right; line-height: 32px;"><?php echo $this->link($this->accountLink, $this->getClientText('quoteRequest_order_form_view_account'), array('id'=>'viewAccountButton', 'class'=>'grayish-button')) ?></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <?php echo $this->element->shippingShipToADifferentAddress->render() ?>
+                    </table>
+                </td>
+            </tr>
+        </table>
+        
+        <table id="shipToADifferentAddress" class="client-informations" style="margin-bottom: 10px;" cellpadding="0" cellspacing="0" border="0">
+            
+            <?php echo $this->element->lastName->render() ?>
+            
+            <?php echo $this->element->firstName->render() ?>
+            
+            <?php echo $this->element->company->render() ?>
+            
+            <?php echo $this->element->address->render() ?>
+            
+            <?php echo $this->element->city->render() ?>
+            
+            <?php echo $this->element->state->render() ?>
+            
+            <?php echo $this->element->country->render() ?>
+            
+            <?php echo $this->element->zipCode->render() ?>
+            
+            <?php echo $this->element->phone->render() ?>
+            
+        </table>
+
+    </div>
+
+    <div class="information-block">
+        <span class="subtitle"><?php echo $this->getClientText('quoteRequest_other_information_title') ?></span>
+        <table class="client-informations" cellpadding="0" cellspacing="0" border="0">
+        
+            <?php echo $this->element->poNumber->render() ?>
+            
+            <?php echo $this->element->projectName->render() ?>
+            
+            <?php echo $this->element->contactMe->render() ?>
+            
+        </table>
+        
+        <table class="client-informations">
+            <?php echo $this->element->newsletterSubscription->render() ?>
+            <?php echo $this->element->termsAgreement->render() ?>
+        </table>
+        <?php if( $this->agreementError ): ?>
+
+        <div class="errors" style="margin-top: 10px; font-size: 12px!important;">
+            <?php echo $this->getClientText('terms_agreement_error_message') ?>
+        </div>
+
+        <?php endif; ?>
+
+        <table cellpadding="0" cellspacing="0" border="0">
+            <tr>
+                <td style="vertical-align: bottom; width: 203px"><span class="field_required">*</span><?php echo $this->getCibleText('form_field_required_label') ?></td>
+                <td style="vertical-align: bottom; width: 252px; text-align: right;">
+                    <?php echo $this->element->submit->render() ?>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <input id="selectedState" name="selectedState" type="hidden" value="<?php echo($this->selectedState); ?>"/>
+</form>

@@ -142,6 +142,134 @@ class FormVideo extends Cible_Form_Multilingual
         $VI_MP4_Name_tmp->removeDecorator('Label');
         $this->addElement($VI_MP4_Name_tmp);
 
+        // Technical specs of the product.
+        $video1 = new Cible_Form_Element_FileManager(
+                'VI_MP4',
+                array(
+                    //  'associatedElement' => 'productFormBotPub',
+                    'displayElement' => 'video1',
+                    'pathTmp' => "/videos",
+                    'contentID' => $this->_dataId,
+                    'setInit' => true
+                )
+        );
+
+        $video1->setLabel(
+                $this->getView()->getCibleText('form_label_video_VI_MP4'))
+            ->addFilter('StripTags')
+            ->addFilter('StringTrim')
+            ->setDecorators(
+                array(
+                    'ViewHelper',
+                    array('label', array('placement' => 'prepend')),
+                    array(
+                        array('row' => 'HtmlTag'),
+                        array(
+                            'tag' => 'dd',
+                            'class' => 'form_title_inline',
+                            'id' => 'title')
+                    ),
+                )
+            )
+            ->setAttrib('class', 'stdTextInput');
+
+        $label = $video1->getDecorator('Label');
+        $label->setOption('class', $this->_labelCSS);
+
+        $this->addElement($video1);
+
+        $VI_WEBM_tmpt = new Zend_Form_Element_Hidden('VI_WEBM', array('value' => $options['VI_WEBM']));
+        $VI_WEBM_tmpt->removeDecorator('Label');
+        $this->addElement($VI_WEBM_tmpt);
+
+        $VI_WEBM_Name_tmp = new Zend_Form_Element_Hidden('VI_WEBM_Name');
+        $VI_WEBM_Name_tmp->removeDecorator('Label');
+        $this->addElement($VI_WEBM_Name_tmp);
+
+        // Technical specs of the product.
+        $video2 = new Cible_Form_Element_FileManager(
+                'VI_WEBM',
+                array(
+                    //  'associatedElement' => 'productFormBotPub',
+                    'displayElement' => 'video2',
+                    'pathTmp' => "/videos",
+                    'contentID' => $this->_dataId,
+                    'setInit' => true
+                )
+        );
+        $video2->setLabel(
+                $this->getView()->getCibleText('form_label_video_VI_WEBM'))
+            ->addFilter('StripTags')
+            ->addFilter('StringTrim')
+            ->setDecorators(
+                array(
+                    'ViewHelper',
+                    array('label', array('placement' => 'prepend')),
+                    array(
+                        array('row' => 'HtmlTag'),
+                        array(
+                            'tag' => 'dd',
+                            'class' => 'form_title_inline',
+                            'id' => 'title')
+                    ),
+                )
+            )
+            ->setAttrib('class', 'stdTextInput');
+
+        $label = $video2->getDecorator('Label');
+        $label->setOption('class', $this->_labelCSS);
+
+        $this->addElement($video2);
+
+        $VI_OGG_tmpt = new Zend_Form_Element_Hidden('VI_OGG', array('value' => $options['VI_OGG']));
+        $VI_OGG_tmpt->removeDecorator('Label');
+        $this->addElement($VI_OGG_tmpt);
+
+        $VI_OGG_Name_tmp = new Zend_Form_Element_Hidden('VI_OGG_Name');
+        $VI_OGG_Name_tmp->removeDecorator('Label');
+        $this->addElement($VI_OGG_Name_tmp);
+
+        // Technical specs of the product.
+        $video3 = new Cible_Form_Element_FileManager(
+                'VI_OGG',
+                array(
+                    //  'associatedElement' => 'productFormBotPub',
+                    'displayElement' => 'video3',
+                    'pathTmp' => "/videos",
+                    'contentID' => $this->_dataId,
+                    'setInit' => true
+                )
+        );
+        $video3->setLabel(
+                $this->getView()->getCibleText('form_label_video_VI_OGG'))
+            ->addFilter('StripTags')
+            ->addFilter('StringTrim')
+            ->setDecorators(
+                array(
+                    'ViewHelper',
+                    array('label', array('placement' => 'prepend')),
+                    array(
+                        array('row' => 'HtmlTag'),
+                        array(
+                            'tag' => 'dd',
+                            'class' => 'form_title_inline',
+                            'id' => 'title')
+                    ),
+                )
+            )
+            ->setAttrib('class', 'stdTextInput');
+
+        $label = $video3->getDecorator('Label');
+        $label->setOption('class', $this->_labelCSS);
+
+        $this->addElement($video3);
+
+        $VI_Description = new Cible_Form_Element_Editor('VI_Description', array('mode' => Cible_Form_Element_Editor::ADVANCED, 'value' => $options['VI_Description']));
+        $VI_Description->setLabel($this->getView()->getCibleText('form_label_video_description'));
+        $label = $VI_Description->getDecorator('Label');
+        $label->setOption('class', $this->_labelCSS);
+
+        $this->addElement($VI_Description);
     }
 
 }

@@ -64,15 +64,15 @@ class FormBannerImage extends Cible_Form_Multilingual
         $label = $textUrl->getDecorator('Label');
         $label->setOption('class', $this->_labelCSS);
 
-//        $blockBulle = new Zend_Form_Element_Select('BII_Bubble');
-//        $blockBulle->setLabel($this->_view->getCibleText('banners_bulle_block_page'))
-//        ->setAttrib('class','largeSelect');
-//        $colors = array(
-//            'black' =>'Noir',
-//            'grey' =>'Gris',
-//            'white' =>'Blanc'
-//        );
-//        $blockBulle->addMultiOptions($colors);
+        $blockBulle = new Zend_Form_Element_Select('BII_Bubble');
+        $blockBulle->setLabel($this->_view->getCibleText('banners_bulle_block_page'))
+        ->setAttrib('class','largeSelect');
+        $colors = array(
+            'black' =>'Noir',
+            'grey' =>'Gris',
+            'white' =>'Blanc'
+        );
+        $blockBulle->addMultiOptions($colors);
         
         $sequence = new Zend_Form_Element_Text('BI_Seq');
         $sequence->setLabel($this->_view->getCibleText('form_banner_image_seq_label'))
@@ -123,7 +123,7 @@ class FormBannerImage extends Cible_Form_Multilingual
         $this->addElement($imageView);
         $this->addElement($imagePicker);
         $this->addElement($groupImage);
-//        $this->addElement($blockBulle);
+        $this->addElement($blockBulle);
         $this->addElement($textDescription);
         $this->addElement($textUrl);
         $this->addElement($sequence);

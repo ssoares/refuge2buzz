@@ -48,14 +48,24 @@ class Video_IndexController extends Cible_Controller_Categorie_Action
         $this->_formatName();
         $this->view->assign('cleaction', $this->_labelSuffix);
 
-     
+        $dataImagePath = "../../"
+                . $this->_config->document_root
+                . "/data/files/videos/";
 
 
-      
-       $this->_imageFolder = $dataImagePath . $this->_moduleTitle . "/";
-               
 
-       
+        //if(isset($this->_objectList[$this->_currentAction]))
+            $this->_imageFolder = $dataImagePath . $this->_moduleTitle . "/";
+                   // . $this->_objectList[$this->_currentAction] . "/";
+
+        if(isset($this->_objectList[$this->_currentAction]))
+            $this->_rootImgPath = Zend_Registry::get("www_root")
+                    . "/data/files/videos/"
+                    . $this->_moduleTitle . "/";
+                   // . $this->_objectList[$this->_currentAction] . "/";
+
+
+        //$this->_imageFolder = $this->_config->document_root . "/data/images/videos/";
     }
 
     /**
@@ -111,9 +121,57 @@ class Video_IndexController extends Cible_Controller_Categorie_Action
                 $formData = $this->_request->getPost();
                 if ($form->isValid($formData))
                 {
-                    
+                    $videoObject = new VideoObject();
+                    if($form->getValue('VI_MP4')<>''){
+                        $srcVI_MP4O = $form->getValue('VI_MP4');
+                        $mp4 = $this->getVideoName($srcVI_MP4O);
+                        $formData['VI_MP4'] = $mp4;
+                    }
+                     if($form->getValue('VI_WEBM')<>''){
+                        $srcVI_WEBM = $form->getValue('VI_WEBM');
+                        $webm = $this->getVideoName($srcVI_WEBM);
+                        $formData['VI_WEBM'] = $webm;
+                    }
+                     if($form->getValue('VI_OGG')<>''){
+                        $srcVI_OGG = $form->getValue('VI_OGG');
+                        $ogg = $this->getVideoName($srcVI_OGG);
+                        $formData['VI_OGG'] = $ogg;
+                    }
+                    $videoID = $videoObject->insert($formData, $this->_currentEditLanguage);
+
+                    $this->mediaListVideoMaker();
+
                     $config = Zend_Registry::get('config')->toArray();
-                    
+                    if ($form->getValue('VI_Poster') <> ''){
+
+                        $srcVI_PosterO = "../../{$this->_config->document_root}/data/images/tmp/" . $form->getValue('VI_Poster');
+                        $srcVI_PosterL = "../../{$this->_config->document_root}/data/files/videos/" . $form->getValue('VI_Poster');
+                        copy($srcVI_PosterO, $srcVI_PosterL);
+                        //echo $srcVI_PosterO . " | " . $srcVI_PosterL . "<br />";
+                    }
+                    if($form->getValue('VI_MP4')<>''){
+                        $srcVI_MP4O = $form->getValue('VI_MP4');
+                        /*$srcVI_MP4O = $this->getRelativePathVideo($srcVI_MP4O);
+                        $mp4 = $this->getVideoName($srcVI_MP4O);
+                        $srcVI_MP4L = "../../{$this->_config->document_root}/data/images/videos/" . $videoID . "/" . Zend_Registry::get('languageSuffix') . "/" . $mp4;
+                        copy($srcVI_MP4O, $srcVI_MP4L);*/
+                    }
+                    if($form->getValue('VI_WEBM')){
+                        $srcVI_WEBMO = $form->getValue('VI_WEBM');
+                        /*$srcVI_WEBMO = $this->getRelativePathVideo($srcVI_WEBMO);
+                        $webm = $this->getVideoName($srcVI_WEBMO);
+                        $srcVI_WEBML = "../../{$this->_config->document_root}/data/images/videos/" . $videoID . "/" . Zend_Registry::get('languageSuffix') . "/" . $webm;
+                        copy($srcVI_WEBMO, $srcVI_WEBML);*/
+                    }
+                    if($form->getValue('VI_OGG')){
+                        $srcVI_OGGO =  $form->getValue('VI_OGG');
+                       /* $srcVI_OGGO = $this->getRelativePathVideo($srcVI_OGGO);
+                        $ogg = $this->getVideoName($srcVI_OGGO);
+                        $srcVI_OGGL = "../../{$this->_config->document_root}/data/images/videos/" . $videoID . "/" . Zend_Registry::get('languageSuffix') . "/" . $ogg;
+                        copy($srcVI_OGGO, $srcVI_OGGL); */
+
+                    }
+                    //exit;
 
                     if (isset($formData['submitSaveClose']))
                         $this->_redirect($returnUrl);
@@ -224,7 +282,37 @@ class Video_IndexController extends Cible_Controller_Categorie_Action
                     $config = Zend_Registry::get('config')->toArray();
                      //var_dump($form);
                     $config = Zend_Registry::get('config')->toArray();
-                   
+                    if ($form->getValue('VI_Poster') <> ''){
+
+                        $srcVI_PosterO = "../../{$this->_config->document_root}/data/images/tmp/" . $form->getValue('VI_Poster');
+                        $srcVI_PosterL = "../../{$this->_config->document_root}/data/files/videos/" . $form->getValue('VI_Poster');
+                        copy($srcVI_PosterO, $srcVI_PosterL);
+                        //echo $srcVI_PosterO . " | " . $srcVI_PosterL . "<br />";
+                    }
+                    if($form->getValue('VI_MP4')<>''){
+                        $srcVI_MP4O = $form->getValue('VI_MP4');
+                       /* $srcVI_MP4O = $this->getRelativePathVideo($srcVI_MP4O);
+                        $mp4 = $this->getVideoName($srcVI_MP4O);
+                        $srcVI_MP4L = "../../{$this->_config->document_root}/data/images/videos/" . $videoID . "/" . Zend_Registry::get('languageSuffix') . "/" . $mp4;
+                        copy($srcVI_MP4O, $srcVI_MP4L);*/
+                        //echo $srcVI_MP4O . " | " . $srcVI_MP4L . "<br />";
+                    }
+                    if($form->getValue('VI_WEBM')){
+                        $srcVI_WEBMO = $form->getValue('VI_WEBM');
+                       /* $srcVI_WEBMO = $this->getRelativePathVideo($srcVI_WEBMO);
+                        $webm = $this->getVideoName($srcVI_WEBMO);
+                        $srcVI_WEBML = "../../{$this->_config->document_root}/data/images/videos/" . $videoID . "/" . Zend_Registry::get('languageSuffix') . "/" . $webm;
+                        copy($srcVI_WEBMO, $srcVI_WEBML);*/
+                        //echo $srcVI_WEBMO . " | " . $srcVI_WEBML . "<br />";
+                    }
+                    if($form->getValue('VI_OGG')){
+                        $srcVI_OGGO =  $form->getValue('VI_OGG');
+                        /*$srcVI_OGGO = $this->getRelativePathVideo($srcVI_OGGO);
+                        $ogg = $this->getVideoName($srcVI_OGGO);
+                        $srcVI_OGGL = "../../{$this->_config->document_root}/data/images/videos/" . $videoID . "/" . Zend_Registry::get('languageSuffix') . "/" . $ogg;
+                        copy($srcVI_OGGO, $srcVI_OGGL); */
+                        //echo $srcVI_OGGO . " | " . $srcVI_OGGL . "<br />";
+                    }
                     if (isset($formData['submitSaveClose']))
                         $this->_redirect($returnUrl);
                     else

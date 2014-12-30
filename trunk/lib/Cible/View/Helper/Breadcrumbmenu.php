@@ -29,7 +29,7 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
                     $selectedItemMenuID = $menu[0]['MID_ID'];
                 }
             }
-        }       
+        }
 
         if (isset($options['showHomeImg']))
             $options['homeIcon'] = $this->view->image($options['showHomeImg']);
@@ -40,7 +40,6 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
         if (Zend_Registry::isRegistered('module')){
             $module = Zend_Registry::get('module');
         }
-        
         $addPageTitle = false;
         if (class_exists('CatalogCollection', 0) && $module == CatalogCollection::MODULE_NAME){
             $breadcrumb = $this->view->breadcrumbCatalog(1, $showHome, null, $options);
@@ -73,7 +72,7 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
 
             if ($addPageTitle)
                 $return .= $this->view->pageTitle()->toString(null, null, true);
-            
+
         return $linkHome . $return;
     }
 

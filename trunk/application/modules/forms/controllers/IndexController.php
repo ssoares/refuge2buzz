@@ -26,12 +26,11 @@ class Forms_IndexController extends Cible_Controller_Action {
             if (array_key_exists('submit', $formData)) {
                 if ($form->isValid($formData)) {
                     // send the mail
-                    $data = array(                        
+                    $data = array(
+                        'firstName' => $formData['prenom'],
                         'lastName' => $formData['name'],
-                        'firstName' => "",
                         'email' => $formData['email'],
                         'comments' => $formData['commentaire'],
-                        'phone' => $formData['phone'],
                         'language' => Zend_Registry::get('languageID'),
                     );
                     $options = array(
@@ -42,8 +41,7 @@ class Forms_IndexController extends Cible_Controller_Action {
                         'type' => 'email',
                         'recipient' => 'admin',
                         'data' => $data
-                    );                  
-                    
+                    );
                     if (!empty($mailTo))
                         $options['to'] = $mailTo;
 

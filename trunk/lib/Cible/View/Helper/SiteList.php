@@ -44,9 +44,7 @@ class Cible_View_Helper_SiteList extends Zend_View_Helper_Abstract
             return $siteList;
         else
         {
-            $isLoginPage = empty($this->view->user['EU_SiteAccess']);
-            $dispCurrentLogo = $isLoginPage && count($siteList) > 1;
-            if ($this->_unique > 1 || $dispCurrentLogo)
+            if ($this->_unique > 1)
                 return $select;
             else
                 return '';

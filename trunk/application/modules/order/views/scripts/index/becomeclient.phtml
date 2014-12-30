@@ -1,0 +1,70 @@
+<?php if($this->updatedName): ?>
+    <?php $this->jQuery()->onLoadCaptureStart() ?>
+
+    var currentUserElement = $('span#currentUser');
+    
+    if( currentUserElement.text() != '<?php echo $this->updatedName ?>'){
+        currentUserElement.fadeOut('slow', function(){
+            currentUserElement.text('<?php echo $this->updatedName ?>').fadeIn('slow');
+        });
+    }
+    
+    <?php $this->jQuery()->onLoadCaptureEnd() ?>
+<?php endif; ?>
+
+<?php $this->headStyle()->captureStart() ?>
+
+td.checkbox-alignment {
+    text-align: right;
+    padding: 0px 5px;
+}
+
+<?php $this->headStyle()->captureEnd();
+
+?>
+
+<?php if($this->mode == 'add'): ?>
+    <div class="block">
+        <?php echo($this->getClientText('quoteRequest_account_introduction_text')); ?>
+    </div>    
+<?php endif; ?>
+
+<div class="block form">
+    <?php if($this->messages): ?>
+        <div class="messages success">
+            <ul>
+                <?php foreach($this->messages as $msg): ?>
+                    <li><?php echo $msg ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+    <input id="selectedState" name="selectedState" type="hidden" value="<?php echo($this->selectedState); ?>"/>
+    
+    <?php if(!$this->accountValidate): ?>
+        <p>
+        <?php echo $this->getClientText('cart_need_confirm_email_text');?>
+        <?php echo($this->link($this->baseUrl() . '/' . Cible_FunctionsCategories::getPagePerCategoryView(0,'return_confirm_email',1002), $this->getClientText('return_email_confirmation'))); ?>
+        </p>
+    <?php endif;?>
+    <?php  echo $this->form; ?>
+    
+    <?php if( $this->agreementError ): ?>
+        
+        <?php $this->jQuery()->onLoadCaptureStart() ?>
+            var divTermsAgreement = '<div class="errors" style="margin-top:2px; margin-left:5px; font-size: 11px;"><?php echo $this->getClientText('terms_agreement_error_message') ?></div>';
+            $('dd#dd-terms-agreement').append(divTermsAgreement);
+        <?php $this->jQuery()->onLoadCaptureEnd() ?>
+        
+    <?php endif; ?>
+    
+    <!--<div class="required-field-message" style="margin-top: 25px;"><span class="field_required">*</span>  <?php echo $this->getCibleText('form_field_required_label') ?></div>-->
+    
+</div>
+<div class="block">
+    <?php if( $this->return ): ?>
+        <div id="last-search-result-link">
+            <?php echo $this->link("{$this->baseUrl()}/{$this->return}", $this->getClientText("quoteRequest_return_to_previous_page")); ?>
+        </div>
+    <?php endif; ?>
+</div>

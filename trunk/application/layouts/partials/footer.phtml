@@ -3,52 +3,46 @@ $section = $this->section;
 $lang = $this->view->languageId;
 $baseUrl = Zend_Registry::get('web_root');
 $config = Zend_Registry::get('config');
-$edith_logo = $this->link('#', $this->clientImage('logo.png', array('alt' => "Edith", 'title' => "Edith", 'class' => 'site-footer-logo-image'), array('class' => 'site-footer-logo')));
+$edith_logo = $this->link('#', $this->clientImage('logo.png', array('alt' => "Edith", 'title' => "Edith")));
 $array_replace = array('<p>' => '', '<P>' => '', '</p>' => '', '</P>' => '',
     '%%%GET_DATE_YEAR%%%' => date('Y'),
     '%%%SITE_NAME%%%' => $config->site->title->$lang);
 $copyrightText = $this->getClientText('footer_copyright', null, $array_replace);
-
-$imageFirstALT = "";
-if (Zend_Registry::isRegistered('altImageFirst')) {
-    $imageFirstALT = Zend_Registry::get('altImageFirst');
-}
-if ($imageFirstALT == "") {
-    if (Zend_Registry::isRegistered('pageTitle')) {
-        $imageFirstALT = Zend_Registry::get('pageTitle');
-    } else if ($imgAlt != "") {
-        $imageFirstALT = $imgAlt;
-    } else {
-        $imageFirstALT = $config->site->title->$lang;
-    }
-}
 ?>
 <div class="site-footer-top">
-    <div class="site-footer-top-container container">
-        <div class="site-footer-logo col-md-4">
-            <?php
-            $homeDetails = Cible_FunctionsPages::getHomePageDetails();
-            $logo = $config->clientLogo->src;
-            echo $this->link(
-                    $this->baseUrl() . '/' . $homeDetails['PI_PageIndex'], $this->clientImage($logo, array('alt' => $imageFirstALT, 'class' => '')), array('title' => $imageFirstALT, 'class' => 'site-footer-logo-image')
-            );
-            ?>
+    <div class="site-footer-top-container container content">
+        <?php echo $this->getClientText('footer_nous_joindre_button') ?>
+    </div>
+</div>
+<div class="site-footer-middle">
+    <div class="site-footer-middle-container container">
+        <div class="site-footer-infos col-md-2">
+            <?php echo $this->menu('footer', array('parentIdAlt' => 'footer1ParentId', 'class' => 'site-footer-menu')) ?>
         </div>
-        <div class="site-footer-facebook col-md-4">
-            <?php echo $this->getClientText('footer_facebook') ?>
-        </div>
-        <div class="site-footer-collab col-md-4">
-            <h3 class="title-footer"><?php echo $this->getClientText('footer_title_collab') ?></h3>
-            <?php echo $this->getClientText('footer_collab') ?>
+        <nav class="site-footer-menu-wrapper col-md-4">
+            <h2><?php echo $this->getClientText('footer_newsletter_title') ?></h2>
+            <?php echo $this->action("formsnewsletterfooter", "index", "forms"); ?>
+        </nav>
+        <div class="site-footer-address col-md-6 content">
+            <?php echo $this->getClientText('footer_address') ?>
         </div>
     </div>
 </div>
 <div class="site-footer-bottom">
     <div class="site-footer-bottom-container container">
-        <span class="site-footer-copyright-text">
-            <?php echo $copyrightText; ?>
-        </span>
-        <?php echo $this->menu('footer', array('parentIdAlt' => 'footer1ParentId', 'class' => 'site-footer-menu')) ?>
+        <div class='site-footer-copyright col-md-6'>
+            <?php echo $edith_logo; ?>
+            <span class="site-footer-copyright-text">
+                <?php echo $copyrightText; ?>
+            </span>
+            <?php echo $this->menu('copyright', array('parentIdAlt' => 'footer3ParentId', 'class' => 'site-footer-copyright-menu')) ?>
+        </div>
+        <div class='site-footer-realisation col-md-2'>
+            <?php echo strip_tags($this->getClientText('footer_cible_realisation'), '<span>,<a>,<br>') ?>
+        </div>
+        <nav class="site-footer-reseaux col-md-4">
+            <?php echo $this->menu('reseaux', array('parentIdAlt' => 'footer2ParentId', 'class' => 'site-footer-reseaux-menu')) ?>
+        </nav>
     </div>
 </div>
 <?php
@@ -100,21 +94,16 @@ if ($config->searchbox->embeded)
         $('[type=checkbox], [type=radio]').each(function() {
             $(this).prettyCheckable();
         });
+        $('.google-map').cibleGoogleMaps({icon: "<?php echo $this->locateFile('map-icon.png'); ?>"});
         //script qui permet de rajouter des data-toggle sur des éléments html
-        var options = {'eventsMap': [
-                {'name': 'open', 'events': 'click', 'className': 'open', 'typeName': 'toggle', 'touch': true},
-                {'name': 'modal', 'events': 'click', 'className': 'modal', 'typeName': 'modal', 'touch': true},
-                {'name': 'collapse', 'events': 'click', 'className': 'collapse', 'typeName': 'collapse', 'touch': true},
-                {'name': 'scroll', 'events': 'click', 'className': 'scroll', 'typeName': 'scroll', 'touch': true}
-            ]};
-//        $('html').cibletoggle(options);
+        var options = [
+            {'name': 'open', 'events': 'click', 'className': 'open', 'typeName': 'toggle', 'touch': true}
+        ];
+        $('html').cibletoggle(options);
         $('[type=number],[data-input-number]').inputNumber();
         $('[type=number],[data-input-number]').live('cible.creation', function() {
             $(this).inputNumber()
         })
-        $('.site-parallax').scrolly();
-        //ralentir la transition du collapse de bootstrap
-        $.fn.collapse.Constructor.TRANSITION_DURATION = 750;
         //ajoute une classe empty lorsqu'un champ est vide
         setInterval(function() {
             $('input[type=text], textarea').each(function() {
@@ -122,20 +111,5 @@ if ($config->searchbox->embeded)
                 $this.toggleClass('empty', ($this.val() == ""));
             });
         }, 100);
-        //check le scroll
-        $(window).scroll(function() {
-            var $header = $('.site-header');
-            var pos = $(window).scrollTop();
-            var h = $header.outerHeight();
-            $header.toggleClass('clinched', (pos > h));
-        }).scroll();
-        //check le resize
-        $(window).resize(function() {
-//            var $header = $('.site-header');
-//            var $main = $('.site-main');
-//            if($('body').is(':not(.home)')) {
-//                $main.css('margin-top',$header.height());
-//            }
-        }).resize();
     });
 </script>

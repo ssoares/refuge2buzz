@@ -54,7 +54,7 @@ abstract class Cible_FunctionsIndexation
         $text = Cible_FunctionsGeneral::html2text($indexationData['text']);
         $contentText = Cible_FunctionsGeneral::html2text(html_entity_decode($indexationData['contents'], null, 'UTF-8'));
         $content = mb_strtolower(Cible_FunctionsGeneral::removeAccents($contentText));
-        Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num());
+        Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
         $doc = new Zend_Search_Lucene_Document();
         $doc->addField(Zend_Search_Lucene_Field::Keyword('pageID', $indexationData['pageID']));
         if (isset($indexationData['object']))
@@ -200,6 +200,7 @@ abstract class Cible_FunctionsIndexation
         $result = array();
         try
         {
+            Zend_Search_Lucene_Analysis_Analyzer::setDefault(new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive());
             $index = new Zend_Search_Lucene($directory);
             $hits = $index->find($query);
             foreach ($hits as $hit)
