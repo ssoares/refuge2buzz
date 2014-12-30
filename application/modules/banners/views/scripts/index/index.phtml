@@ -1,8 +1,6 @@
-
 <?php
 $random = rand(1, 100000000);
-if ($this->imageToShow):
-    ?>
+if ($this->imageToShow):?>
     <section class="banners index module">
         <?php
         echo $this->showBlockTitle('h2', array('class' => 'banners-title'));
@@ -17,23 +15,22 @@ if ($this->imageToShow):
                 <div class="banners-slide banners-slide-<?php echo $image['color']; ?>">
                     <?php
                     $content = '';
+                    if (!empty($image['img']))
+                        $content .= $this->image($image['img'], array('alt' => $alt, 'class' => 'banners-image', 'direct' => true));
                     if (!empty($image['text']))
                         $content .= '<div class="banners-container container"><div class="banners-content content">' . $image['text'] . '</div></div>';
-                    if ($this->navi)
-                        $content .= '<div class="cycle-pager banners-nav"></div>';
-                    if (!empty($image['img'])){
-                        $img = $this->image($image['img'], array('alt' => $alt, 'class' => 'banners-image', 'direct' => true));
-                        if (!empty($image['url'])){
-                            $content .= $this->link($image['url'], $img, array("class" => "banners-link popup-youtube"));
-                        }else{
-                            $content .= $img;
-                        }
-                    }
-                    if (empty($image['url'])){
+                    if (!empty($image['url']))
+                        $content = $this->link($image['url'], $content, array("class" => "banners-link"));
+                    else
                         $content = '<div class="banners-nolink">' . $content . '</div>';
-                    }
+
                     echo $content;
                     ?>
+                    <?php if ($this->navi): ?>
+                        <div class="banners-prev leftCycle-<?php echo $random; ?>">prev</div>
+                        <div class="banners-next rightCycle-<?php echo $random; ?>">next</div>
+                        <div class="cycle-pager banners-nav"></div>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -53,14 +50,12 @@ if ($this->imageToShow):
     </section>
 <?php endif; ?>
 <?php $this->placeholder('footerScript')->captureStart(); ?>
-
 <script type="text/javascript">
 //<![CDATA[
     $(window).load(function() {
         var $slideshow = $('#slideshow-<?php echo $random; ?>');
         $slideshow.cycle({
-        autoHeight:'calc',
-                fx: "<?php echo $this->effect ?>",
+        fx: "<?php echo $this->effect ?>",
 <?php if ($this->navi) : ?>
             prev : '.leftCycle-<?php echo $random; ?>',
                     next : '.rightCycle-<?php echo $random; ?>',
@@ -71,17 +66,10 @@ if ($this->imageToShow):
                 timeout : <?php echo ($this->autoPlay) ? $this->transition : 0 ?>,
                 //manualTrump:false,
                 log: false
+    }).on('cycle-before',function(){
+        ie8BeforeAfterFix('.icon:after,.icon:before,.banners-prev:after,.banners-next:after');
     });
     }).resize();
-    $('.popup-youtube').magnificPopup({
-          disableOn: 700,
-          type: 'iframe',
-          mainClass: 'mfp-fade',
-          removalDelay: 160,
-          preloader: false,
-
-          fixedContentPos: false
-        });
 //]]>
 </script>
 <?php $this->placeholder('footerScript')->captureEnd(); ?>

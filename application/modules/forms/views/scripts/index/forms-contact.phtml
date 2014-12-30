@@ -2,11 +2,17 @@
 <section class="forms module forms-contact content">    
     <?php
     $inscriptionValidate = $this->inscriptionValidate;
-    echo $this->showBlockTitle('h2', array('class' => 'forms-title content-h1-style super-margin-bottom'));
+    if ($this->showTitle) {
+        echo $this->showBlockTitle('h2', array('class' => 'forms-title'));
+    } else {
+        echo $this->showBlockTitle('h1', array('class' => 'forms-title'));
+    }
+
 
     if (!$inscriptionValidate) {
+        
         echo($this->form);
-        echo "<div class='champs-obligatoires'>".$this->getClientText('champs_obligatoires')."</div>";
+        
     } else {
         ?>
         <p class="forms-contact-succeed">
@@ -16,16 +22,30 @@
         </p>
     <?php }
     ?>
-    <div class="clear"></div>
+        <div class="clear"></div>
 </section>
-<script>
-    (function() {
-        var submit = $('.forms-contact').find('.form-div-submit');
-        var captcha = $('.forms-contact').find('.form-captcha-div')
-        captcha.append(submit);
-        $(window).resize(function(){
-            $('.forms-contact').height($('.captcha-fieldset').height());
-        })
-    })();
-</script>
+
+
+<section class="forms module forms-contact">    
+    <?php
+    $inscriptionValidate = $this->inscriptionValidate;
+        echo $this->showBlockTitle('h2', array('class' => 'forms-title'));
+
+    if (!$inscriptionValidate) {
+
+        echo($this->form);
+
+    } else {
+        ?>
+        <p class="forms-contact-succeed">
+            <?php
+            echo($this->getClientText('form_contact_sent_tank_you_message'));
+            ?>
+        </p>
+    <?php }
+    ?>
+        <div class="clear"></div>
+        <div class="required-field notice-required-field"><?php echo $this->getClientText('notice_champs_obligatoire');?></div>
+</section>
+
 

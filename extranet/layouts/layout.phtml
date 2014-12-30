@@ -186,8 +186,8 @@
         <!--[if IE 7]>
             <link rel="stylesheet" type="text/css" href="<?php echo $this->baseUrl(); ?>/themes/default/css/site-ie7.css" media="all">
         <![endif]-->
-        <!--<link rel="stylesheet" type="text/css" media="screen" href="<?php // echo $this->locateFile('integration.css', null, 'front', 'default'); ?>" />-->
-        <link rel="stylesheet" type="text/css" media="screen" href="<?php echo $this->locateFile('integration.css', null, 'front', $this->currentSite); ?>" />
+        <!--<link rel="stylesheet" type="text/css" media="screen" href="<?php echo $this->locateFile('integration.css', null, 'front', 'default'); ?>" />-->
+        <link rel="stylesheet" type="text/css" media="screen" href="<?php // echo $this->locateFile('integration.css', null, 'front', $this->currentSite); ?>" />
         <link rel="stylesheet" type="text/css" media="print" href="<?php echo $this->locateFile('print.css'); ?>" />
         <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="<?php echo (Zend_Registry::get('www_root')) ?>favicon.ico" />
     </head>
@@ -207,7 +207,7 @@
                                 'alt' => $config->clientLogoAlt,
                             ));
                         else
-                        echo $this->image($this->locateFile($config->clientLogo->src), array(
+                        echo $this->image($this->locateFile($config->clientLogo->src, null, 'front', $this->currentSite), array(
                             'height' => $config->clientLogo->height,
 //                            'width' => $config->clientLogo->width,
                             'alt' => $config->clientLogoAlt,

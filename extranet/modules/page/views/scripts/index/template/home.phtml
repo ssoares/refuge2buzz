@@ -3,23 +3,39 @@
 $ph1_blocks = isset($this->blocks[1]) ? $this->blocks[1] : array();
 $ph2_blocks = isset($this->blocks[2]) ? $this->blocks[2] : array();
 $ph3_blocks = isset($this->blocks[3]) ? $this->blocks[3] : array();
+$ph4_blocks = isset($this->blocks[4]) ? $this->blocks[4] : array();
+$ph5_blocks = isset($this->blocks[5]) ? $this->blocks[5] : array();
+$ph6_blocks = isset($this->blocks[6]) ? $this->blocks[6] : array();
+$ph7_blocks = isset($this->blocks[7]) ? $this->blocks[7] : array();
 $controller = 'index';
 ?>
 <div id="template" style="width: 958px">
-    <div style="clear: both; width: 97%; margin: 1%;" class="zone1">
-        <!-- Placeholder 1 = special banners -->
+    <div style="clear: both; width: 97%; margin: 1%;" class="zone7">
+        <!-- Placeholder 7 = special banners -->
         <?php
         $options = array(
-            'zoneId' => 1,
-            'rows' => $ph1_blocks,
+            'zoneId' => 7,
+            'rows' => $ph7_blocks,
             'controller' => $controller,
             'isActive' => false
         );
         ?>
         <?php echo $this->zonesTemplate($options); ?>
     </div>
-    <div style="clear: both; width: 97%; margin: 1%;" class="zone2">
-        <!-- Placeholder 2 -->
+    <div style="clear: both; width: 97%; margin: 1%;" class="zone1">
+        <!-- Placeholder 1 -->
+        <?php
+        $options = array(
+            'zoneId' => 1,
+            'rows' => $ph1_blocks,
+            'controller' => $controller,
+            'isActive' => true
+        );
+        ?>
+        <?php echo $this->zonesTemplate($options); ?>
+    </div>
+    <div style="width: 45%; margin: 1%;float: left;" class="zone2">
+        <!-- Placeholder 2 = special banners -->
         <?php
         $options = array(
             'zoneId' => 2,
@@ -30,7 +46,7 @@ $controller = 'index';
         ?>
         <?php echo $this->zonesTemplate($options); ?>
     </div>
-    <div style="width: 97%; margin: 1%;float: left;" class="zone3 blackZone">
+    <div style="width: 45%; margin: 1%;float: left;" class="zone3">
         <!-- Placeholder 3 = special banners -->
         <?php
         $options = array(
@@ -41,5 +57,42 @@ $controller = 'index';
         );
         ?>
         <?php echo $this->zonesTemplate($options); ?>
-    </div>    
+    </div>
+    <div style="clear: both; width: 97%; margin: 1%;" class="zone4">
+        <!-- Placeholder 4 = special banners -->
+        <?php
+        $options = array(
+            'zoneId' => 4,
+            'rows' => $ph4_blocks,
+            'controller' => $controller,
+            'isActive' => true
+        );
+        ?>
+        <?php echo $this->zonesTemplate($options); ?>
+    </div>
+    <div style="clear: both; width: 97%; margin: 1%;" class="zone5">
+        <!-- Placeholder 5 = special banners -->
+        <?php
+        $options = array(
+            'zoneId' => 5,
+            'rows' => $ph5_blocks,
+            'controller' => $controller,
+            'isActive' => true
+        );
+        ?>
+        <?php echo $this->zonesTemplate($options); ?>
+    </div>
+    <div style="clear: both; width: 97%; margin: 1%;" class="zone6">
+        <!-- Placeholder 6 = special banners -->
+        <?php
+        $options = array(
+            'zoneId' => 6,
+            'rows' => $ph6_blocks,
+            'controller' => $controller,
+            'isActive' => true
+        );
+        ?>
+        <?php echo $this->zonesTemplate($options); ?>
+    </div>
+    <hr style="clear: both;margin:0;padding: 0;visibility: hidden;width: 100%" />
 </div>

@@ -125,6 +125,11 @@ class FormImageslibrary extends Cible_Form
 
             $this->addElement($sequence);
             
+            $video = new Zend_Form_Element_Text('IL_Video');
+            $video->setLabel($this->getView()->getCibleText('form_label_IL_Video'));
+            $video->setAttrib('class', 'largeTextInput');
+            $this->addElement($video);            
+            
             $left = array(
                 'IL_ID',
                 'isNewImage',
@@ -202,9 +207,9 @@ class FormImageslibrary extends Cible_Form
 
                 $this->addElement($label2);
                 array_push($right, 'ILI_Label2_' . $lang['L_ID']);
+
             }
             
-            /*
             foreach ($languages as $lang){
                 $labelCSS = 'formLabelLanguageCssColor_' . $lang['L_ID'];
                 $link = new Zend_Form_Element_Text('ILI_Link_' . $lang['L_ID']);
@@ -236,7 +241,8 @@ class FormImageslibrary extends Cible_Form
 
                 $this->addElement($link);
                 array_push($right, 'ILI_Link_' . $lang['L_ID']);
-            }*/
+
+            }
 
             foreach ($languages as $lang)
             {
@@ -325,4 +331,5 @@ class FormImageslibrary extends Cible_Form
             $this->getDisplayGroup('groupRight')->removeDecorator('DtDdWrapper');
         }
     }
+
 }

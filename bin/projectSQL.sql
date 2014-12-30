@@ -43,3 +43,37 @@ INSERT INTO `NewsletterFilter_ProfilesFields` (`NFPF_ProfileTableID`, `NFPF_Type
 ('2', 'int', 'NP_TypeID'),
 ('2', 'qrystr', 'NP_SubscriptionDate');
 -- Fin C28
+
+CREATE TABLE `cible_admin`.`Extranet_UsersSites` (
+  `EUS_UserId` INT(11) NOT NULL,
+  `EU_DefaultSite` VARCHAR(45) NOT NULL,
+  `EU_SiteAccess` VARCHAR(255) NULL,
+  PRIMARY KEY (`EUS_UserId`, `EU_DefaultSite`));
+
+-- Pour ajouter manuellement les accès admin à un site.
+-- Pour les multisite, mettre la liste des site séparés par un |.
+REPLACE INTO `cible_admin`.`Extranet_UsersSites` (`EUS_UserId`, `EU_DefaultSite`, `EU_SiteAccess`) VALUES
+(1, '##DEFAULT##', '##LIST|SITES##'),
+(19, '##DEFAULT##', '##LIST|SITES##'),
+(20, '##DEFAULT##', '##LIST|SITES##'),
+(22, '##DEFAULT##', '##LIST|SITES##'),
+(24, '##DEFAULT##', '##LIST|SITES##'),
+(25, '##DEFAULT##', '##LIST|SITES##'),
+(26, '##DEFAULT##', '##LIST|SITES##'),
+(27, '##DEFAULT##', '##LIST|SITES##')
+;
+
+DELETE FROM `Extranet_Users` WHERE `EU_ID`='19';
+DELETE FROM `Extranet_Users` WHERE `EU_ID`='20';
+DELETE FROM `Extranet_Users` WHERE `EU_ID`='22';
+DELETE FROM `Extranet_Users` WHERE `EU_ID`='24';
+DELETE FROM `Extranet_Users` WHERE `EU_ID`='25';
+DELETE FROM `Extranet_Users` WHERE `EU_ID`='26';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='11' and`EUG_GroupID`='1';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='19' and`EUG_GroupID`='2';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='20' and`EUG_GroupID`='1';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='22' and`EUG_GroupID`='1';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='23' and`EUG_GroupID`='1';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='24' and`EUG_GroupID`='2';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='25' and`EUG_GroupID`='1';
+DELETE FROM `Extranet_UsersGroups` WHERE `EUG_UserID`='26' and`EUG_GroupID`='1';

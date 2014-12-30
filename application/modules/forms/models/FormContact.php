@@ -32,38 +32,22 @@ EOS;
 
 EOS;
 
-        
+        $this->getView()->headScript()->appendScript($script2);
+        // last name
+        $surname = new Zend_Form_Element_Text('surname');
+        $surname
+                //->setLabel($this->getView()->getCibleText('forms_label_name'))
+                ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_surname'))
+        ->setAttrib('class', 'forms-input-lastname forms-input-text required-field')
+        ;
+
         // first name
         $name = new Zend_Form_Element_Text('name');
         $name
                 //->setLabel($this->getView()->getCibleText('forms_label_name'))
-                ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_field_required'))))
                 ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_name'))
-                ->setRequired(true)
-        ->setAttrib('class', 'forms-input-firstname forms-input-text required-field')
-        ;
-        
-        // first name
-        $entreprise = new Zend_Form_Element_Text('entreprise');
-        $entreprise
-                //->setLabel($this->getView()->getCibleText('forms_label_name'))
-                ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_field_required'))))
-                ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_entreprise'))
-                ->setRequired(true)
-        ->setAttrib('class', 'forms-input-firstname forms-input-text required-field')
-        ;
-        
-        
-        // first name
-        $phone = new Zend_Form_Element_Text('phone');
-        $phone
-                //->setLabel($this->getView()->getCibleText('forms_label_name'))
-                ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_phone'))
         ->setAttrib('class', 'forms-input-firstname forms-input-text')
         ;
-        
-        
-        
         //email
         $email = new Zend_Form_Element_Text('email');
         $email
@@ -80,56 +64,38 @@ EOS;
         $commentaire
                 //->setLabel($this->getView()->getCibleText('form_label_comments'))
                 ->setRequired(false)
-                ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_field_required'))))
                 ->addFilter('StripTags')
                 ->addFilter('StringTrim')
                 ->setAttrib('rows', 10)
-                ->setRequired(true)
                 ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_comments'))
         ->setAttrib('class', 'stdTextarea required-field')
         ;
 
+        $this->addElement($surname);
         $this->addElement($name);
-        $this->addElement($entreprise);
         $this->addElement($email);
-        $this->addElement($phone);
         $this->addElement($commentaire);
 
-         // Captcha
-        $script = <<< EOT
-            function refreshCaptcha(id){
-            $.getJSON('{$this->_view->baseUrl()}/default/index/captcha-reload',
-                function(data){
-                    $(".form-captcha-div img").attr({src : data['url']});
-                    $("#"+id).attr({value: data['id']});
-            });
-        }
-            
-EOT;
-        $this->getView()->formAddCaptcha($this, array(
-            'script' => $script,        
-        ));
-
+        // Captcha
+        $this->getView()->formAddCaptcha($this);
         // Submit button
         $submit = new Zend_Form_Element_Submit('submit');
-        $submit
-                ->setLabel($this->getView()->getCibleText('button_submit'))
-                ->setAttrib('class', '')
-                ->removeDecorator('DtDdWrapper');
-        $submit->addDecorators(array(
-            array(array('row' => 'HtmlTag'), array('tag' => 'dd', 'openOnly' => true, 'class' => 'formSubmit'))
-        ));
+        $submit->setLabel($this->getView()->getCibleText('button_submit'))
+                ->setAttrib('class', 'link-button')
+        //->setAttrib('class', 'grayish-button')
+        ;
 
-        $this->addElement($submit);        
-      
+        $this->addElement($submit);       
+        
+        $this->addDisplayGroup(array('refresh_captcha','captcha', 'submit'), 'captcha-fieldset');
 
         //$mobile = Zend_Registry::get('isMobile');
         $this->formatDivDecorators();
     }
 
-    public function formatDivDecorators($options = null) {
+    public function formatDivDecorators() {
         parent::formatDivDecorators();
-       
+
         $this->getElement('captcha')
                 ->removeDecorator('ViewHelper')
                 ->addDecorators(array(
@@ -146,17 +112,17 @@ EOT;
                 ))
         ;
         $this->getElement('submit')
+                ->removeDecorator('DtDdWrapper')
                 ->addDecorators(array(
                     array('HtmlTag', array('class' => 'form-div form-div-submit'))
                 ))
         ;
-        $this->addDisplayGroup(array('commentaire', 'captcha', 'refresh_captcha', 'submit'), 'right-fieldset');
-        $captchaFieldset = $this->getDisplayGroup('right-fieldset');
+        $captchaFieldset = $this->getDisplayGroup('captcha-fieldset');
         $captchaFieldset->setDecorators(array(
             'FormElements',
             array(
                 array('fieldset' => 'HtmlTag'),
-                array('tag' => 'div', 'class' => 'captcha-fieldset')
+                array('tag' => 'fieldset', 'class' => 'captcha-fieldset')
             )))
                 ;
     }

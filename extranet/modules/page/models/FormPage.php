@@ -242,12 +242,6 @@ class FormPage extends Cible_Form_Block_Multilingual
             ->setAttrib('class','stdTextInput');
         $lblImage= $altImage->getDecorator('Label');
         $lblImage->setOption('class', $this->_labelCSS);
-        
-        $PI_TitleImage2 = new Zend_Form_Element_Text('PI_TitleImage2');
-        $PI_TitleImage2->setLabel($this->getView()->getCibleText('label_PI_TitleImage2'))
-            ->setAttrib('class','stdTextInput');
-        $lblImage2= $PI_TitleImage2->getDecorator('Label');
-        $lblImage2->setOption('class', $this->_labelCSS);
 
 
         // input text for the title of the page
@@ -322,7 +316,6 @@ class FormPage extends Cible_Form_Block_Multilingual
             $imageSrc,
             $imageBackSrc,
             $altImage,
-            $PI_TitleImage2,
             $metaTitle,
             $canonical,
             $metaDescription,

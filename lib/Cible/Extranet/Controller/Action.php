@@ -381,11 +381,8 @@ abstract class Cible_Extranet_Controller_Action extends Cible_Controller_Action
      * @return void
      */
     protected function _setImage($source, $newData, $recordID)
-    {        
-       
+    {
         $config = Zend_Registry::get('config')->toArray();
-        
-        
         $dimensions = $config[$this->_moduleTitle][$this->_imgIndex];
 
         if ($this->_editMode)
@@ -397,14 +394,10 @@ abstract class Cible_Extranet_Controller_Action extends Cible_Controller_Action
         else
             $srcImg = $this->_imagesFolder . "tmp/";
 
-       
         foreach ($dimensions as $size => $dims)
         {
             $tmpSrc = $srcImg . "{$size}_" . $newData[$source];
-           
             copy($srcImg . $newData[$source], $tmpSrc);
-            
-          
 
             $maxWidth = $dims['maxWidth'];
             $maxHeight = $dims['maxHeight'];

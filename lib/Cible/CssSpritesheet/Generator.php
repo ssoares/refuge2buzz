@@ -125,8 +125,8 @@ class Cible_CssSpritesheet_Generator extends Cible_CssSpritesheet {
         //initialise le fichier css
         $cssPath = $this->_findRelativePath(self::$_outputCSS, self::$_outputImage);
         $cssContent = ".sprite {display:inline-block;overflow:hidden;background-repeat:no-repeat;font-size:0;background-image:url({$cssPath}) }\n\n";
-//        if ($isLess)
-//            $cssMixinsContent = ".import-sprite(@name) when (default()) {}\n";
+        if ($isLess)
+            $cssMixinsContent = ".import-sprite(@name) when (default()) {}\n";
 
         //initialise l'image
         $im = imagecreatetruecolor($this->_fileWidth, $this->_fileHeight);

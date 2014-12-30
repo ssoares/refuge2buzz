@@ -125,7 +125,6 @@ class AuthController extends Cible_Extranet_Controller_Action
                         case Zend_Auth_Result::FAILURE_IDENTITY_NOT_FOUND:
                         case Zend_Auth_Result::FAILURE_IDENTITY_AMBIGUOUS:
                             $this->_db = $dbs->getDb('admins');
-                            $this->_db->query('SET NAMES utf8');
                             // Setup adapter
                             $adapter = new Cible_Auth_Adapter_DbTable($this->_db, 'Extranet_Users', 'EU_Username', 'EU_Password', 'MD5(?)');
                             $adapter->setIdentity($_POST['username'])

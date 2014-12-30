@@ -1,5 +1,5 @@
 //permet de coloriser les sélections dans l'élément courant
-.selection(@color:red;@background:yellow)  {
+.selection(@color:red;@background:yellow) when (default()) {
     ::selection {
         color:@color;
         background:@background;

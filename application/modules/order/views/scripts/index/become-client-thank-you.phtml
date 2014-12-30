@@ -1,0 +1,10 @@
+<div class="block">
+    <div class="title"><?php echo $this->getClientText('become_member_thank_you'); ?></div>
+</div>
+<div class="block">
+    <?php if( $this->return ): ?>
+        <div id="last-search-result-link">
+            <?php echo $this->getClientText("confirmation_email_thank_you"); ?>
+        </div>
+    <?php endif; ?>
+</div>

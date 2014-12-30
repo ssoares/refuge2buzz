@@ -40,7 +40,7 @@ class Banners_IndexController extends Cible_Controller_Action {
         $this->view->headLink()->offsetSetStylesheet($this->_moduleID, $this->view->locateFile('banners.css'), 'all');
         $this->view->headLink()->appendStylesheet($this->view->locateFile('banners.css'), 'all');
 
-      
+        $this->_rootVideoPath = $this->_filesFolder . "videos/";
 
         $this->view->cleaction = $this->_name;
         $this->_imgIndex = 'imagefeat';
@@ -87,9 +87,6 @@ class Banners_IndexController extends Cible_Controller_Action {
                 case("flipVert"):
                     $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.flip.min.js', 'jquery'));
                     break;
-                case("fade"):
-                    //$this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.ie-fade.js', 'jquery'));
-                    break;
                 default:
                     break;
             }
@@ -115,8 +112,6 @@ class Banners_IndexController extends Cible_Controller_Action {
      * @return void
      */
     public function featuredAction() {
-        
-       
         $this->_addSubFolder = true;
         $this->_currentAction = 'featured';
         parent::init();
@@ -134,11 +129,14 @@ class Banners_IndexController extends Cible_Controller_Action {
             $transition = 0;
             $navi = 0;
             $effect = 0;
-            $bannerId = 1;
 
             foreach ($params as $param) {
                 $blockParams[$param['P_Number']] = $param['P_Value'];
             }
+
+//            $videos = new VideoObject();
+//            $listVideo = array();
+//            $listVideo = $videos->getVideosList();
 
             $groupId = str_replace('_f', '', $blockParams[1]);
             $this->view->autoPlay = $blockParams[2];
@@ -151,14 +149,20 @@ class Banners_IndexController extends Cible_Controller_Action {
             $oImageFeat = new BannerFeaturedImageObject();
 
             $banner = $oBannerFeat->populate($groupId, $langId);
-            $imgBanner = $oImageFeat->getData($langId, $bannerId, false);
+            $imgBanner = $oImageFeat->getData($langId, $groupId);
 
             $config = Zend_Registry::get('config');
             $cfgBanner = $config->banners->imagefeat->toArray();
 
             $this->view->imgCfg = $cfgBanner;
             $this->view->imgFeat = $imgBanner;
-            $this->view->imgPath = $this->_rootImgPath;          
+            $this->view->imgPath = $this->_rootImgPath . $groupId . '/';
+
+            $this->view->videoPath = $this->_rootVideoPath;
+
+
+
+            //$this->view->listVideos = $listVideo;
         }
     }
 

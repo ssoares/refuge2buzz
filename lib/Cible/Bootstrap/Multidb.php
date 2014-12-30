@@ -33,7 +33,6 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
     protected $_importsList = array();
 
     public function run() {
-
         try {
             $this->bootstrap('FrontController');
             $front = $this->getResource('FrontController');
@@ -52,9 +51,7 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
                 $router->addRoute('rss', $route);
             }
 
-
             $front->dispatch();
-
         } catch (Exception $e) {
             echo 'An error has occured.' . PHP_EOL;
             echo "<pre>";
@@ -95,9 +92,7 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
     }
 
     protected function _initConfig() {
-        // Load the c onfig files with parameters form the front-office and back-office.
-
-
+        // Load the config files with parameters form the front-office and back-office.
 
         try {
             $imgCfg = new Zend_Config_Ini($this->_applicationPath . "config.ini", 'Image-' . $this->session->currentSite, true);
@@ -110,7 +105,6 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
         $config = new Zend_Config($this->getOptions(), true);
         $config->merge($imgCfg);
         $config->merge($cfg);
-        $config->readOnly();
 
         Zend_Registry::set('config', $config);
 

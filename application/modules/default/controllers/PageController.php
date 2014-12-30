@@ -14,7 +14,7 @@
  * @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
  * @copyright  2009 CIBLE Solutions d'Affaires
  * @license    http://www.ciblesolutions.com
- * @version    $Id: PageController.php 1720 2014-11-04 14:51:02Z ldrapeau $
+ * @version    $Id: PageController.php 1741 2014-12-10 18:05:21Z ssoares $
  */
 class PageController extends Cible_Controller_Action {
 
@@ -28,7 +28,7 @@ class PageController extends Cible_Controller_Action {
      * @return a string containing xml sitemap
      */
     public function siteMapAction() {
-        
+
     }
 
     public function indexAction() {
@@ -71,7 +71,7 @@ class PageController extends Cible_Controller_Action {
             $theme = $this->_config->site->defaultTheme;
         Zend_Registry::set('currentTheme', $theme);
         $this->view->assign('currentTheme', $theme);
-        $this->view->assign('themeClass', str_replace('/', '-', $theme));
+        $this->view->assign('themeClass', str_replace('/','-', $theme));
         if (!Zend_Registry::isRegistered('selectedItemMenuLevel'))
             Zend_Registry::set('selectedItemMenuLevel', 0);
         Zend_Registry::set('config', $this->_config);
@@ -97,14 +97,15 @@ class PageController extends Cible_Controller_Action {
         $this->view->assign('imgBackHeader', $pageBackground);
 
         //condition ajouté pour avoir une image vide
-
-        $pageHeader = rtrim($this->_rootImgPath, '/') . Cible_FunctionsPages::getPageImage($Row, 'header', 'default.jpg', false);
-        $this->view->assign('imgHeader', $pageHeader);
-
+        if ($Row['PI_TitleImageSrc']) {
+            $pageHeader = rtrim($this->_rootImgPath, '/') . Cible_FunctionsPages::getPageImage($Row, 'header', 'default.jpg', false);
+            $this->view->assign('imgHeader', $pageHeader);
+        }
+        else
+            $this->view->assign('imgHeader', "");
 
         //Whatever text that goes in the banners in content pages
         $this->view->assign('bannerTitle', ($Row['PI_AltPremiereImage'] != "") ? $Row['PI_AltPremiereImage'] : $Row['PI_PageTitle'] );
-        $this->view->assign('bannerSubtitle', ($Row['PI_TitleImage2'] != "") ? $Row['PI_TitleImage2'] : '' );
 
         // To get the parent image if there is no image on this page
         $this->view->assign('PI_Secure', $Row['PI_Secure']);
@@ -184,16 +185,16 @@ class PageController extends Cible_Controller_Action {
         $this->view->header = "header.phtml";
         $this->view->footer = "footer.phtml";
         $this->view->analytic = "google.analytic.phtml";
-        if (!empty($session->currentSite)) {
+        if (!empty($session->currentSite)){
             $tmp = '../application/layouts/partials/';
-            if (file_exists($tmp . $session->currentSite . '.' . $this->view->header)) {
+            if (file_exists($tmp . $session->currentSite . '.' . $this->view->header)){
                 $this->view->header = $session->currentSite . '.' . $this->view->header;
             }
-            if (file_exists($tmp . $session->currentSite . '.' . $this->view->footer)) {
-                $this->view->footer = $session->currentSite . '.' . $this->view->footer;
+            if (file_exists($tmp . $session->currentSite . '.' . $this->view->footer)){
+                $this->view->footer = $session->currentSite . '.'  . $this->view->footer;
             }
-            if (file_exists($tmp . $session->currentSite . '.' . $this->view->analytic)) {
-                $this->view->analytic = $session->currentSite . '.' . $this->view->analytic;
+            if (file_exists($tmp . $session->currentSite . '.' . $this->view->analytic)){
+                $this->view->analytic = $session->currentSite . '.'  . $this->view->analytic;
             }
         }
 
@@ -248,7 +249,6 @@ class PageController extends Cible_Controller_Action {
 
         $this->view->headScript()->appendFile($this->view->locateFile('jquery.googlemaps.js', 'jquery'));
         $this->view->headScript()->appendFile($this->view->locateFile('jquery.toggle.js', 'jquery'));
-        $this->view->headScript()->appendFile($this->view->locateFile('jquery.scrolly.js', 'jquery'));
 
         if ($this->_config->fontController->embeded) {
             $this->view->headScript()->appendFile($this->view->locateFile('font-controller.js', 'jquery'));

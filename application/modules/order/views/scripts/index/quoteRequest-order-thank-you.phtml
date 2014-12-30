@@ -1,0 +1,8 @@
+<?php
+$thankyou = $this->getClientText('quoteRequest_order_thankyou_message');
+$thankyou = str_replace('%%NO_COMMANDE_ORDER%%', '<strong>'.$this->confirmationNumber.'</strong>', $thankyou);
+?>
+<div id="quoteRequest" class="block quoteRequest">
+    <div id="cart-order-steps"><ul><li>1</li><li>2</li><li class="selected">3</li></ul></div>
+    <div style="padding-top: 40px;"><?php echo $thankyou ?></div>
+</div>

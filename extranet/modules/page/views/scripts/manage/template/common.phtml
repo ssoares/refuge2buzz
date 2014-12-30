@@ -1,13 +1,16 @@
 <?php
     // One place_holder template, so grab only the first place_holder elements
     $ph1_blocks = isset($this->blocks[1]) ? $this->blocks[1] : array();
-    $ph2_blocks = isset($this->blocks[2]) ? $this->blocks[2] : array();    
+    $ph2_blocks = isset($this->blocks[2]) ? $this->blocks[2] : array();
+    $ph3_blocks = isset($this->blocks[3]) ? $this->blocks[3] : array();
     $controller = 'manage';
 ?>
-<div id="template" style="width: 958px">    
-   
-    <div style="width: 97%; margin: 1%;float: right;">
-       <div class="zone1 blackZone">
+<div id="template" style="width: 958px">
+    <div class="zone_panel zone_X_panel" style="width: 24%; margin: 1%;float: left;">
+        <p class="zoneLabel">Menu de gauche</p>
+    </div>
+    <div style="width: 69%; margin: 1%;float: right;">
+       <div class="zone1">
             <!-- Placeholder 1 -->
             <?php $options =array('zoneId' => 1,'rows' => $ph1_blocks,'controller' => $controller);?>
             <?php echo $this->zonesTemplate($options); ?>
@@ -17,6 +20,13 @@
        <div class="zone2">
             <!-- Placeholder 2 -->
             <?php $options =array('zoneId' => 2,'rows' => $ph2_blocks,'controller' => $controller);?>
+            <?php echo $this->zonesTemplate($options); ?>
+        </div>
+    </div>
+    <div style="width: 97%; margin: 1%;float: right;">
+       <div class="zone3">
+            <!-- Placeholder 3 -->
+            <?php $options =array('zoneId' => 3,'rows' => $ph3_blocks,'controller' => $controller);?>
             <?php echo $this->zonesTemplate($options); ?>
         </div>
     </div>

@@ -981,7 +981,6 @@ class Page_ManageController extends Cible_Controller_Block_Abstract
                     $rowPageIndex->PI_TitleImageSrc     = $form->getValue('PI_TitleImageSrc');
                     $rowPageIndex->PI_ImageBackground   = $form->getValue('PI_ImageBackground');
                     $rowPageIndex->PI_AltPremiereImage  = $form->getValue('PI_AltPremiereImage');
-                    $rowPageIndex->PI_TitleImage2  = $form->getValue('PI_TitleImage2');
                     $rowPageIndex->PI_CanonicalLink     = $form->getValue('PI_CanonicalLink');
 
                     $rowPageIndex->save();
@@ -1133,9 +1132,6 @@ class Page_ManageController extends Cible_Controller_Block_Abstract
 
                         $Page['PI_TitleImageSrc'] = $formData['PI_TitleImageSrc'];
                         $Page['PI_AltPremiereImage'] = $formData['PI_AltPremiereImage'];
-                        $Page['PI_TitleImage2'] = $formData['PI_TitleImage2'];
-                        
-                        
                         $Page['PI_ImageBackground'] = $formData['PI_ImageBackground'];
                         $Page['PI_CanonicalLink'] = $formData['PI_CanonicalLink'];
                         $Page->save();
@@ -1154,9 +1150,6 @@ class Page_ManageController extends Cible_Controller_Block_Abstract
                             'PI_TitleImageSrc' => $formData['PI_TitleImageSrc'],
                             'PI_ImageBackground' => $formData['PI_ImageBackground'],
                             'PI_AltPremiereImage' => $formData['PI_AltPremiereImage'],
-                            'PI_TitleImage2' => $formData['PI_TitleImage2'],
-                            
-                            
                             'PI_CanonicalLink' => $formData['PI_CanonicalLink']
                         );
                         $this->_db->insert('PagesIndex', $data);

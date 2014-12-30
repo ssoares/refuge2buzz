@@ -1,7 +1,7 @@
 @import "desktop-base.less";
 
 @banner-height:547px;
-.banners { 
+.banners {
     height:@banner-height;
     position:relative;
     .banners-content {
@@ -35,13 +35,13 @@
 }
 .banners-content {
     .banners-slide-black & {
-        &, .banner-text-large, .banner-text-medium, p { 
+        &, .banner-text-large, .banner-text-medium, p {
             color:@brand-black;
         }
         .banner-white-circle {
-            .borderradius & { 
+            .borderradius & {
                 background-color:@brand-black;
-            } 
+            }
             .no-borderradius & {
                 .import-sprite('banner-circle-fallback-black');
             }
@@ -51,18 +51,18 @@
         }
         .banner-secondary-icon {
             & + .banner-secondary-icon {
-                &:before { 
+                &:before {
                     color:@brand-black;
                 }
             }
         }
     }
     .banners-slide-grey & {
-        &, .banner-text-large, .banner-text-medium, &.content p { 
+        &, .banner-text-large, .banner-text-medium, &.content p {
             color:@brand-grey;
         }
         .banner-white-circle {
-            .borderradius & { 
+            .borderradius & {
                 background-color:@brand-grey;
             }
             .no-borderradius & {
@@ -74,7 +74,7 @@
         }
         .banner-secondary-icon {
             & + .banner-secondary-icon {
-                &:before { 
+                &:before {
                     color:@brand-grey;
                 }
             }
@@ -99,15 +99,15 @@
     .banners-slide-grey & {
         color:@brand-grey;
     }
-    &:after { 
-        .responsive-font(@font-size-base * 3);   
+    &:after {
+        .responsive-font(@font-size-base * 3);
         .import-icon-direct(@icon-banner-previous);
         vertical-align:middle;
     }
-    @media @mq-phone { 
+    @media @mq-phone {
         width:68px;
-        &:after {  
-            .responsive-font(@font-size-base * 2);       
+        &:after {
+            .responsive-font(@font-size-base * 2);
         }
     }
 }
@@ -139,9 +139,8 @@
 .banners-slide {
     display:inline-block;
     width:100%;
-    overflow:hidden;
     height:@banner-height;
-    background:url('../images/backgrounds/site-banner-banners-background.jpg') repeat-x;
+    /*background:url('../images/backgrounds/site-banner-banners-background.jpg') repeat-x;*/
 
 }
 .banners-container {

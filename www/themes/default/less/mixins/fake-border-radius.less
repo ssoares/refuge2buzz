@@ -1,6 +1,6 @@
 //ajoute des faux coins ronds
 //load une image selon la convention suivante : fakebr-[rouge]-[vert]-[bleu]-[rayonsanspixel].png
-.fake-border-radius(@color,@radius,@child,@orientation:'left-right')  { 
+.fake-border-radius(@color,@radius,@child,@orientation:'left-right')  {
     z-index:1;
     position:relative;
     &:after, &:before, @{child}:after, @{child}:before {
@@ -30,7 +30,7 @@
         &:before {    .fake-border-radius-top-right(@color,@radius);    }
     }
 }
-.fake-border-radius-background(@color,@radius) {    
+.fake-border-radius-background(@color,@radius) {
     @red:red(@color);
     @green:green(@color);
     @blue:blue(@color);
@@ -47,12 +47,12 @@
     top:0;
     right:0;
 }
-.fake-border-radius-bottom-left(@color,@radius) {  
+.fake-border-radius-bottom-left(@color,@radius) {
     background-position:bottom left;
     bottom:0;
     left:0;
 }
-.fake-border-radius-bottom-right(@color,@radius) { 
+.fake-border-radius-bottom-right(@color,@radius) {
     background-position:right bottom;
     bottom:0;
     right:0;

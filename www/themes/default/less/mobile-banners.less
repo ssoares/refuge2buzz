@@ -1,5 +1,12 @@
-@import "mobile-base.less";
+@import "mixins/absolute-center.less";
+@import "mixins/font-weight.less";
+@import "mixins/import-icon.less";
+@import "mixins/responsive-font.less";
+@import "mixins/vertical-aligner.less";
 
+@import "variables/general-variables.less";
+@import "variables/mobile-variables.less";
+@import "variables/custom-icons.less";
 
 .banners.index {
     height:447px * @mobile-divider;
@@ -19,7 +26,11 @@
         .font-0();
         cursor:pointer;
         margin:0 3px * @mobile-divider;
+        .import-icon(@icon-banners-bullet-full, @font-size-base * @mobile-divider);
         &.cycle-pager-active {
+            &:after {
+                content:@icon-banners-bullet-openl;
+            }
         }
     }
 }

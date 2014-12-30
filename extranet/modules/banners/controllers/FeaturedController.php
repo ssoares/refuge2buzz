@@ -62,7 +62,9 @@ class Banners_FeaturedController extends Cible_Controller_Block_Abstract
         $useOver = $config['banners']['imagefeat']['over'];
         $useFile = $config['banners']['imagefeat']['file'];
 
-       
+        $videos = new VideoObject();
+        $listVideo = array();
+        $listVideo = $videos->getVideosList();
 
         $this->view->title = "Mise en vedette: ajouter";
         $lang = $this->_getParam('lang');
@@ -202,7 +204,10 @@ class Banners_FeaturedController extends Cible_Controller_Block_Abstract
 
     public function editAction()
     {
-       
+        $videos = new VideoObject();
+        $listVideo = array();
+        $listVideo = $videos->getVideosList();
+        //$this->view->videos = $listVideo;
 
         $config = Zend_Registry::get('config')->toArray();
         $useOver = $config['banners']['imagefeat']['over'];
