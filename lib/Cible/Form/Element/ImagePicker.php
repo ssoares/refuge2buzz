@@ -35,7 +35,7 @@ class Cible_Form_Element_ImagePicker extends Zend_Form_Element_Hidden
 
         $session = new Zend_Session_Namespace(SESSIONNAME);
         $_SESSION["moxiemanager.filesystem.rootpath"] = "../../../../../" . $session->currentSite . '/data';
-        
+
         $content = '';
         $content .= '
             <script>
@@ -55,7 +55,7 @@ class Cible_Form_Element_ImagePicker extends Zend_Form_Element_Hidden
             language:'{$_lang}',
             onupload :  function(info) {
                 document.getElementById('".$this->getId()."_tmp').value = info.files[0].meta.thumb_url;
-                document.getElementById('".$this->getId()."_original').value = info.files[0].url;
+                document.getElementById('".$this->getId()."_original').value = info.files[0].path;
                 document.getElementById('".$this->getId()."_preview').src = info.files[0].meta.thumb_url;
                 document.getElementById('".$this->getId()."').value = info.files[0].name;
 
