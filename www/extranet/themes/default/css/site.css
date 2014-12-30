@@ -3493,14 +3493,3 @@ div.zone45 div.zone5{
     top: 184px;
 }
 #fieldset-linkBlocks input{vertical-align: middle}
-
-
-
-div#page-block-zones #template  div.blackZone div.zone_panel{
-    background-color: #000000;
-}
-
-fieldset.imageGroup.first{
-    width: 90%;
-    max-width: 100%;
-}

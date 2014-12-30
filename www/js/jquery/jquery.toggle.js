@@ -139,6 +139,7 @@
             this.$this = $(obj);
             for (var i in this.settings.eventsMap) {
                 var evt = this.settings.eventsMap[i];
+                console.log('yes')
                 if (!$('html').is('.touch') || evt.touch) {
                     this.parseEachEvents(evt);
                 }
