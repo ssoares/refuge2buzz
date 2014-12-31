@@ -104,9 +104,6 @@ class PageController extends Cible_Controller_Action {
         else
             $this->view->assign('imgHeader', "");
 
-        //Whatever text that goes in the banners in content pages
-        $this->view->assign('bannerTitle', ($Row['PI_AltPremiereImage'] != "") ? $Row['PI_AltPremiereImage'] : $Row['PI_PageTitle'] );
-
         // To get the parent image if there is no image on this page
         $this->view->assign('PI_Secure', $Row['PI_Secure']);
         $this->view->assign('PI_TitleImageAlt', $Row['PI_TitleImageAlt']);
