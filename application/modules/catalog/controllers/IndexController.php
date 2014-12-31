@@ -84,15 +84,12 @@ class Catalog_IndexController extends Cible_Controller_Action
         $url = $this->view->absolute_web_root
                  . $this->getRequest()->getPathInfo();
         Cible_View_Helper_LastVisited::saveThis($url);
-        $oRef = new ReferencesObject();
-        $collections = $oRef->getListValues('collections');
-        Zend_Registry::set('collections', $collections);
+        if (!$categorieId && !empty($blockParams[1])){
+            $categorieId = $blockParams[1];
+        }
 
         if (!$productId)
         {
-            if (!$categorieId)
-                $categorieId = $blockParams[1];
-
 //            $searchWords = (isset($this->view->params['keywords']) && $this->view->params['keywords'] != $this->view->getCibleText('form_search_catalog_keywords_label')) ? $this->view->params['keywords'] : '';
 
             /* Search form */
@@ -105,13 +102,15 @@ class Catalog_IndexController extends Cible_Controller_Action
     //
     //        $this->view->assign('searchForm', $searchForm);
 //            $oCategory = new CatalogCategoriesObject();
-            $oCategory = $oProducts->getOCategory();
+            if ($categorieId > 0){
+                $oCategory = $oProducts->getOCategory();
 
-            $category  = $oCategory->populate($categorieId, $this->_registry->languageID);
-            $oCategory->getDataCatagory($this->_registry->languageID, false, $categorieId);
-            $stringUrl = implode('/', $oCategory->setCategoriesLink()->getLink());
-            $this->view->assign('stringUrl', $stringUrl);
-
+                $category  = $oCategory->populate($categorieId, $this->_registry->languageID);
+                $oCategory->getDataCatagory($this->_registry->languageID, false, $categorieId);
+                $stringUrl = implode('/', $oCategory->setCategoriesLink()->getLink());
+                $this->view->assign('stringUrl', $stringUrl);
+                $this->view->assign('title', $category['CCI_Name']);
+            }
             $lastSearch = array();
             if(!empty ($searchWords))
                 $lastSearch['keywords'] = $searchWords;
@@ -136,7 +135,6 @@ class Catalog_IndexController extends Cible_Controller_Action
 //            $this->view->assign('keywords', $searchWords);
 //            $this->view->assign('searchCount', $searchCount);
 //            $this->view->assign('filter', $filter);
-            $this->view->assign('title', $category['CCI_Name']);
 
             if(isset($category['CCI_ValUrl']))
                 echo $this->_registry->set('selectedCatalogPage', $category['CCI_ValUrl']);

@@ -2,7 +2,7 @@
 // One place_holder template, so grab only the first place_holder elements
 $emptyPlaceholders = $this->zonesBlocks(array('nbZones' => $this->nbZones));
 
-$tree = $this->subMenu(array('id' => 'submenu', 'class' => 'open'));
+$tree = $this->subMenu(array('id' => 'submenu', 'class' => 'open', 'buildOnCatalog' => true));
 $menu = $this->menu(
         $tree, array(
     'id' => 'submenu',

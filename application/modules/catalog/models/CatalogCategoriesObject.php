@@ -140,7 +140,6 @@ class CatalogCategoriesObject extends DataObject
     {
         $langId = Zend_Registry::get('languageID');
         $defaultCatId = 0;
-        $defaultCat = "";
         if (!empty($options) && isset($options['nesting']))
             $this->_nesting = $options['nesting'];
         if (!empty($options) && isset($options['buildOnCatalog']))
@@ -155,6 +154,9 @@ class CatalogCategoriesObject extends DataObject
             if(empty ($tmpCat[$this->_valurlField]))
                 $tmpCat[$this->_valurlField] = "";
             $this->_link[] = $tmpCat[$this->_valurlField];
+            $this->_level++;
+        }elseif(isset($menuCatalog['link'])){
+            $this->_link[] = $menuCatalog['link'];
             $this->_level++;
         }
 

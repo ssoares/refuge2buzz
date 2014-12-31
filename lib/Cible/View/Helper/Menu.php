@@ -240,15 +240,15 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
             $nbChildren = count($tree);
         foreach ($tree as $object)
         {
-            
-            
+
+
             if(isset($object)){
-                
+
                 $MID_FontIcon = "";
                 if(isset($object['MID_FontIcon'])){
                     $MID_FontIcon = $object['MID_FontIcon'];
-                }                
-                
+                }
+
                 $tmp = '';
                 $object['Title'] = $object['Title'];
                 $this->_buildOnCatalog = isset($object['Style']) && $object['Style'] == 'useCatalog' ? true : false;
@@ -268,7 +268,8 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                 }
                 else
                 {
-                    if (substr($link, 0, 4) == 'http')
+                    if (substr($link, 0, 4) == 'http'
+                        || substr($link, 0, 11) == 'javascript:')
                     {
                         $link = "{$link}";
                         $external = true;
@@ -279,7 +280,7 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
 
                 if(isset($object['MID_Show'])){
                     if($object['MID_Show']==0){
-                          array_push($liclass, 'doNotShow');
+                          array_push($liclass, 'hidden');
                     }
                 }
 
@@ -338,7 +339,7 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                         $menuContent .= "</p>";
                     }
                 }
-                else{                    
+                else{
                     $menuContent = "<a href='{$link}' class='level-{$level} icon-{$MID_FontIcon}'>{$object['Title']}</a>\r\n";
                 }
 
@@ -544,10 +545,14 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
         $oCatalog = new CatalogCollection();
         $buildOnObj = $oCatalog->getBuildSubMenuOn();
         $collections = new $buildOnObj();
-        $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'listtextures', 14, null, true);
+        $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list', 14, null, true);
         $object['link'] = $catalogPage;
         $catalogMenu = $collections->buildCatalogMenu($object, array('nesting' => 1));
+        if(isset($object['child'])){
         $tree = array_merge($catalogMenu['child'], $object['child']);
+        }else{
+            $tree = $catalogMenu['child'];
+        }
 
         return $tree;
     }

@@ -11,7 +11,11 @@ $this->pageTitle($this->title);
 <div id="contentCatalog" class="block catalog">
     <?php foreach ($this->paginator as $name => $data): ?>
         <?php
-        $url = $this->Url(array('action' => null)) . '/' . $this->stringUrl . '/' . $data['CCI_ValUrl'];
+        $url = $this->Url(array('action' => null));
+        if ($this->stringUrl){
+            $url .= '/' . $this->stringUrl;
+        }
+        $url .= '/' . $data['CCI_ValUrl'];
         $catName = $data["CCI_Name"];
         ($i % $columns == 0) ? $class = 'right' : $class = 'left';
         ?>

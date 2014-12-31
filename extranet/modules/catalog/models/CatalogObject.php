@@ -28,7 +28,12 @@ class CatalogObject extends DataObject
     protected $_constraint      = '';
     protected $_foreignKey      = '';
 
+    protected $_buildSubMenuOn = "CatalogCategoriesObject";
 
+    public function getBuildSubMenuOn()
+    {
+        return $this->_buildSubMenuOn;
+    }
 
     /**
      * Builds folder to manage images and files according to the current website.

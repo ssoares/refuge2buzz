@@ -60,6 +60,13 @@ class CatalogCollection
     protected $_bonus    = false;
     protected $_oCategory = null;
     protected $_oProducts = null;
+    protected $_buildSubMenuOn = "CatalogCategoriesObject";
+    protected $_sortby = array('P_Seq ASC','P_Number ASC');
+
+    public function getBuildSubMenuOn()
+    {
+        return $this->_buildSubMenuOn;
+    }
 
     /**
      * Fetch the parameter value
@@ -291,11 +298,11 @@ class CatalogCollection
         if (!$this->_prodId)
         {
             // If no category selected, set the default one.
-            if (!$this->_catId && !$this->_keywords && isset ($this->_blockParams['1']))
+            if (!$this->_catId && !$this->_keywords && isset ($this->_blockParams['1'])){
                 $categoryId = $this->_blockParams['1'];
-            else
+            }else{
                 $categoryId = $this->_catId;
-
+            }
             Zend_Registry::set('catId_',$categoryId);
             $catQry = $this->_oCategory->getAll($this->_currentLang,false);
             $hasChildren = $this->_oCategory->setQuery($catQry)->hasChildren($categoryId);
