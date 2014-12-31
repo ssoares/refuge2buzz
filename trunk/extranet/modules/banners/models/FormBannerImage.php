@@ -1,5 +1,5 @@
 <?php
-    
+
 class FormBannerImage extends Cible_Form_Multilingual
 {
     public function __construct($options = null)
@@ -33,8 +33,8 @@ class FormBannerImage extends Cible_Form_Multilingual
 
         // Name of the group of banner
         // Set the texte for the image
-        
-        
+
+
         //champs texte sans tiny
         /*
         $textDescription = new Zend_Form_Element_Textarea('BII_Text');
@@ -43,7 +43,7 @@ class FormBannerImage extends Cible_Form_Multilingual
             ->addFilter('StringTrim')
             //->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->_view->getCibleText('validation_message_empty_field'))))
             ->setAttrib('class','stdTextarea');*/
-        
+
         //champs texte avec tiny
         $textDescription = new Cible_Form_Element_Editor('BII_Text', array('mode' => Cible_Form_Element_Editor::ADVANCED));
         $textDescription->setLabel($this->_view->getCibleText('form_banner_image_text_label'))
@@ -52,9 +52,9 @@ class FormBannerImage extends Cible_Form_Multilingual
             //->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->_view->getCibleText('validation_message_empty_field'))))
             ->setAttrib('class','mediumEditor');
         $label = $textDescription->getDecorator('Label');
-        $label->setOption('class', $this->_labelCSS); 
-        
-        
+        $label->setOption('class', $this->_labelCSS);
+
+
 
         $textUrl = new Zend_Form_Element_Text('BII_Url');
         $textUrl->setLabel($this->_view->getCibleText('form_banner_image_texturl_label'))
@@ -64,16 +64,6 @@ class FormBannerImage extends Cible_Form_Multilingual
         $label = $textUrl->getDecorator('Label');
         $label->setOption('class', $this->_labelCSS);
 
-        $blockBulle = new Zend_Form_Element_Select('BII_Bubble');
-        $blockBulle->setLabel($this->_view->getCibleText('banners_bulle_block_page'))
-        ->setAttrib('class','largeSelect');
-        $colors = array(
-            'black' =>'Noir',
-            'grey' =>'Gris',
-            'white' =>'Blanc'
-        );
-        $blockBulle->addMultiOptions($colors);
-        
         $sequence = new Zend_Form_Element_Text('BI_Seq');
         $sequence->setLabel($this->_view->getCibleText('form_banner_image_seq_label'))
             ->addFilter('StripTags')
@@ -85,9 +75,9 @@ class FormBannerImage extends Cible_Form_Multilingual
         $groupImage = new Zend_Form_Element_Select('BI_GroupID');
         $groupImage->setLabel($this->_view->getCibleText('form_banner_image_group'))
         ->setAttrib('class','largeSelect');
-        
-        
-        
+
+
+
 
         $group = new GroupObject();
         $groupArray = $group->groupCollection();
@@ -123,7 +113,6 @@ class FormBannerImage extends Cible_Form_Multilingual
         $this->addElement($imageView);
         $this->addElement($imagePicker);
         $this->addElement($groupImage);
-        $this->addElement($blockBulle);
         $this->addElement($textDescription);
         $this->addElement($textUrl);
         $this->addElement($sequence);

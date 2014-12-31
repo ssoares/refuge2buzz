@@ -12,7 +12,7 @@ if ($this->imageToShow):?>
         <div id="slideshow-<?php echo $random; ?>" class="banners-container">
             <?php foreach ($this->imageToShow as $index => $image):
                 ?>
-                <div class="banners-slide banners-slide-<?php echo $image['color']; ?>">
+            <div class="banners-slide banners-slide-<?php echo $image['color']; ?>" style="display:none">
                     <?php
                     $content = '';
                     if (!empty($image['img']))
@@ -26,13 +26,13 @@ if ($this->imageToShow):?>
 
                     echo $content;
                     ?>
-                    <?php if ($this->navi): ?>
-                        <div class="banners-prev leftCycle-<?php echo $random; ?>">prev</div>
-                        <div class="banners-next rightCycle-<?php echo $random; ?>">next</div>
-                        <div class="cycle-pager banners-nav"></div>
-                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
+            <?php if ($this->navi): ?>
+                <div class="banners-prev leftCycle-<?php echo $random; ?>">prev</div>
+                <div class="banners-next rightCycle-<?php echo $random; ?>">next</div>
+                <div class="cycle-pager banners-nav"></div>
+            <?php endif; ?>
         </div>
 
 

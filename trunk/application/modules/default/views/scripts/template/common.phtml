@@ -21,15 +21,13 @@ $breadCrumb = $this->breadcrumbmenu(array('menuTitle' => 'principal',
 <?php if (isset($tree[0])): ?>
     <?php $withLeftMenu = 'col-md-9 site-main-with-menu'; ?>
 <?php endif; ?>
-
-<div class="site-banner" role="banner">  
+<?php if (!empty($this->imgHeader)): ?>
+<div class="site-banner" role="banner">
     <div class="site-banner-container container ">
         <?php if ($this->imgHeader != '') echo $this->image($this->imgHeader, array('class' => 'img-header', 'direct' => true)); ?>
-        <div class="site-banner-content content">
-            <p class="blue-quote"><?php echo $this->bannerTitle ?></p>
-        </div>
     </div>
 </div>
+<?php endif; ?>
 <div class="site-common-zone-1 site-common-zone-1-container container">
     <?php if (isset($tree[0])): ?>
         <aside class="site-main-aside col-md-3" role="complementary">
@@ -40,9 +38,7 @@ $breadCrumb = $this->breadcrumbmenu(array('menuTitle' => 'principal',
     <?php endif; ?>
     <main class="site-common-main  <?php echo $withLeftMenu; ?>">
         <div class="site-breadcrump">
-            <?php
-            echo $breadCrumb;
-            ?>
+            <?php echo $breadCrumb;?>
         </div>
         <?php if ($this->showTitle): ?>
             <h1 class="site-main-title"><?php echo $this->pageTitle()->toString(null, null, true) ?></h1>

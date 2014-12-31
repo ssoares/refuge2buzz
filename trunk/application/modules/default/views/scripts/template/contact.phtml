@@ -2,39 +2,32 @@
 // loads the placeholders according to the number of zones
 $emptyPlaceholders = $this->zonesBlocks(array('nbZones' => $this->nbZones));
 ?>
-<div class="site-banner" role="banner">  
-    <div class="site-banner-container container "> 
+<?php if (!empty($this->imgHeader)): ?>
+<div class="site-banner" role="banner">
+    <div class="site-banner-container container ">
         <?php echo $this->image($this->imgHeader, array('class' => 'img-header', 'direct' => true)); ?>
-        <div class="site-banner-content content">
-            <p class="blue-quote"><?php echo $this->bannerTitle ?></p>
-        </div>
     </div>
 </div>
+<?php endif; ?>
 <div class="site-main">
-    <div class="site-main-contact-container container "> 
+    <div class="site-main-contact-container container ">
         <?php if ($this->showTitle): ?>
             <h1 class="title col-md-12"><?php echo $this->pageTitle()->toString(null, null, true) ?></h1>
         <?php endif; ?>
         <main class="site-contact-zone-1 col-md-3">
             <?php if (!isset($emptyPlaceholders[1])): ?>
-                <!--<div id="zone1" class="">-->
                 <?php echo $this->placeholder('zone1') ?>
-                <!--</div>-->
             <?php endif; ?>
         </main>
         <div class="site-contact-zone-2 col-md-9">
             <?php if (!isset($emptyPlaceholders[2])): ?>
-                <!--<div id="zone2" class="">-->
                 <?php echo $this->placeholder('zone2') ?>
-                <!--</div>-->
             <?php endif; ?>
         </div>
     </div>
+    <?php if (!isset($emptyPlaceholders[3])): ?>
     <div class="site-contact-zone-3">
-        <?php if (!isset($emptyPlaceholders[3])): ?>
-            <!--<div id="zone3" class="">-->
-            <?php echo $this->placeholder('zone3') ?>
-            <!--</div>-->
-        <?php endif; ?>
+        <?php echo $this->placeholder('zone3') ?>
     </div>
+    <?php endif; ?>
 </div>
