@@ -1,20 +1,16 @@
 <section class="news details module block">
     <?php
-    if ($this->showTitle) {
-        echo $this->showBlockTitle('h2', array('class' => 'news-title'));
-    } else {
-        echo $this->showBlockTitle('h1', array('class' => 'news-title'));
-    }
-    
+    echo $this->showBlockTitle('h2', array('class' => 'news-title'));
+
     $viewAllList = $this->getClientText('see_all_news_text');
     if (!empty($this->newsCategoryDetails['CI_ReturnToList'])) {
         if (trim($this->newsCategoryDetails['CI_ReturnToList']) != "") {
             $viewAllList = $this->newsCategoryDetails['CI_ReturnToList'];
         }
     }
-    
+
     $langSuffix = Cible_FunctionsGeneral::getLocalForLanguage(Zend_Registry::get("languageID"));
-    
+
     if (count($this->paginator)):
         ?>
         <div class="news-article-list">
@@ -33,7 +29,7 @@
                         <header class='news-header content'>
                             <?php if ($this->params['5']): ?>
                                 <span class="news-article-date date"><?php echo $date_string; ?></span>
-                            <?php endif; ?>                        
+                            <?php endif; ?>
 
                             <h1 class="news-article-title"><?php echo $news['NI_Title'] ?></h1>
                         </header>

@@ -31,7 +31,7 @@
                         <h1 class="news-article-title"><?php echo $news['NI_Title'] ?></h1>
                     </header>
 
-                    <?php if ($this->params['6']): ?>
+                    <?php // if ($this->params['6']): ?>
                         <?php
                         if (!empty($news['NI_ImageSrc'])) {
                             $class = '';
@@ -50,7 +50,7 @@
                                 ?>
                             <?php } ?>
                         </div>
-                    <?php endif; ?>
+                    <?php // endif; ?>
                     <div class="news-article-content content">
                         <?php echo $this->decorateImage($news['NI_Text']); ?>
                     </div>
