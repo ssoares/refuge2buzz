@@ -101,23 +101,8 @@ class ItemsObject extends DataObject
         {
             switch ($key)
             {
-                case 'I_DimAF':
-                case 'I_DimBF':
-                case 'I_DimCF':
-                case 'I_DimDF':
-                    $this->_totalInches += $value * 12;
-                    break;
-                case 'I_DimAI':
-                case 'I_DimBI':
-                case 'I_DimCI':
-                case 'I_DimDI':
-                    $this->_totalInches += $value;
-                    $convertField = preg_replace('/[I|F]$/', 'Convert', $key);
-                    $data[$convertField] = $this->_totalInches;
-                    $this->_totalInches = 0;
-                    break;
                 case 'I_PriceDetail':
-                case 'I_PricePanels':
+                case 'I_DiscountPercent':
                     $data[$key] = str_replace(array(',', ' '), array('.', ''), $value);
                     break;
 

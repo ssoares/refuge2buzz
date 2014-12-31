@@ -1450,7 +1450,7 @@ fieldset.infoData legend{
     width: 99%;
 }
 
-.smallTextInput{
+input.smallTextInput{
     width: 50px;
 }
 

@@ -44,7 +44,6 @@ class Catalog_IndexController extends Cible_Controller_Block_Abstract
         'items'       => 'ItemsObject',
         'categories'  => 'CatalogCategoriesObject',
         'products' => 'ProductsObject',
-        'items-promo' => 'ItemsPromoObject'
     );
     protected $_actionsList = array();
 
@@ -452,7 +451,7 @@ class Catalog_IndexController extends Cible_Controller_Block_Abstract
             {
                 $nameAssoc = $this->_objectList[$this->_associationIds[0]];
                 $assocObj = new $nameAssoc();
-                $this->view->data = $assocObj->getList(true);
+                $this->view->data = $assocObj->getList(false, null, true);
             }
 
             // image src.
