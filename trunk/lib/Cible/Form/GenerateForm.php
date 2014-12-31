@@ -109,8 +109,9 @@ EOS;
                 case 'double':
                 case 'tinyint':
                 case 'int':
-                    if (!$meta['PRIMARY'])
+                    if (!$meta['PRIMARY'] || !empty($params['elem'])){
                         $this->setElementInput($meta, $params);
+                    }
                     break;
 
                 case 'char':
@@ -178,8 +179,6 @@ EOS;
      */
     public function setElementInput(Array $meta, Array $params)
     {
-        if (!empty($params))
-        {
             if (!isset($params['elem']))
                 $params['elem'] = '';
 
@@ -269,7 +268,7 @@ EOS;
 
             if (isset($params['shortCut']) && SESSIONNAME != 'application')
                 $this->_addShortcut($params, $meta);
-        }
+
     }
 
     /**
@@ -345,13 +344,16 @@ EOS;
                 );
                 $this->_decoParams['class'] = 'imgPreview';
                 $this->_setBasicDecorator($imageView);
-                if (file_exists($_SERVER['DOCUMENT_ROOT'] . $imageSrc))
+                $imageView->setImage($this->getView()->BaseUrl() . "/icons/image_non_ disponible.jpg");
+                if (!empty($imageSrc) && file_exists($_SERVER['DOCUMENT_ROOT'] . $imageSrc)){
                     $imageView->setImage($imageSrc);
-                if (!isset($params['imgLabel']))
+                }
+                if (!isset($params['imgLabel'])){
                     $imageView->removeDecorator('Label');
-                else
+                }else{
                     $imageView->setLabel(
-                        $this->getView()->getCibleText('form_label_' . $meta['COLUMN_NAME']));;
+                        $this->getView()->getCibleText('form_label_' . $meta['COLUMN_NAME']));
+                }
                 $this->addElement($imageView);
 
                 if (!empty($this->_groupName))
@@ -542,6 +544,9 @@ EOS;
             if ($label)
                 $label->setOption('class', $this->_labelCSS);
         }
+
+        if (isset($params['shortCut']) && SESSIONNAME != 'application')
+            $this->_addShortcut($params, $meta);
         $this->addElement($element);
     }
 
