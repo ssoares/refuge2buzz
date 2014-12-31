@@ -2,11 +2,58 @@
 @header-menu-line-height:36px;//la hauteur de ligne du menu
 @header-padding-top:68px / 2;//padding top du header
 @header-padding-bottom:68px / 2;//padding top du header
+@animation-height:150px;
+@mobile-menu-height:97px;
+
 .site-header {
-    position:relative;
+    margin-top:-@animation-height;
+    position:absolute;
+    width:100%;
+    top:0;
+    left:0;
+    .transition(background-color 0.4s);
     background:@brand-white;
-    padding: 0;
+    padding-top: @animation-height;
     line-height:@header-line-height;
+    z-index: @z-index-header;
+    .box-shadow(0 3px 5px @brand-grey-dark);
+    &.clinched, &.always-clinched {
+        .transition(margin 1s);
+        margin-top:0;
+        position:fixed;
+        padding-top:0;
+        background:@brand-white;
+        .site-logo {
+            padding-right:0;
+            .site-logo-image {
+                display:none;
+            }
+            .site-logo-image-content {
+                display:block;
+            }
+        }
+    }
+    @media @mq-phone {
+        &, &.clinched, &.always-clinched {
+            margin-top:0;
+            position:fixed;
+            padding-top:0;
+            background:@brand-white;
+            min-height:@mobile-menu-height;
+            .site-logo {
+                line-height:@mobile-menu-height;
+                width:auto;
+                float:left;
+                .site-logo-image {
+                    display:none;
+                }
+                .site-logo-image-content {
+                    padding:0;
+                    display:inline-block;
+                }
+            }
+        }
+    }
 }
 .site-header-container {
     padding:0;
