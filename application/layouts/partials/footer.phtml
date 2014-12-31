@@ -8,12 +8,15 @@ $array_replace = array('<p>' => '', '<P>' => '', '</p>' => '', '</P>' => '',
     '%%%GET_DATE_YEAR%%%' => date('Y'),
     '%%%SITE_NAME%%%' => $config->site->title->$lang);
 $copyrightText = $this->getClientText('footer_copyright', null, $array_replace);
+$footerTopTxt = $this->getClientText('footer_nous_joindre_button');
 ?>
+<?php if (!strstr($footerTopTxt, 'not found in database')): ?>
 <div class="site-footer-top">
     <div class="site-footer-top-container container content">
-        <?php echo $this->getClientText('footer_nous_joindre_button') ?>
+        <?php echo $footerTopTxt ?>
     </div>
 </div>
+<?php endif; ?>
 <div class="site-footer-middle">
     <div class="site-footer-middle-container container">
         <div class="site-footer-infos col-md-2">
@@ -38,7 +41,7 @@ $copyrightText = $this->getClientText('footer_copyright', null, $array_replace);
             <?php echo $this->menu('copyright', array('parentIdAlt' => 'footer3ParentId', 'class' => 'site-footer-copyright-menu')) ?>
         </div>
         <div class='site-footer-realisation col-md-2'>
-            <?php echo strip_tags($this->getClientText('footer_cible_realisation'), '<span>,<a>,<br>') ?>
+            <?php // echo strip_tags($this->getClientText('footer_cible_realisation'), '<span>,<a>,<br>') ?>
         </div>
         <nav class="site-footer-reseaux col-md-4">
             <?php echo $this->menu('reseaux', array('parentIdAlt' => 'footer2ParentId', 'class' => 'site-footer-reseaux-menu')) ?>
@@ -111,5 +114,11 @@ if ($config->searchbox->embeded)
                 $this.toggleClass('empty', ($this.val() == ""));
             });
         }, 100);
+        $(window).scroll(function() {
+            var $header = $('.site-header');
+            var pos = $(window).scrollTop();
+            var h = $header.height();
+            $header.toggleClass('clinched', (pos > h));
+        }).scroll();
     });
 </script>

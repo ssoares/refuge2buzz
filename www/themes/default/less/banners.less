@@ -1,6 +1,8 @@
 @import "desktop-base.less";
 
-@banner-height:547px;
+@banner-height:490px;
+@banner-height-tablet:@banner-height * 0.5;
+@banner-height-phone:@banner-height * 0.25;
 .banners {
     height:@banner-height;
     position:relative;
@@ -20,7 +22,7 @@
         }
         .banner-white-circle {
             margin:60px 25px 0 25px;
-            @media @mq-phone {
+            @media @mq-tablet {
                 margin:26px 10px 0 10px;
             }
             @media @mq-phone {
@@ -30,7 +32,13 @@
     }
     .banners-image {
         .absolute-center-center();
-        min-height:100%;
+        max-height:100%;
+    }
+    @media @mq-tablet {
+        height:@banner-height-tablet;
+    }
+    @media @mq-phone {
+        height:@banner-height-phone;
     }
 }
 .banners-content {
@@ -140,6 +148,12 @@
     display:inline-block;
     width:100%;
     height:@banner-height;
+    @media @mq-tablet {
+        height:@banner-height-tablet;
+    }
+    @media @mq-phone {
+        height:@banner-height-phone;
+    }
     /*background:url('../images/backgrounds/site-banner-banners-background.jpg') repeat-x;*/
 
 }

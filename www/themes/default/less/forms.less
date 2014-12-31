@@ -1,8 +1,8 @@
-@import "mixins/border-radius.less";    
-@import "mixins/responsive-font.less";    
+@import "mixins/border-radius.less";
+@import "mixins/responsive-font.less";
 
-@import "variables/general-variables.less";    
-@import "variables/desktop-variables.less";    
+@import "variables/general-variables.less";
+@import "variables/desktop-variables.less";
 
 .formsnewsletterfooter {
     input[type=text] {
@@ -26,7 +26,7 @@
                 width:100%;
             }
         }
-        & + .form-div { 
+        & + .form-div {
             .sticky-placeholder-wrapper.text {
                 margin-left:1%;
                 @media @mq-tablet {
@@ -49,13 +49,13 @@
 }
 .form-captcha-div {
     display:inline-block;
-    @media @mq-tablet { 
+    @media @mq-tablet {
         float:left;
         width:50%;
         margin-right:50%;
         position:relative;
     }
-    @media @mq-phone {  
+    @media @mq-phone {
         float:left;
         width:50%;
         margin-right:50%;
@@ -75,18 +75,18 @@
         display:inline-block;
         width:auto;
         height:@input-height-base;
-        @media @mq-tablet { 
+        @media @mq-tablet {
             position:absolute;
             right:-100%;
             width:95%;
         }
-        @media @mq-phone { 
+        @media @mq-phone {
             position:absolute;
             right:-100%;
             width:100%;
         }
     }
-    .errors { 
+    .errors {
         clear: both;
         width: 200%;
     }
@@ -121,7 +121,7 @@
 
 //required field
 .required-field {
-    &, input[type=text]& { 
+    &, input[type=text]& {
         background-image:data-uri('../images/backgrounds/required-field-background.png');
     }
     background-repeat:repeat-y;
