@@ -13,7 +13,7 @@
 
 /**
  * Build the breadcrumb for catalog pages
- * 
+ *
  * @category   Cible
  * @package    cible_View
  * @subpackage Cible_View_Helper
@@ -26,12 +26,12 @@ class Cible_View_Helper_BreadcrumbCatalog extends Zend_View_Helper_Abstract
      * Build the breadcrumd for the catalog page.
      *
      * @param int $lang  <Optional> Id of the current language
-     * 
-     * @return string 
+     *
+     * @return string
      */
-    public function breadcrumbCatalog($level = 1, $showHome = true, $langId = null)
+    public function breadcrumbCatalog($level = 1, $showHome = true, $langId = null, $options = array())
     {
-       
+
         if( $langId == null )
             $langId = Zend_Registry::get('languageID');
 
@@ -39,83 +39,66 @@ class Cible_View_Helper_BreadcrumbCatalog extends Zend_View_Helper_Abstract
 
         $_breadcrumb = array();
         $_first = true;
-        
+
         $pathInfo  = $this->view->request->getPathInfo();
-        $oProducts = new ProductsCollection();
+        $oProducts = new CatalogCollection();
 
         $oProducts->setActions($pathInfo);
         $oProducts->getDataByName();
 
+        $subCatId = null;
         $catId    = $oProducts->getCatId();
-        $subCatId = $oProducts->getSubCatId();
-        $prodId   = $oProducts->getProdId(); 
-        
+        $prodId   = $oProducts->getProdId();
+        $details = Cible_FunctionsPages::getPageDetails($this->view->currentPageID, $langId);
+        $pageLink = "<a href='{$_baseUrl}/{$details['PI_PageIndex']}'>{$details['PI_PageTitle']}</a>";
         if ($catId == null && $subCatId == null && $prodId == null)
         {
-            $_breadcrumb = $this->view->breadcrumb(true) . "<b>" . $this->view->selectedPage . "</b>";
+//            $_breadcrumb = $this->view->breadcrumb(true);
+            $_breadcrumb[0] = $this->view->pageTitle()->toString(null, null, true);
             return  $_breadcrumb;
         }
         else
         {
             $pathElemts = $oProducts->getActions();
-           
             if($prodId)
             {
-              
                 $_class = '';
                 $product = new ProductsObject();
-                $details = $product->populate($prodId, $langId);               
+                $details = $product->populate($prodId, $langId);
                 if( $_first ){$_class = 'current_page';}
-                $link = $_first ? "<b>" . $details['PI_Name'] . "</b>" : "<a href='{$_baseUrl}/{$this->view->selectedPage}/{$pathElemts[0]}/{$pathElemts[1]}/{$pathElemts[2]}' class='{$_class}'>{$details['PI_Name']}</a>";
+                $link = $_first ? $details['PI_Name']: "<a href='{$_baseUrl}/{$pathElemts[0]}/{$pathElemts[1]}/{$pathElemts[2]}' class='{$_class}'>{$details['PI_Name']}</a>";
                 array_push($_breadcrumb, $link);
                 if( $_first ){$_first = false;}
             }
-            
+
             if($subCatId)
             {
                 $_class = '';
-                $object = new SubCategoriesObject();
+                $oCatalog = new CatalogCollection();
+                $buildOnObj = $oCatalog->getBuildSubMenuOn();
+                $object = new $buildOnObj();
                 $details = $object->populate($subCatId, $langId);
                 if( $_first ){$_class = 'current_page';}
-                $link = $_first ? "<b>" . $details['SCI_Name'] . "</b>" : "<a href='{$_baseUrl}/{$this->view->selectedPage}/{$pathElemts[0]}/{$pathElemts[1]}' class='{$_class}'>{$details['SCI_Name']}</a>";
+                $link = $_first ? $details[$object->getTitleField()] : "<a href='{$_baseUrl}/{$pathElemts[0]}/{$pathElemts[1]}' class='{$_class}'>{$details[$object->getTitleField()]}</a>";
                 array_push($_breadcrumb, $link);
+                array_push($_breadcrumb, $pageLink);
                 if( $_first ){$_first = false;}
             }
+
             if($catId)
             {
                 $_class = '';
                 $object = new CatalogCategoriesObject();
                 $details = $object->populate($catId, $langId);
                 if( $_first ){$_class = 'current_page';}
-                $link = $_first ? "<b>" . $details['CCI_Name'] . "</b>" : "<a href='{$_baseUrl}/{$this->view->selectedPage}/{$pathElemts[0]}' class='{$_class}'>{$details['CCI_Name']}</a>";
+                $link = $_first ? $details['CCI_Name'] : "<a href='{$_baseUrl}/{$pathElemts[0]}' class='{$_class}'>{$details['CCI_Name']}</a>";
                 array_push($_breadcrumb, $link);
                 if( $_first ){$_first = false;}
 
             }
 
-            $details = Cible_FunctionsPages::getPageDetails($this->view->currentPageID, $langId);
+            return $_breadcrumb;
 
-            $link = $_first ? '' : "<a href='{$_baseUrl}/{$details['PI_PageIndex']}' class='{$_class}'>{$details['PI_PageTitle']}</a>";
-            array_push($_breadcrumb, $link);
-
-            if($showHome){
-                $homeDetails = Cible_FunctionsPages::getHomePageDetails();
-                $link = "<a href='{$_baseUrl}/{$homeDetails['PI_PageIndex']}' class='{$_class}'>". $homeDetails['PI_PageTitle'] . "</a>";
-                array_push($_breadcrumb, $link);
-            }
-
-            $_breadcrumb = array_reverse($_breadcrumb);
-            //var_dump($_breadcrumb);
-//            for($i=0;$i<$level;$i++){
-//                array_splice($_breadcrumb,$i+1,1);
-//            }
-            // add the > after the breadcrumb when only on item is found
-            if( count($_breadcrumb) == 1 )
-                return "{$_breadcrumb[0]} > ";
-            else
-                return implode( ' > ', $_breadcrumb);
-        
         }
     }
 }
-?>

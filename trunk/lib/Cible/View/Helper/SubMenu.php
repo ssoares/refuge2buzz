@@ -110,6 +110,7 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
         $menuData = $oPages->getRelatedMenu($this->_selectedPageId);
 
         $parentId = 0;
+        $parentName = "";
         if(!$menuData){
 
             $parentId = $oPages->getParentRelatedID($this->_selectedPageId);
@@ -118,7 +119,6 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
             $this->_selectedPageId = $parentId;
             $parentId = $menuData['MID_ParentID'];
             $this->view->assign('selectedPage',$parentName);
-            //echo $parentName;
         }
         $_menu    = new MenuObject($menuData['MID_MenuId']);
 
@@ -138,24 +138,27 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
         if (!empty($options['parentId'])){
             $parentId = $options['parentId'];
         }
-        if (preg_match('/useCatalog/', $menuData['MID_Style']) && $this->_buildOnCatalog)
+        $parentUseCatalog = false;
+        if(!empty ($parentId)){
+            $tree = $_menu->populate($parentId);
+            $parentData = $_menu->getMenuItemById($parentId);
+            $parentName = $oPages->getParentRelatedName($parentData['MII_PageID'], Zend_Registry::get('languageID'));
+            $parentUseCatalog = preg_match('/useCatalog/',$parentData['MID_Style']) ? true : false;
+        }
+        $useCatalg = preg_match('/useCatalog/', $menuData['MID_Style']);
+        if (($useCatalg || $parentUseCatalog) && $this->_buildOnCatalog)
         {
             $menuData['Placeholder'] = 2;
-            $collections = new CatalogCategoriesObject();
-//                $menuCatalog = $this->getMenuItemByPageId( null, 'collections');
+            $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list', 14, null, true);
+            $menuData['link'] = $parentUseCatalog ? $parentName : $catalogPage;
+            $oCatalog = new CatalogCollection();
+            $buildOnObj = $oCatalog->getBuildSubMenuOn();
+            $collections = new $buildOnObj();
             $catalogMenu = $collections->buildCatalogMenu($menuData, array('nesting' => 2));
 
-            $tree = $catalogMenu['child'];
-//               $first = $this->populate($menuCatalog['MID_ID']);
-//               $childCombined = array();
-
-
-//                   $childCombined = array_merge($catalogMenu['child'], $first);
-//                   $catalog['child'] = $childCombined;
+            $tree = array_merge($catalogMenu['child'], $tree);
         }
-        elseif(!empty ($parentId)){
-            $tree = $_menu->populate($parentId);
-        }
+
         $tree['MID_MenuID']   = $menuData['MID_MenuId'];
         $tree['MID_ParentId'] = $parentId;
 
