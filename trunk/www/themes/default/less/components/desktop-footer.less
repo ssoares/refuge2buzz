@@ -10,10 +10,10 @@
     }
 }
 .site-footer-middle {
-    background:@brand-grey-very-light;
+    background:@brand-grey-very-light url('../../images/backgrounds/bgfooter.jpg') no-repeat 50% 0;
     padding:58px 0 38px 0;
     h2 {
-        .front-end & { 
+        .front-end & {
             font-style:normal;
             .font-weight('normal','sans-serif');
             color:@brand-primary;
@@ -32,8 +32,8 @@
 }
 @footer-line-height:51px;//dans ce cas-ci, le line-height devrait être de la même hauteur que le logo
 @footer-text-line-height:18px;//la hauteur de ligne du menu
-@footer-padding-top:26px;//padding top du header 
-@footer-padding-bottom:26px;//padding top du header 
+@footer-padding-top:26px;//padding top du header
+@footer-padding-bottom:26px;//padding top du header
 
 .site-footer-bottom {
     background:@brand-grey;
@@ -44,8 +44,8 @@
     ul,li {
         display:inline;
     }
-    .site-footer-bottom-container{ 
-        & > * { 
+    .site-footer-bottom-container{
+        & > * {
             line-height:@footer-text-line-height;
             display:inline-block;
             vertical-align:middle;
