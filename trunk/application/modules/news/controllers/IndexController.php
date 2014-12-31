@@ -3,6 +3,7 @@ class News_IndexController extends Cible_Controller_Action
 {
 
     protected $_showBlockTitle = false;
+    protected $_homePage = false;
 
     /**
      * Overwrite the function defined in the SiteMapInterface implement in Cible_Controller_Action
@@ -69,28 +70,8 @@ class News_IndexController extends Cible_Controller_Action
 
     public function homepagelistAction()
     {
-        $news = new NewsCollection($this->_blockId);
-        $news->setBlock();
-        $listall_page = Cible_FunctionsCategories::getPagePerCategoryView($news->getBlockParam(1), 'listall', 2, null, true);
-        $details_page = Cible_FunctionsCategories::getPagePerCategoryView($news->getBlockParam(1), 'detailswithpreviousnext', 2, null, true);
-        $this->_testDuplicatedContent(true);
-        if (!empty($this->_duplicateData))
-            $news->setDb($this->_db)
-            ->setDuplicateId ($this->_duplicateData['B_DuplicateId'])
-            ->setFromSite ($this->_duplicateData['B_FromSite']);
-
-        $data = $news->getList($news->getBlockParam('2'));
-        if (empty($data))
-        {
-            $otherData = (bool)$this->_hasContent($news);
-            if ($otherData)
-                $this->view->assign('otherData', true);
-        }
-        $this->_resetDefaultAdapter();
-        $this->view->assign('listall_page', $listall_page);
-        $this->view->assign('details_page', $details_page);
-        $this->view->assign('params', $news->getBlockParams());
-        $this->view->assign('news', $data);
+        $this->_homePage = true;
+        $this->listallAction();
     }
 
     public function homepagelist1colAction()
@@ -101,7 +82,10 @@ class News_IndexController extends Cible_Controller_Action
     public function listallAction()
     {
         $detailsPageView = 'details';
-        $detailsPageWithPaginator = false;
+        $newsObject = new NewsCollection($this->_blockId);
+        $newsObject->setBlock();
+        $detailsPaginator = $this->_homePage? $newsObject->getBlockParam(2) : false;
+        $limit = null;
         $pageDetails = Cible_FunctionsPages::getPageDetails(Zend_Registry::get('pageID'), $this->_getParam('lang'));
         $childPageDetails = Cible_FunctionsPages::findChildPage($pageDetails['P_ID'], $this->_getParam('lang'), 's');
         $oBlock = new BlocksObject();
@@ -111,16 +95,14 @@ class News_IndexController extends Cible_Controller_Action
             $detailsPageView = $oBlock->getViewByModuleID($this->_moduleID);
             if($detailsPageView == 'detailswithpreviousnext')
             {
-                $detailsPageWithPaginator = true;
+                $detailsPaginator = true;
                 break;
             }
         }
-        /*if($detailsPageView == 'detailswithpreviousnext')
-            $detailsPageWithPaginator = true;*/
 
-        $newsObject = new NewsCollection($this->_blockId);
-        $newsObject->setBlock();
-        $details_page = Cible_FunctionsCategories::getPagePerCategoryView($newsObject->getBlockParam('1'), $detailsPageView);
+        $listall_page = Cible_FunctionsCategories::getPagePerCategoryView($newsObject->getBlockParam(1), 'listall', $this->_moduleID, null, true);
+        $details_page = Cible_FunctionsCategories::getPagePerCategoryView($newsObject->getBlockParam(1), $detailsPageView, $this->_moduleID, null, true);
+        $this->view->assign('listall_page', $listall_page);
         $this->view->assign('details_page', $details_page);
         $this->_testDuplicatedContent(true);
         if (!empty($this->_duplicateData))
@@ -129,7 +111,7 @@ class News_IndexController extends Cible_Controller_Action
             ->setFromSite ($this->_duplicateData['B_FromSite']);
 
         $options = $this->_setFilter($newsObject);
-        $news = $newsObject->getList(null, $options['filtre']);
+        $news = $newsObject->getList($limit, $options['filtre']);
         if (empty($news))
         {
             $otherData = (bool)$this->_hasContent($newsObject);
@@ -137,45 +119,26 @@ class News_IndexController extends Cible_Controller_Action
                 $this->view->assign('otherData', true);
         }
         $this->_resetDefaultAdapter();
-        $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($news));
-        $paginator->setItemCountPerPage($newsObject->getBlockParam('2'));
-        $paginator->setCurrentPageNumber($this->_request->getParam('page'));
+        if ($this->_homePage){
+            $this->view->assign('news', $news);
+        }else{
+            $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($news));
+            $perPage = $detailsPaginator ? 1 : $newsObject->getBlockParam(2);
+            $paginator->setItemCountPerPage($perPage);
+            $paginator->setCurrentPageNumber($this->_request->getParam('page'));
+            $this->view->assign('paginator', $paginator);
+            $this->view->assign('detailsPageWithPaginator', $detailsPaginator);
+        }
+
         $this->view->assign('params', $newsObject->getBlockParams());
-        $this->view->assign('paginator', $paginator);
-        $this->view->assign('detailsPageWithPaginator', $detailsPageWithPaginator);
     }
 
     public function detailswithpreviousnextAction()
     {
-        $newsObject = new NewsCollection($this->_blockId);
-        $newsObject->setBlock();
-        $this->_testDuplicatedContent(true);
-        if (!empty($this->_duplicateData))
-            $newsObject->setDb($this->_db)
-            ->setDuplicateId ($this->_duplicateData['B_DuplicateId'])
-            ->setFromSite ($this->_duplicateData['B_FromSite']);
-
-        $options = $this->_setFilter($newsObject);
-        $news = $newsObject->getList(null, $options['filtre']);
-        if (empty($news))
-        {
-            $otherData = (bool)$this->_hasContent($newsObject);
-            if ($otherData)
-                $this->view->assign('otherData', true);
-        }
-
         $newsCategoryDetails = Cible_FunctionsCategories::getCategoryDetails($news[0]['ND_CategoryID']);
         $this->view->assign('newsCategoryDetails', $newsCategoryDetails);
 
-        $this->_resetDefaultAdapter();
-        $listall_page = $this->view->parentPage($this->_blockId);
-        $paginator = new Zend_Paginator(new Zend_Paginator_Adapter_Array($news));
-        //$paginator->setItemCountPerPage($newsObject->getBlockParam('2'));
-        $paginator->setItemCountPerPage(1);
-        $paginator->setCurrentPageNumber($this->_request->getParam('page'));
-        $this->view->assign('params', $newsObject->getBlockParams());
-        $this->view->assign('paginator', $paginator);
-        $this->view->assign('listall_page', $listall_page);
+        $this->listallAction();
     }
 
     public function listall2Action()
