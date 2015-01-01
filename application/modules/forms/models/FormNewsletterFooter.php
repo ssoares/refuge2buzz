@@ -50,7 +50,7 @@ EOS;
                 //->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_field_required'))))
                 //->addValidator('EmailAddress', true, array('messages' => Cible_Translation::getCibleText('validation_message_emailAddressInvalid')))
                 //->setRequired(true)
-                ->setAttrib('placeholder', $this->getView()->getClientText('forms_label_placeholder_email'))
+                ->setAttrib('placeholder', $this->getView()->getCibleText('form_label_email'))
                 ->setAttrib('class', 'forms-input-newsletter-email');
 
         $this->addElement($email);

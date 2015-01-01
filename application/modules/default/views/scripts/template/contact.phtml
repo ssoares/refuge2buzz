@@ -8,9 +8,11 @@ $emptyPlaceholders = $this->zonesBlocks(array('nbZones' => $this->nbZones));
         <?php echo $this->image($this->imgHeader, array('class' => 'img-header', 'direct' => true)); ?>
     </div>
 </div>
+<?php else: ?>
+        <?php $margintop = 'margin-top'; ?>
 <?php endif; ?>
 <div class="site-main">
-    <div class="site-main-contact-container container ">
+    <div class="site-main-contact-container container <?php echo $margintop; ?>">
         <?php if ($this->showTitle): ?>
             <h1 class="title col-md-12"><?php echo $this->pageTitle()->toString(null, null, true) ?></h1>
         <?php endif; ?>

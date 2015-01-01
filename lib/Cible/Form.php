@@ -158,17 +158,50 @@ class Cible_Form extends Zend_Form
     {
         $firstElementID = null;
 
-        foreach($this->getElements() as $_element){
-            if ($firstElementID == null && ($_element->getType() == 'Zend_Form_Element_Text' || $_element->getType()  == 'Cible_Form_Element_Editor' || $_element->getType()  == 'Zend_Form_Element_TextArea' ) ) $firstElementID = $_element->getID();
+        foreach ($this->getElements() as $_element)
+        {
+            if ($firstElementID == null
+                && ($_element->getType() == 'Zend_Form_Element_Text'
+                    || $_element->getType() == 'Cible_Form_Element_Editor'
+                    || $_element->getType() == 'Zend_Form_Element_TextArea' )){
+                $firstElementID = $_element->getID();
+            }
 
             if ($_element->getType() == 'Cible_Form_Element_Editor'){
                 $this->getView()->headScript()->appendFile($this->getView()->baseUrl() . '/js/tinymce/tinymce.min.js');
                 break;
             }
 
-            if($_element->isRequired() && $this->_addRequiredAsterisks )
-            {
+            $isOk = preg_match('/field_required/', $_element->getLabel());
+            $label = $_element->getLabel();
+            if ($_element->isRequired() && $this->_addRequiredAsterisks
+                && !$isOk && !empty($label)) {
                 $_element->setLabel("{$_element->getLabel()} <span class='field_required'>*</span>");
+            }
+            if ($_element->isRequired()){
+                $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
+            }
+        }
+
+        foreach($this->getSubForms() as $key => $subform)
+        {
+            foreach($subform as $key => $_element)
+            {
+                if (!$_element instanceof Zend_Form_DisplayGroup){
+                    if ($_element->getType() == 'Cible_Form_Element_Editor') {
+                        $this->getView()->headScript()->appendFile($this->getView()->baseUrl() . '/js/tinymce/tinymce.min.js');
+                        break;
+                    }
+                    $isOk = preg_match('/field_required/', $_element->getLabel());
+                    $label = $_element->getLabel();
+                    if ($_element->isRequired() && $this->_addRequiredAsterisks
+                        && !$isOk && !EMPTY($label)) {
+                        $_element->setLabel("{$_element->getLabel()} <span class='field_required'>*</span>");
+                    }
+                    if ($_element->isRequired()){
+                        $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
+                    }
+                }
             }
         }
 
@@ -223,68 +256,77 @@ EOS;
         }
     }
 
+    public function formatDivDecorators($options = null) {
+
+        $displayLabels = isset($options['label']) ? $options['label'] : true;
+        $classDiv = isset($options['classDiv']) ? $options['classDiv'] : "form-div";
+        $classLabel = isset($options['classLabel']) ? $options['classLabel'] : "form-label";
+
+        $formsToFormat = array(array('object' => $this, 'type' => 'Form'));
+        //decorators
+        if ($this->getSubForms()) {
+            foreach ($this->getSubForms() as $form) {
+                $formsToFormat[] = array('object' => $form, 'type' => 'Fieldset');
+            }
+        }
+        foreach ($formsToFormat as $form)
+        {
+            foreach ($form['object']->getElements() as $key => $element)
+            {
+                $currentClass = " " . $element->getAttrib('class');
+                $label = !$displayLabels ? $displayLabels : $element->getDecorator('Label');
+                if ($label) {
+                    $element->setDecorators(array(
+                        'ViewHelper',
+                        'Errors',
+                        array('Description', array('tag' => 'p', 'class' => 'description')),
+                        array('Label', array('class' => $classLabel)),
+                        array('HtmlTag', array('class' => $classDiv . $currentClass)),
+                    ));
+                } else {
+                    $element->setDecorators(array(
+                        'ViewHelper',
+                        'Errors',
+                        array('Description', array('tag' => 'p', 'class' => 'description')),
+                        array('HtmlTag', array('class' => $classDiv . $currentClass)),
+                    ));
+                }
+                if ($key == 'captcha'){
+                    $element->removeDecorator("viewhelper");
+                }
+            }
+            $form['object']->setDecorators(array(
+                'FormElements',
+                $form['type']
+            ));
+         }
+    }
+
     protected function _addSubFormAsteriks($subForms)
     {
-        foreach ($subForms->getElements() as $_element)
-        {
-            if ($_element->getType() == 'Cible_Form_Element_Editor')
-            {
+        foreach ($subForms->getElements() as $_element) {
+            if ($_element->getType() == 'Cible_Form_Element_Editor') {
                 $this->getView()->headScript()->appendFile($this->getView()->baseUrl() . '/js/tinymce/tinymce.min.js');
                 break;
             }
-
-            if ($_element->isRequired() && $this->_addRequiredAsterisks)
-            {
-                $_element->setLabel("{$_element->getLabel()} <span class='field_required'>*</span>");
+            $isOk = preg_match('/field_required/', $_element->getLabel());
+            $label = $_element->getLabel();
+            if ($_element->isRequired() && $this->_addRequiredAsterisks
+                && !$isOk && !empty($label)){
+                $_element->setLabel("{$label} <span class='field_required'>*</span>");
+            }
+            if ($_element->isRequired()){
+                $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
             }
         }
 
         $tmpForm = $subForms->getSubForms();
-        if (is_array($tmpForm))
+        if (is_array($tmpForm)){
             $tmpForm = current($tmpForm);
-
-        if (count($tmpForm) && $tmpForm instanceof Zend_Form_SubForm)
-        {
+        }
+        if (count($tmpForm) && $tmpForm instanceof Zend_Form_SubForm){
             $this->_addSubFormAsteriks($tmpForm);
         }
     }
-
-     public function formatDivDecorators() {
-        //decorators
-        $this
-                ->setElementDecorators(array(
-                    'ViewHelper',
-                    'Errors',
-                    array('Description', array('tag' => 'p', 'class' => 'description')),
-                    array('HtmlTag', array('class' => 'form-div')),
-                        //array('Label', array('class' => 'form-label'))
-                ))
-                ->setDecorators(
-                        array(
-                            'FormElements',
-                            'Form'
-                        )
-                )
-        ;
-     }
-
-//    public function autoGenerate()
-//    {
-//        $metaData = array();
-//        $object = $this->_object;
-//
-//        $metaData = $object->getColsData();
-//
-//        foreach ($metaData as $key => $meta)
-//            $this->setFormFields($meta, $key);
-//
-//        $indexTable = $object->getIndexTableName();
-//        if (!empty ($indexTable))
-//        {
-//            $metaIndex = $object->getColsIndex();
-//            foreach ($metaIndex as $key => $meta)
-//                $this->setFormFields($meta, $key);
-//        }
-//    }
 
 }
