@@ -1,51 +1,20 @@
-
-<section class="forms module forms-contact content">    
+<section class="forms module forms-contact content">
     <?php
     $inscriptionValidate = $this->inscriptionValidate;
-    if ($this->showTitle) {
-        echo $this->showBlockTitle('h2', array('class' => 'forms-title'));
-    } else {
-        echo $this->showBlockTitle('h1', array('class' => 'forms-title'));
-    }
-
-
-    if (!$inscriptionValidate) {
-        
-        echo($this->form);
-        
-    } else {
-        ?>
-        <p class="forms-contact-succeed">
-            <?php
-            echo($this->getClientText('form_contact_sent_tank_you_message'));
-            ?>
-        </p>
-    <?php }
+    echo $this->showBlockTitle('h2', array('class' => 'forms-title'));
     ?>
-        <div class="clear"></div>
-</section>
-
-
-<section class="forms module forms-contact">    
-    <?php
-    $inscriptionValidate = $this->inscriptionValidate;
-        echo $this->showBlockTitle('h2', array('class' => 'forms-title'));
-
-    if (!$inscriptionValidate) {
-
+    <?php if (!$inscriptionValidate) :
         echo($this->form);
-
-    } else {
-        ?>
-        <p class="forms-contact-succeed">
-            <?php
-            echo($this->getClientText('form_contact_sent_tank_you_message'));
-            ?>
-        </p>
-    <?php }
+     else :
     ?>
-        <div class="clear"></div>
-        <div class="required-field notice-required-field"><?php echo $this->getClientText('notice_champs_obligatoire');?></div>
+    <p class="forms-contact-succeed">
+    <?php echo($this->getClientText('form_contact_sent_tank_you_message'));?>
+    </p>
+    <?php endif; ?>
+    <div class="clear"></div>
+    <div class="required-field notice-required-field">
+        <?php echo $this->getCibleText('form_field_required_label'); ?>
+    </div>
 </section>
 
 

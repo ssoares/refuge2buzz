@@ -13,6 +13,7 @@ $menu = $this->menu(
     'class' => 'nav nav-pills nav-stacked')
 );
 $withLeftMenu = 'col-md-12 site-main-without-menu';
+$margintop = '';
 
 $breadCrumb = $this->breadcrumbmenu(array('menuTitle' => 'principal',
     'showHomeClass' => 'breadcrumb-home')
@@ -27,8 +28,10 @@ $breadCrumb = $this->breadcrumbmenu(array('menuTitle' => 'principal',
         <?php if ($this->imgHeader != '') echo $this->image($this->imgHeader, array('class' => 'img-header', 'direct' => true)); ?>
     </div>
 </div>
+<?php else: ?>
+<?php $margintop = 'margin-top'; ?>
 <?php endif; ?>
-<div class="site-common-zone-1 site-common-zone-1-container container">
+<div class="site-common-zone-1 site-common-zone-1-container container <?php echo $margintop; ?>">
     <?php if (isset($tree[0])): ?>
         <aside class="site-main-aside col-md-3" role="complementary">
             <nav class="aside-menu-secondaire" role="navigation">

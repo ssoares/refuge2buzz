@@ -35,18 +35,20 @@ EOS;
         $this->getView()->headScript()->appendScript($script2);
         // last name
         $surname = new Zend_Form_Element_Text('surname');
-        $surname
-                //->setLabel($this->getView()->getCibleText('forms_label_name'))
-                ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_surname'))
-        ->setAttrib('class', 'forms-input-lastname forms-input-text required-field')
+                //->setLabel($this->getView()->getCibleText('forms_label_surname'))
+        $surname->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_surname'))
+            ->setAttrib('class', 'forms-input-lastname forms-input-text')
+            ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_field_required'))))
+            ->setRequired(true)
         ;
 
         // first name
         $name = new Zend_Form_Element_Text('name');
-        $name
                 //->setLabel($this->getView()->getCibleText('forms_label_name'))
-                ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_name'))
-        ->setAttrib('class', 'forms-input-firstname forms-input-text')
+        $name->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_name'))
+            ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_field_required'))))
+            ->setRequired(true)
+            ->setAttrib('class', 'forms-input-firstname forms-input-text')
         ;
         //email
         $email = new Zend_Form_Element_Text('email');
@@ -56,7 +58,7 @@ EOS;
                 ->addValidator('EmailAddress', true, array('messages' => Cible_Translation::getCibleText('validation_message_emailAddressInvalid')))
                 ->setRequired(true)
                 ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_email'))
-        ->setAttrib('class', 'forms-input-email forms-input-text required-field')
+        ->setAttrib('class', 'forms-input-email forms-input-text')
         ;
 
         // Commentaires
@@ -68,7 +70,7 @@ EOS;
                 ->addFilter('StringTrim')
                 ->setAttrib('rows', 10)
                 ->setAttrib('placeholder', $this->getView()->getCibleText('forms_label_placeholder_comments'))
-        ->setAttrib('class', 'stdTextarea required-field')
+        ->setAttrib('class', 'stdTextarea')
         ;
 
         $this->addElement($surname);
@@ -85,16 +87,16 @@ EOS;
         //->setAttrib('class', 'grayish-button')
         ;
 
-        $this->addElement($submit);       
-        
+        $this->addElement($submit);
+
         $this->addDisplayGroup(array('refresh_captcha','captcha', 'submit'), 'captcha-fieldset');
 
         //$mobile = Zend_Registry::get('isMobile');
-        $this->formatDivDecorators();
+        $this->formatDivDecorators(array('classDiv' => 'form-captcha-div'));
     }
 
-    public function formatDivDecorators() {
-        parent::formatDivDecorators();
+    public function formatDivDecorators($options = null) {
+        parent::formatDivDecorators($options);
 
         $this->getElement('captcha')
                 ->removeDecorator('ViewHelper')
@@ -128,5 +130,3 @@ EOS;
     }
 
 }
-
-?>
