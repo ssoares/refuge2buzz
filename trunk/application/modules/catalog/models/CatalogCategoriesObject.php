@@ -155,8 +155,8 @@ class CatalogCategoriesObject extends DataObject
                 $tmpCat[$this->_valurlField] = "";
             $this->_link[] = $tmpCat[$this->_valurlField];
             $this->_level++;
-        }elseif(isset($menuCatalog['link'])){
-            $this->_link[] = $menuCatalog['link'];
+        }elseif(isset($menuCatalog['Link'])){
+            $this->_link[] = $menuCatalog['Link'];
             $this->_level++;
         }
 

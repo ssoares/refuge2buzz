@@ -150,7 +150,7 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
         {
             $menuData['Placeholder'] = 2;
             $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list', 14, null, true);
-            $menuData['link'] = $parentUseCatalog ? $parentName : $catalogPage;
+            $menuData['Link'] = $parentUseCatalog ? $parentName : $catalogPage;
             $oCatalog = new CatalogCollection();
             $buildOnObj = $oCatalog->getBuildSubMenuOn();
             $collections = new $buildOnObj();

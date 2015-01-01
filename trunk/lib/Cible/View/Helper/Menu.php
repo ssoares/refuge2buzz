@@ -546,7 +546,11 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
         $buildOnObj = $oCatalog->getBuildSubMenuOn();
         $collections = new $buildOnObj();
         $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list', 14, null, true);
-        $object['link'] = $catalogPage;
+        $object['Link'] = $catalogPage;
+        if (empty($object['Link']) && $object['PageID'] > 0){
+            $object['Link'] = Cible_FunctionsPages::getPageNameByID($object['PageID'], Zend_Registry::get('languageID'));
+        }
+
         $catalogMenu = $collections->buildCatalogMenu($object, array('nesting' => 1));
         if(isset($object['child'])){
         $tree = array_merge($catalogMenu['child'], $object['child']);
