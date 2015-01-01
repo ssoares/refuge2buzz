@@ -7,7 +7,7 @@
 //la barre de menu principal
 .site-menu-principal {
     font-size:0;
-    vertical-align:middle; 
+    vertical-align:middle;
     margin:0;
     line-height:24px;
     background:none;
@@ -26,7 +26,7 @@
         & > li {
             float:none;
             display:inline-block;
-            .responsive-font(@font-size-base); 
+            .responsive-font(@font-size-base);
             margin:0 0 0 @grid-gutter-width * 2;
             @media @mq-tablet {
                 margin:0 @grid-gutter-width * 2 0 0;
@@ -51,10 +51,10 @@
             }
         }
         //lorsque l'élément est survolé ou active
-        & > .active > a, 
-        & > li:hover > a, 
+        & > .active > a,
+        & > li:hover > a,
             & > .with-dropdown-toggle:hover > a,
-            & > .active > a:focus { 
+            & > .active > a:focus {
             background:none;
             &:before {
                 content:"";
@@ -62,27 +62,27 @@
                 position:absolute;
                 bottom:0;
                 left:0;
-                width:100%;  
+                width:100%;
                 background:@brand-primary;
                 @media @mq-phone {
                     display:none;
                 }
             }
             @media @mq-phone {
-                color:@brand-primary;
+                color:@link-color;
             }
         }
         .with-dropdown-toggle {
             &.open {
-                & > a, 
-                & > a:hover, 
+                & > a,
+                & > a:hover,
                     & > a:focus {
                     background:@brand-black;
                     color:@brand-grey;
                 }
             }
             & > a {
-                &:after { 
+                &:after {
                     content:"";
                     margin:0 4px;
                     .caret-down(4px);
@@ -104,27 +104,27 @@
             }
             & > li {
                 padding:0 14px;
-                .responsive-font(@font-size-base);  
+                .responsive-font(@font-size-base);
                 & > a {
                     line-height:43px;
                     padding:0;
-                    .color-brightness(@brand-primary);                 
+                    .color-brightness(@brand-primary);
                 }
                 & + li {
-                    a { 
+                    a {
                         border-top:1px solid lighten(@brand-primary,19.8%);
                     }
                 }
             }
-            & > li 
+            & > li
             & > li.active > a,
             & > li:hover > a {
                 background:none;
-                color:@brand-grey;
+                color:@brand-cyan;
             }
             @media @mq-phone {
                 border-top:1px solid @brand-white;
-                border-bottom:1px solid @brand-white;    
+                border-bottom:1px solid @brand-white;
                 padding:@grid-gutter-width / 2;
                 margin:0 @grid-gutter-width / 2;
                 width:auto;
@@ -144,8 +144,8 @@
 .aside-menu-secondaire {
     padding:0;
     margin:0 -@grid-gutter-width / 2;
-    .nav-stacked { 
-        li { 
+    .nav-stacked {
+        li {
             ul {
                 display:none;
             }
@@ -166,14 +166,14 @@
             &.active > a,
             &:hover > a {
                 background:none;
-                color:@brand-primary;
+                color:@link-color;
                 text-decoration:none;
             }
             ul {
                 list-style:none;
                 padding:0;
                 margin:14px 0;
-                li {                    
+                li {
                     a {
                         padding:0px 12px;
                         margin:2px 0;
@@ -189,7 +189,7 @@
                     }
                     &.active > a,
                     & > a:hover {
-                        color:@brand-primary;
+                        color:@link-color;
                         background:none;
                     }
                 }
@@ -199,9 +199,9 @@
             }
         }
     }
-    @media @mq-phone {        
+    @media @mq-phone {
         display:none;
-    } 
+    }
 }
 .site-footer-menu {
     list-style:none;
@@ -216,8 +216,8 @@
             color:@brand-grey;
             display:block;
         }
-        &:hover a, &.active a {            
-            color:@brand-primary;
+        &:hover a, &.active a {
+            color:@link-color;
             text-decoration:none;
         }
         @media @mq-tablet {
@@ -230,7 +230,7 @@
 }
 .site-footer-reseaux  {
     text-align:right;
-    ul { 
+    ul {
         padding:0;
         display: inline-block;
         .font-0();
@@ -255,13 +255,13 @@
                 }
                 &:after {
                     .responsive-font(@font-size-base * 2);
-                    @media @mq-desktop { 
+                    @media @mq-desktop {
                         .responsive-font(@font-size-base * 1.5);
                     }
-                    @media @mq-tablet { 
+                    @media @mq-tablet {
                         .responsive-font(@font-size-base * 2);
                     }
-                    @media @mq-phone { 
+                    @media @mq-phone {
                         .responsive-font(@font-size-base * 2);
                     }
                 }
@@ -285,7 +285,7 @@
     }
 }
 .site-footer-reseaux {
-    ul { 
+    ul {
         li {
             .foreach(@custom-colors, {
                 @name: e('color-@{value}' );
@@ -293,21 +293,21 @@
                 a.icon-@{class-name}:hover:after {
                     color:@@name;
                 }
-            }); 
+            });
         }
     }
 }
 .site-footer-copyright {
-    ul { 
+    ul {
         padding:0;
         margin:6px 0 0 0;
         display:inline-block;
         vertical-align:middle;
-        @media @mq-tablet { 
+        @media @mq-tablet {
             display: block;
             padding: 0;
         }
-        @media @mq-phone { 
+        @media @mq-phone {
             display: block;
             padding: 0;
         }
