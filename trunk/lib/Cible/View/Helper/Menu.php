@@ -405,7 +405,9 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                 if (count($this->_parentsMenuId))
                     $tmpArray = $this->_parentsMenuId;
 
-                if ($url == $this->_selectedPage || in_array($object['ID'], $tmpArray))
+                if ($url == $this->_selectedPage
+                    || in_array($object['ID'], $tmpArray)
+                    || (isset($object['Style']) && strstr($object['Style'], 'active')))
                 {
 //                    $this->_getParentsMenuId($object);
                     array_push($liclass, 'active');
@@ -550,8 +552,11 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
         if (empty($object['Link']) && $object['PageID'] > 0){
             $object['Link'] = Cible_FunctionsPages::getPageNameByID($object['PageID'], Zend_Registry::get('languageID'));
         }
-
-        $catalogMenu = $collections->buildCatalogMenu($object, array('nesting' => 1));
+        $pathInfo  = $this->view->request->getPathInfo();
+        $oCatalog->setActions($pathInfo);
+        $options = array('nesting' => 1,
+            'currentPath' => $oCatalog->getActions());
+        $catalogMenu = $collections->buildCatalogMenu($object, $options);
         if(isset($object['child'])){
         $tree = array_merge($catalogMenu['child'], $object['child']);
         }else{

@@ -154,7 +154,11 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
             $oCatalog = new CatalogCollection();
             $buildOnObj = $oCatalog->getBuildSubMenuOn();
             $collections = new $buildOnObj();
-            $catalogMenu = $collections->buildCatalogMenu($menuData, array('nesting' => 2));
+            $pathInfo  = $this->view->request->getPathInfo();
+            $oCatalog->setActions($pathInfo);
+            $options = array('nesting' => 2,
+                'currentPath' => $oCatalog->getActions());
+            $catalogMenu = $collections->buildCatalogMenu($menuData, $options);
 
             $tree = array_merge($catalogMenu['child'], $tree);
         }

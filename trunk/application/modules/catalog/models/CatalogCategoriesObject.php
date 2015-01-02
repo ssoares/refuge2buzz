@@ -30,6 +30,7 @@ class CatalogCategoriesObject extends DataObject
     protected $_valurlField     = 'CCI_ValUrl';
     protected $_nesting         = 0;
     protected $_buildOnCatalog  = false;
+    protected $_currentPath  = array();
     protected $_link  = array();
     protected $_level  = 0;
     protected $_searchColumns = array(
@@ -148,7 +149,8 @@ class CatalogCategoriesObject extends DataObject
             $this->_nesting = $options['nesting'];
         if (!empty($options) && isset($options['buildOnCatalog']))
             $this->_buildOnCatalog = $options['buildOnCatalog'];
-
+        if (!empty($options) && isset($options['currentPath']))
+            $this->_currentPath = $options['currentPath'];
         if(Zend_Registry::isRegistered('defaultCategory')
             && !is_null(Zend_Registry::get('defaultCategory'))
             && Zend_Registry::get('defaultCategory') > 0)
@@ -190,6 +192,7 @@ class CatalogCategoriesObject extends DataObject
     private function _getTree($categories, $catalog, $langId)
     {
         $menu = array();
+
         foreach ($categories as $category)
         {
             $this->_link[$this->_level] = $category[$this->_valurlField];
@@ -202,7 +205,9 @@ class CatalogCategoriesObject extends DataObject
                 'loadImage' => 0,
                 'menuImgAndTitle' => 0,
                 'Placeholder' => 0);
-
+            if (in_array($category[$this->_valurlField], $this->_currentPath)){
+                $menu['Style'] = 'active';
+            }
             if ($this->_nesting > 0)
             {
                 $qry = $this->getAll($langId, false);
