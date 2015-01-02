@@ -184,7 +184,8 @@ class Catalog_IndexController extends Cible_Controller_Block_Abstract
             $this->_colTitle = array(
                 'CC_ID'    => array('width' => '150px', 'label' => $this->view->getCibleText('list_column_id')),
                 'CCI_Name' => array('width' => '150px', 'useFormLabel' => true),
-                'CC_Seq'    => array('width' => '150px', 'useFormLabel' => true)
+                'CC_Seq'    => array('width' => '150px', 'useFormLabel' => true),
+                'CC_Online'    => array('width' => '150px', 'useFormLabel' => true)
                 );
 
             $oCat = new CatalogCategoriesObject();

@@ -386,7 +386,7 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
 
                     if ($this->setRowStyle)
                         $rowClass = "row{$this->row}";
-                    if ($level < $this->_maxLevel  || $this->_maxLevel == 0){
+                    if (($level < $this->_maxLevel  || $this->_maxLevel == 0) && !empty($object['child'])){
                         $tmp .= "<ul class='level-{$level} {$rowClass} ".$this->_dropdownMenuClass."'>\r\n";
                         $tmp .= $this->generateList($object['child'], $addFirstLastClasses, $level + 1);
                         $tmp .= $this->html;
@@ -552,13 +552,13 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
         if (empty($object['Link']) && $object['PageID'] > 0){
             $object['Link'] = Cible_FunctionsPages::getPageNameByID($object['PageID'], Zend_Registry::get('languageID'));
         }
-        $pathInfo  = $this->view->request->getPathInfo();
+        $pathInfo  = '';//$this->view->request->getPathInfo();
         $oCatalog->setActions($pathInfo);
         $options = array('nesting' => 1,
             'currentPath' => $oCatalog->getActions());
         $catalogMenu = $collections->buildCatalogMenu($object, $options);
         if(isset($object['child'])){
-        $tree = array_merge($catalogMenu['child'], $object['child']);
+            $tree = array_merge($catalogMenu['child'], $object['child']);
         }else{
             $tree = $catalogMenu['child'];
         }
