@@ -59,6 +59,7 @@ class CatalogCategoriesObject extends DataObject
     public function setQuery(Zend_Db_Select $query)
     {
         $this->_query = $query;
+        $this->_query->where('CC_Online = ?', 1);
         return $this;
     }
 
@@ -165,13 +166,25 @@ class CatalogCategoriesObject extends DataObject
             $this->_link[] = $menuCatalog['Link'];
             $this->_level++;
         }
+        if (!$defaultCatId && isset($menuCatalog['PageID'])){
+            $opt = array('pageId' => $menuCatalog['PageID'], 'moduleId' => 14);
+            $blocks = Cible_FunctionsBlocks::getBlocksFromRelatedPage($opt);
+            if (isset($blocks['blocks'])){
+                $blockId = current(array_keys($blocks['blocks']));
+                $param = Cible_FunctionsBlocks::getBlockParameter($blockId, 1);
+                if ($param > 0){
+                    $defaultCatId = $param;
+                }
+            }
+        }
 
         $id = isset($menuCatalog['MID_ID']) ? $menuCatalog['MID_ID'] : $menuCatalog['ID'];
         $title = isset($menuCatalog['Title']) ? $menuCatalog['Title'] : '';
 
-        $this->_query = $this->getAll($langId, false);
-        $this->_query->where($this->_foreignKey . ' = ?', $defaultCatId);
-
+        $this->setQuery($this->getAll($langId, false));
+        if ($defaultCatId){
+            $this->_query->where($this->_foreignKey . ' = ?', $defaultCatId);
+        }
         $categories = $this->_db->fetchAll($this->_query);
         $catalog = array(
             'ID' => $id,
@@ -212,6 +225,7 @@ class CatalogCategoriesObject extends DataObject
             {
                 $qry = $this->getAll($langId, false);
                 $qry->where($this->_foreignKey . ' = ?', $category[$this->_dataId]);
+                $qry->where('CC_Online = ?', 1);
                 $children = $this->_db->fetchAll($qry);
                 if (!empty($children))
                 {
