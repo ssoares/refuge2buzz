@@ -24,15 +24,10 @@
 class ProductsObject extends DataObject
 {
     protected $_dataClass   = 'ProductsData';
-//    protected $_dataId      = '';
-//    protected $_dataColumns = array();
-
     protected $_indexClass      = 'ProductsIndex';
-//    protected $_indexId         = '';
     protected $_indexLanguageId = 'PI_LanguageID';
     protected $_foreignKey      = 'P_CategoryId';
-//    protected $_indexColumns    = array();
-
+    protected $_titleField      = 'PI_Name';
     protected $_query;
     protected $_searchColumns = array(
         'data' => array(),
@@ -55,6 +50,11 @@ class ProductsObject extends DataObject
     public function setQuery(Zend_Db_Select $query)
     {
         $this->_query = $query;
+    }
+
+    function getTitleField()
+    {
+        return $this->_titleField;
     }
 
     /**

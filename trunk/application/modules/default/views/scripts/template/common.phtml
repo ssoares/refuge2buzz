@@ -4,13 +4,13 @@ $emptyPlaceholders = $this->zonesBlocks(array('nbZones' => $this->nbZones));
 
 $tree = $this->subMenu(array('id' => 'submenu', 'class' => 'open', 'buildOnCatalog' => true));
 $menu = $this->menu(
-        $tree, array(
-    'id' => 'submenu',
-    'startLevel' => 2,
-    'maxLevel' => 2,
-    'parentIdAlt' => 'subMenu-',
-    'parentId' => $tree['MID_ParentId'],
-    'class' => 'nav nav-pills nav-stacked')
+    $tree, array(
+        'id' => 'submenu',
+        'startLevel' => 2,
+        'maxLevel' => 2,
+        'parentIdAlt' => 'subMenu-',
+        'parentId' => $tree['MID_ParentId'],
+        'class' => 'nav nav-pills nav-stacked')
 );
 $withLeftMenu = 'col-md-12 site-main-without-menu';
 $margintop = '';

@@ -39,6 +39,11 @@ class CatalogCategoriesObject extends DataObject
         )
     );
 
+    function getTitleField()
+    {
+        return $this->_titleField;
+    }
+
     public function getLink()
     {
         return $this->_link;
@@ -74,8 +79,7 @@ class CatalogCategoriesObject extends DataObject
                         $this->_oIndexTableName,
                         $this->_dataId . " = " . $this->_indexId,
                         '')
-                ->where("CCI_ValUrl LIKE ?", "%" . $string . "%")
-                ;
+                ->where("CCI_ValUrl = ?", $string);
 
             $data = $this->_db->fetchRow($select);
             $id = $data[$this->_dataId];
