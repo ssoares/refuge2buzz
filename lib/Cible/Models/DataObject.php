@@ -154,6 +154,16 @@ class DataObject
     }
 
     /**
+     * Setter for $_dataId
+     *
+     */
+    public function setDataId($id)
+    {
+        $this->_dataId = $id;
+        return $this;
+    }
+
+    /**
      * Getter for $_indexId
      *
      * @return string name of the column for primary index
@@ -352,17 +362,6 @@ class DataObject
                             ->where("{$this->_indexLanguageId} = ?", $langId);
 
             $_row = $this->_db->fetchRow($select);
-            /*
-              $_object = new $this->_dataClass();
-              $select = $_object->select()
-              ->from($this->_dataClass)
-              ->setIntegrityCheck(false)
-              ->join($this->_indexClass, "{$this->_dataClass}.{$this->_dataId} = {$this->_indexClass}.{$this->_indexId}")
-              ->where("{$this->_dataId} = ?", $id)
-              ->where("{$this->_indexLanguageId} = ?", $langId);
-
-              $_row = $_object->fetchRow($select);
-             */
         }
 
         $tmp = array();
@@ -450,7 +449,6 @@ class DataObject
             $_insertedId = $data[$this->_dataId];
 
 
-        //var_dump($this->_indexClass);
         if (!empty($this->_indexClass))
         {
             unset($this->_indexColumns[$this->_indexId]);
@@ -632,9 +630,7 @@ class DataObject
      */
     public function getAll($langId = null, $array = true, $id = null)
     {
-
         $typeData = array();
-
         $dataTableName = $this->_oDataTableName;
 
         $select = $this->_oData->select()
@@ -689,11 +685,11 @@ class DataObject
         if (!is_null($id))
             $select->where("{$this->_dataId} = ?", $id);
 
-        if ($array)
+        if ($array){
             $typeData = $this->_oData->fetchAll($select)->toArray();
-        else
+        }else{
             $typeData = $select;
-
+        }
         return $typeData;
     }
 
@@ -1156,20 +1152,41 @@ class DataObject
      *
      * @return array | Zend_Db_Select
      */
-    public function joinFetchData($array = false)
+    public function joinFetchData($array = false, $langId = null)
     {
         $results = null;
-        $select =  null;
-
+        if (empty($this->_columns)){
+            $this->_columns = $this->_dataColumns;
+        }
         if (!empty($this->_query))
         {
-            $select = $this->_query;
-            $select->joinLeft($this->_oDataTableName, $this->_foreignKey, $this->_columns);
+            $this->_query->joinLeft($this->_oDataTableName, $this->_foreignKey ."=". $this->_dataId , $this->_columns);
+            if (!empty($this->_indexClass))
+            {
+                $indexTableName = $this->_oIndexTableName;
 
+                if (isset($this->_indexColumns[0]))
+                    $columns = $this->_indexColumns[0];
+                else
+                    $columns = $this->_indexColumns;
+
+                $this->_query->joinLeft(
+                        $indexTableName,
+                        "{$this->_dataId} = {$this->_indexId}",
+                        $columns);
+
+
+                if (!is_null($langId)){
+                    $this->_query->where("{$this->_indexLanguageId} = ?", $langId);
+                }
+            }
+            if (!empty($this->_orderBy)){
+                $this->_query->order($this->_orderBy);
+            }
             if ($array)
-                $results = $this->_db->fetchAll($select);
+                $results = $this->_db->fetchAll($this->_query);
             else
-                $results = $select;
+                $results = $this->_query;
 
         }
 
@@ -1182,34 +1199,37 @@ class DataObject
      *
      * @param array $filters List of values to build filters.
      */
-    public function findData($filters = array())
+    public function findData($filters = array(), $useQry = false)
     {
+        if (!$useQry){
+            $select = $this->_db->select();
+            $select->from($this->_oDataTableName, $this->_dataColumns);
+            $select->joinLeft($this->_oIndexTableName,
+                $this->_dataId . '= ' . $this->_indexId,
+                $this->_indexColumns);
+            foreach ($filters as $key => $value)
+            {
+                if (isset($this->_dataColumns[$key]))
+                {
+                    if (is_string($value ))
+                        $select->where("{$this->_dataColumns[$key]} like '%{$value}%'");
+                    elseif (is_integer($value))
+                        $select->where($this->_dataColumns[$key] . ' = ?',$value);
+                }
+                if (isset($this->_indexColumns[$key]))
+                {
+                    if (is_string($value ))
+                        $select->where("{$this->_indexColumns[$key]} like '%{$value}%'");
+                    elseif (is_integer($value))
+                        $select->where($this->_indexColumns[$key] . ' = ?',$value);
+                }
+            }
 
-        $select = $this->_db->select();
-        $select->from($this->_oDataTableName, $this->_dataColumns);
-        $select->joinLeft($this->_oIndexTableName,
-            $this->_dataId . '= ' . $this->_indexId,
-            $this->_indexColumns);
-        foreach ($filters as $key => $value)
-        {
-            if (isset($this->_dataColumns[$key]))
-            {
-                if (is_string($value ))
-                    $select->where("{$this->_dataColumns[$key]} like '%{$value}%'");
-                elseif (is_integer($value))
-                    $select->where($this->_dataColumns[$key] . ' = ?',$value);
-            }
-            if (isset($this->_indexColumns[$key]))
-            {
-                if (is_string($value ))
-                    $select->where("{$this->_indexColumns[$key]} like '%{$value}%'");
-                elseif (is_integer($value))
-                    $select->where($this->_indexColumns[$key] . ' = ?',$value);
-            }
+            if ($this->_orderBy)
+                $select->order($this->_orderBy);
+        }else{
+            $select = $this->_query;
         }
-
-        if ($this->_orderBy)
-            $select->order($this->_orderBy);
 
         return $this->_db->fetchAll($select);
     }
@@ -1280,6 +1300,12 @@ class DataObject
     {
         if (!empty($this->_query))
         {
+            if (empty($this->_searchColumns)){
+                $this->_searchColumns = $this->_dataColumns;
+            }
+            if (!empty($this->_indexColumns)){
+                $this->_searchColumns = array_merge($this->_dataColumns, $this->_indexColumns);
+            }
             foreach ($data as $key => $value)
             {
                 if(!empty($value))
@@ -1288,6 +1314,7 @@ class DataObject
                     if (count($tmpVal) > 1)
                         $value = $tmpVal;
                     if (array_key_exists($key, $this->_searchColumns))
+                    {
                         if (is_array($this->_searchColumns[$key]))
                         {
                             foreach ($this->_searchColumns[$key] as $column){
@@ -1311,8 +1338,9 @@ class DataObject
                         }
                         else
                             $this->_addWhere($this->_searchColumns[$key], $value);
-                 }
-            }
+                    }
+               }
+           }
         }
 
         return $this->_query;
@@ -1342,7 +1370,6 @@ class DataObject
             $clause = implode(' OR ', $where);
             $this->_query->where($clause);
         }
-
         return $tmpWhere;
     }
 
@@ -1374,17 +1401,18 @@ class DataObject
             $langId = Cible_Controller_Action::getDefaultEditLanguage();
 
         if (!$noDefault)
-            $list[0] = Cible_Translation::getCibleText('form_select_default_label');
+            $list[''] = Cible_Translation::getCibleText('form_select_default_label');
         $data = $this->getAll($langId);
         foreach ($data as $values)
         {
-            if ($withKey)
+            if ($withKey){
                 $list[] = array(
                     $this->_dataId => $values[$this->_dataId],
                     $this->_titleField =>$values[$this->_titleField]
                 );
-            else
+            }else{
                 $list[$values[$this->_dataId]] = $values[$this->_titleField];
+            }
         }
 
         return $list;

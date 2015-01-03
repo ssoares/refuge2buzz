@@ -181,18 +181,28 @@ class Catalog_IndexController extends Cible_Controller_Block_Abstract
         if ($this->view->aclIsAllowed($this->_moduleTitle, 'edit', true))
         {
             $this->_imageSrc = 'CC_imageCat';
+            $oCat = new CatalogCategoriesObject();
             $this->_colTitle = array(
-                'CC_ID'    => array('width' => '150px', 'label' => $this->view->getCibleText('list_column_id')),
-                'CCI_Name' => array('width' => '150px', 'useFormLabel' => true),
-                'CC_Seq'    => array('width' => '150px', 'useFormLabel' => true),
-                'CC_Online'    => array('width' => '150px', 'useFormLabel' => true)
+                'CC_ID'    => array('width' => '50px', 'label' => $this->view->getCibleText('list_column_id')),
+                'CCI_Name' => array('width' => '300px', 'useFormLabel' => true),
+                'CC_Seq'    => array('width' => '50px', 'useFormLabel' => true),
+                'CC_Online'    => array('width' => '80px', 'useFormLabel' => true,
+                    'postProcess' => array(
+                        'type' => 'yesNo',
+                    )),
+                'CC_ParentId'    => array('width' => '300px',
+                    'useFormLabel' => true,
+                    'postProcess' => array(
+                        'type' => 'retrieveById',
+                        'object' => $oCat,
+                        'callMethod' => 'getTitleValue'
+                    ))
                 );
 
-            $oCat = new CatalogCategoriesObject();
             $listC = $oCat->getList();
             $this->_joinTables = array();
             $this->_filterData = array(
-                'project' => array(
+                'category' => array(
                     'label' => $this->view->getCibleText('form_label_CC_ParentId'),
                     'default_value' => null,
                     'associatedTo' => 'CC_ParentId',
@@ -245,12 +255,12 @@ class Catalog_IndexController extends Cible_Controller_Block_Abstract
             $this->_joinTables = array('CatalogCategoriesObject');
 
             $oCat = new CatalogCategoriesObject();
-            $listC = $oCat->getList();
+            $listC = $oCat->getList(true);
             $this->_filterData = array(
-                'project' => array(
+                'category' => array(
                     'label' => $this->view->getCibleText('form_label_CC_ParentId'),
                     'default_value' => null,
-                    'associatedTo' => 'CC_ParentId',
+                    'associatedTo' => 'P_CategoryId',
                     'choices' => $listC
                 ),
             );
