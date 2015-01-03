@@ -1,39 +1,30 @@
-<?php $controllerName = $this->request->getParam('controller'); ?>
 <?php
-$i = 1;
-$columns = 2;
 $this->headTitle($this->title);
 $this->pageTitle($this->title);
 ?>
-<div id="contentCatalog" class="block catalog">
+<section id="contentCatalog" class="block catalog">
     <?php foreach ($this->paginator as $name => $data): ?>
-        <?php $class = ($i % $columns == 0) ? 'right' : 'left'; ?>
-        <div class="list <?php echo $class; ?>">
+        <article class="list col-lg-4">
             <?php
             $name = $data["PI_Name"];
             $url = $this->Url(array('action' => null)) . '/' . $this->stringUrl . '/' . $data['PI_ValUrl'];
             ?>
-            <p class="picture">
+            <figure class="picture">
+                <?php $img = $this->clientImage('logo.png'); ?>
                 <?php if (!empty($data['P_Photo'])) : ?>
-                <?php echo $this->link($url,
-                        $this->moduleImage(
-                            'catalog', 'products/' . $data['P_ID'], $data['P_Photo'], 'medium'
-                        )
-                    );
+                <?php $img = $this->moduleImage(
+                            'catalog', 'products/' . $data['P_ID'],
+                            $data['P_Photo'], 'thumb');
                 ?>
-                <?php else: ?>
-                    <?php echo $this->clientImage('logo.png'); ?>
                 <?php endif; ?>
-            </p>
+                <?php echo $this->link($url, $img); ?>
+            </figure>
             <p class="text">
                 <?php // echo $data['CCI_Description']; ?>
                 <?php echo $this->link($url, $name, array('class' => '')); ?>
             </p>
-        </div>
-        <?php
-        $i++;
-    endforeach;
-    ?>
+        </article>
+        <?php endforeach;?>
     <div class="clear_both"></div>
     <?php echo $this->paginationControl($this->paginator,'sliding', 'partials/products.paginator.phtml'); ?>
-</div>
+</section>

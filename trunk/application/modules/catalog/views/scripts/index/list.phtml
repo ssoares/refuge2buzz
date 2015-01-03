@@ -1,49 +1,41 @@
-<?php $controllerName = $this->request->getParam('controller'); ?>
 <?php
-$i = 1;
-$columns = 2;
-
 $this->headTitle($this->title);
 $this->pageTitle($this->title);
-
 ?>
 
-<div id="contentCatalog" class="block catalog">
+<section id="contentCatalog" class="block catalog row">
     <?php foreach ($this->paginator as $name => $data): ?>
         <?php
-        $url = $this->Url(array('action' => null));
-        if ($this->stringUrl){
-            $url .= '/' . $this->stringUrl;
-        }
+        $url = rtrim($this->url(), '/');
+//        if ($this->stringUrl){
+//            $url .= '/' . $this->stringUrl;
+//        }
         $url .= '/' . $data['CCI_ValUrl'];
         $catName = $data["CCI_Name"];
-        ($i % $columns == 0) ? $class = 'right' : $class = 'left';
         ?>
-        <div class="list <?php echo $class; ?>">
-            <?php if (!empty($data['CC_imageCat'])):?>
-            <p class="picture">
-                <?php
-                    echo $this->link($url,
-                        $this->moduleImage(
-                            'catalog', 'categories/' . $data['CC_ID'], $data['CC_imageCat'], 'medium',
+        <article class="list col-lg-4">
+            <figure class="picture">
+                <?php $img = $this->clientImage('logo.png'); ?>
+                <?php if (!empty($data['CC_imageCat'])):?>
+                    <?php
+                        $img = $this->moduleImage(
+                            'catalog', 'categories/' . $data['CC_ID'],
+                            $data['CC_imageCat'], 'thumb',
                             array(
                                 'class' => '',
                                 'key' => 'category',
                             )
-                        )
-                    );
-                ?>
-            </p>
-            <?php endif;; ?>
+                        );
+                    ?>
+                <?php endif; ?>
+                <?php echo $this->link($url, $img);?>
+            </figure>
             <p class="text">
                 <?php // echo $data['CCI_Description']; ?>
                 <?php echo $this->link($url, $catName, array('class' => '')); ?>
             </p>
-        </div>
-        <?php
-        $i++;
-    endforeach;
-    ?>
+        </article>
+        <?php endforeach;?>
     <div class="clear_both"></div>
     <?php echo $this->paginationControl($this->paginator,'sliding', 'partials/products.paginator.phtml'); ?>
-</div>
+</section>

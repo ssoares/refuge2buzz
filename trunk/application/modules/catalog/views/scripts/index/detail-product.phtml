@@ -11,10 +11,13 @@ $large = $config->catalog->image->original->maxWidth . 'x' . $config->catalog->i
 $medium = $config->catalog->image->medium->maxWidth . 'x' . $config->catalog->image->medium->maxHeight . '_';
 $small = $config->catalog->image->thumb->maxWidth . 'x' . $config->catalog->image->thumb->maxHeight . '_';
 $descr = $product['CCI_Description'];
+$this->headTitle($product['PI_Name']);
+$this->pageTitle($product['PI_Name']);
 ?>
-<div class="block catalog">
+<section class="block catalog">
     <?php echo $descr; ?>
-    <div class="caracteristics_top">
+    <div class="caracteristics_top row">
+        <figure class="medium col-lg-5">
         <?php if (!empty($product['P_Photo'])): ?>
             <?php
             echo $this->moduleImage(
@@ -29,71 +32,71 @@ $descr = $product['CCI_Description'];
             echo $this->clientImage('pix.gif', array('alt' => ''));
             ?>
         <?php endif; ?>
-        <?php if (count($images) > 1): ?>
-        <div class="four_small_images">
-            <div class="small_images">
+        </figure>
+        <?php if (count($images) > 0): ?>
+        <figure class="thumb col-lg-2">
+            <?php
+            $bg = $this->moduleImage(
+                'catalog', 'products/' . $product['P_ID'],
+                $product['P_Photo'], 'thumb', array('getSource' => true));
+            ?>
+            <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;">
+                <input class="imgName" type="hidden" value="<?php echo $product['P_Photo']; ?>" />
+            </p>
+        <?php foreach ($images as $image): ?>
                 <?php
                 $bg = $this->moduleImage(
-                    'catalog', 'products/' . $product['P_ID'], $product['P_Photo'], 'thumb', array('getSource' => true)
+                    'catalog', 'products/' . $product['P_ID'], $image['CPI_Img'],
+                    'thumb', array('getSource' => true)
                 );
                 ?>
-                <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;">
-                    <input class="imgName" type="hidden" value="<?php echo $product['P_Photo']; ?>" />
-                </p>
-            </div>
-            <?php foreach ($images as $image): ?>
-                <div class="small_images">
-                    <?php
-                    $bg = $this->moduleImage(
-                        'catalog', 'products/' . $product['P_ID'], $image['CPI_Img'], 'thumb', array('getSource' => true)
-                    );
-                    ?>
-                    <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;"><input class="imgName" type="hidden" value="<?php echo $image['CPI_Img']; ?>" /></p>
-                </div>
+                <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;"><input class="imgName" type="hidden" value="<?php echo $image['CPI_Img']; ?>" /></p>
             <?php endforeach; ?>
-        </div>
+        </figure>
         <?php endif; ?>
-        <div class="clear_both"></div>
-        <?php if (!empty($product['PI_Options'])): ?>
-            <div class="title_products padding_top">
-                <?php echo $this->getCibleText('form_label_product_options'); ?>
-            </div>
-            <div class="liste">
-                <?php echo $product['PI_Options']; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-    <div class="caracteristics_top_right">
-        <?php if (!empty($product['PI_Caracteristic'])): ?>
-            <div class="title_products">
-                <?php echo $this->getCibleText('form_label_product_caracteristic'); ?>
-            </div>
-            <div class="liste">
-                <?php echo $product['PI_Caracteristic']; ?>
-            </div>
-        <?php endif; ?>
-
-        <?php if (!empty($product['PI_Advantage'])): ?>
-            <div class="title_products padding_top">
-                <?php echo $this->getCibleText('form_label_product_advantage'); ?>
-            </div>
-            <div class="liste">
-                <?php echo $product['PI_Advantage']; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-    <div class="clear_both"></div>
-    <!--</div>-->
-    <div class="caracteristics_bottom">
-        <?php $i = 0; ?>
+        <div class="col-lg-5">
         <?php foreach ($items as $item): ?>
-
+            <?php echo $item['II_Name']; ?> : <?php echo $item['I_PriceDetail']; ?> $
         <?php endforeach; ?>
-        <div class="clear_both"></div>
+        </div>
     </div>
-    <div class="clear_both" style="padding-bottom: 20px;"></div>
+    <?php
+    $classWidth = 'col-lg-4';
+    $isEmptyOptions = empty($product['PI_Options']);
+    $isEmptyNote = empty($product['PI_Notes']);
+    if ($isEmptyNote || $isEmptyOptions){
+        $classWidth = 'col-lg-6';
+    }
+    if ($isEmptyNote && $isEmptyOptions){
+        $classWidth = 'col-lg-12';
+    }
+    ?>
 
-</div>
+    <div class="<?php echo $classWidth; ?>">
+    <?php if (!empty($product['PI_Description'])): ?>
+        <header class="title_products">
+            <h3><?php echo $this->getCibleText('product_label_descriptionPublic'); ?></h3>
+        </header>
+        <?php echo $product['PI_Description']; ?>
+    <?php endif; ?>
+    </div>
+    <?php if (!$isEmptyOptions): ?>
+    <div class="<?php echo $classWidth; ?>">
+        <header>
+            <h3><?php echo $this->getCibleText('form_label_PI_Options'); ?></h3>
+        </header>
+        <?php echo $product['PI_Options']; ?>
+    </div>
+    <?php endif; ?>
+    <?php if (!$isEmptyNote): ?>
+    <div class="<?php echo $classWidth; ?>">
+        <header>
+            <h3><?php echo $this->getCibleText('product_label_notePublic'); ?></h3>
+        </header>
+        <?php echo $product['PI_Notes']; ?>
+    </div>
+    <?php endif; ?>
+</section>
 <script type="text/javascript">
     //<![CDATA[
     $(document).ready(function(){
