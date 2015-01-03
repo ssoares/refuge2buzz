@@ -1,0 +1,84 @@
+<?php $random = rand(0, 1000000); ?>
+<?php
+$imagesData = $this->imagesData;
+?>
+
+<div class="navLeftGallery invisible navControl l-<?php echo $random; ?>"><span class="control_fade leftControl">&nbsp;</span></div>
+<div class="navRightGallery invisible navControl r-<?php echo $random; ?>"><span class="control_fade rightControl">&nbsp;</span></div>
+<div class="galleryContainerImages" id="gci-<?php echo $random; ?>">
+    <div class="galleryContainer" id="img-<?php echo $random; ?>">
+        <?php
+        $imgID = 1;
+        $imgPerSlides = 4;
+        $nbImg = count($imagesData);
+        ?>
+        <div id="slideGallery-<?php echo $imgID ?>" class="slide">
+            <?php
+            foreach ($imagesData as $index => $image):
+                $url = $this->view->baseUrl() . $image['link'];
+                $title = $image['PI_Name'];
+                $rightImg = '';
+                if ($imgID % $imgPerSlides == 0) {
+                    $rightImg = 'rightImg';
+                }
+                ?>
+                <div class="slideCell <?php echo $rightImg; ?>">
+                    <?php
+                    $imageS = $this->moduleImage('catalog', 'products/' . $image['P_ID'], $image['P_Photo'], 'mini', array('getSource' => 'true', 'prettyPhoto' => array()));
+                    $imageSFull = $this->moduleImage('catalog', 'products/' . $image['P_ID'], $image['P_Photo'], 'original', array('getSource' => 'true', 'prettyPhoto' => array()));
+                    ?>
+                    <a href="<?php echo $url; ?>" title="<?php echo $title; ?>"><img src="<?php echo $imageS; ?>" /></a>
+                </div>
+                <span class="fixHeight"></span>
+    <?php if ($imgID % $imgPerSlides == 0 && $nbImg > $imgID): ?>
+                </div>
+                <div id="slideGallery-<?php echo $imgID ?>" class="slide">
+                <?php endif; ?>
+                <?php $imgID++; ?>
+<?php endforeach; ?>
+            <span class="fixHeight"></span>
+        </div>
+    </div>
+    <div class="clear"></div>
+</div>
+<?php // $this->placeholder('footerScript')->captureStart();  ?>
+<?php if ($nbImg > $imgPerSlides): ?>
+    <script type="text/javascript">
+    //<![CDATA[
+        $(document).ready(function() {
+
+            $('.navLeftGallery').removeClass('invisible');
+            $('.navRightGallery').removeClass('invisible');
+
+            var timerToRotate = 0;
+            var autoP = 0;
+            var transitionTime = 0;
+            var currentPosition = 0;
+            var showNavi = 0;
+            var effectTrans = 0;
+
+            transitionTime = 1000;
+            showNavi = 1;
+            effectTrans = "scrollLeft";  // slide= scrollHorz , fading = fade
+
+            if (autoP)
+                timerToRotate = 8 * 1000;
+
+            $('#gci-<?php echo $random; ?>').append('<div id="masterControl_paginator-<?php echo $random; ?>" class="masterControl_paginator mc-<?php echo $random; ?>">')
+            $('#img-<?php echo $random; ?>')
+                    .cycle({
+                fx: effectTrans,
+                speed: transitionTime,
+                timeout: timerToRotate,
+                sync: 1,
+                easing: 'easeOutExpo',
+                pager: '#masterControl_paginator-<?php echo $random; ?>',
+                next: '.r-<?php echo $random; ?>',
+                prev: '.l-<?php echo $random; ?>'
+            });
+
+        });
+    //]]>
+    </script>
+<?php endif; ?>
+<?php // $this->placeholder('footerScript')->captureEnd();  ?>

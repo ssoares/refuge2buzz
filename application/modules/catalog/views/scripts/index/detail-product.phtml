@@ -1,9 +1,10 @@
 <?php
-$this->headScript();
+$this->headScript()->appendFile($this->locateFile('ld.jquery.variableSlider.js'));
 //$url   = $this->baseUrl() . '/' . 'cart/index/ajax/';
 $product = $this->productDetails['data'];
 $images = $this->productDetails['images'];
 $items = $this->productDetails['items'];
+$relatedP = $this->productDetails['relatedProducts'];
 $imgPath = $this->imgProductPath . $product['P_ID'] . '/';
 
 $config = Zend_Registry::get('config');
@@ -24,7 +25,8 @@ $this->pageTitle($product['PI_Name']);
                 'catalog', 'products/' . $product['P_ID'],
                 $product['P_Photo'],
                 'medium',
-                array('prettyPhoto' => array('size' => 'original', 'rel' => ''))
+                array('prettyPhoto' => array('size' => 'original',
+                    'rel' => '', 'alt' => $product['P_Photo']))
             );
             ?>
             <?php
@@ -34,25 +36,35 @@ $this->pageTitle($product['PI_Name']);
         <?php endif; ?>
         </figure>
         <?php if (count($images) > 0): ?>
-        <figure class="thumb col-lg-2">
-            <?php
-            $bg = $this->moduleImage(
-                'catalog', 'products/' . $product['P_ID'],
-                $product['P_Photo'], 'thumb', array('getSource' => true));
-            ?>
-            <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;">
-                <input class="imgName" type="hidden" value="<?php echo $product['P_Photo']; ?>" />
-            </p>
-        <?php foreach ($images as $image): ?>
-                <?php
-                $bg = $this->moduleImage(
-                    'catalog', 'products/' . $product['P_ID'], $image['CPI_Img'],
-                    'thumb', array('getSource' => true)
-                );
-                ?>
-                <p style="background-image:  url('<?php echo $bg; ?>'); background-position: 50% 50%;"><input class="imgName" type="hidden" value="<?php echo $image['CPI_Img']; ?>" /></p>
-            <?php endforeach; ?>
-        </figure>
+        <div class="vertical-slider col-lg-2">
+            <div class="thumbnail-container">
+                <figure class="thumbs-column">
+                    <p class="thumbnail-catalog selected">
+                    <?php
+                    echo $this->moduleImage(
+                        'catalog', 'products/' . $product['P_ID'],
+                        $product['P_Photo'], 'thumb', array('alt' => $product['P_Photo'],
+                            'title' => $product['PI_Name']));
+                    ?>
+                        <input class="imgName" type="hidden" value="<?php echo $product['P_Photo']; ?>" />
+                    </p>
+                <?php foreach ($images as $image): ?>
+                    <p class="thumbnail-catalog">
+                        <?php
+                        echo $this->moduleImage(
+                            'catalog', 'products/' . $product['P_ID'], $image['CPI_Img'],
+                            'thumb', array('alt' => $product['P_Photo'],
+                            'title' => $product['PI_Name'])
+                        );
+                        ?>
+                        <input class="imgName" type="hidden" value="<?php echo $image['CPI_Img']; ?>" />
+                    </p>
+                    <?php endforeach; ?>
+                </figure>
+            </div>
+            <div class="side-up"><a href="javascript:void(0)" class="side-up-button">&nbsp;</a></div>
+            <div class="side-down"><a href="javascript:void(0)" class="side-down-button">&nbsp;</a></div>
+        </div>
         <?php endif; ?>
         <div class="col-lg-5">
         <?php foreach ($items as $item): ?>
@@ -71,7 +83,6 @@ $this->pageTitle($product['PI_Name']);
         $classWidth = 'col-lg-12';
     }
     ?>
-
     <div class="<?php echo $classWidth; ?>">
     <?php if (!empty($product['PI_Description'])): ?>
         <header class="title_products">
@@ -99,7 +110,21 @@ $this->pageTitle($product['PI_Name']);
 </section>
 <script type="text/javascript">
     //<![CDATA[
-    $(document).ready(function(){
+    $(window).load(function() {
+        $(".thumbnail-container").variableSlider({
+            arrowPrevious: '.side-up-button',
+            arrowNext: '.side-down-button',
+            childrenSelector:'p',
+            containerSelector:'figure',
+//            transitionTime: 1000,
+            sliderTooShortCallback: function(e) {
+                e.currentTarget.parent().addClass('disabled');
+            }
+        }).find('a').attr('rel', 'gal["produit"]');
+
+
+    });
+    $(document).ready(function() {
         //        $('.addCart a').click(function(e){
         //            var options = new Array();
         //            options.borderColor = "#BABE00";
@@ -109,9 +134,7 @@ $this->pageTitle($product['PI_Name']);
 //        $('li[id^=itemId]').click(function(e){
 //            setSelectedItem(e.type, $(this));
 //        });
-        $('select[id^=itemId]').change(function(e){
-            setSelectedItem(e.type, $(this));
-        }).selectmenu();
+
         $('.small_images p').click(function(e){
             var large = '<?php echo $large; ?>'
             var medium = '<?php echo $medium; ?>'
@@ -135,58 +158,5 @@ $this->pageTitle($product['PI_Name']);
         });
 
     });
-    $(window).load(function(e){
-        var items = $('li[id^=itemId]');
-//        var items = $('select[id^=itemId]');
-        var descr = $('div.caracteristics_bottom_right');
-        var selectedItem = setSelectedItem(e.type);
-        if (!selectedItem.length)
-        {
-            items.first().addClass('selected');
-            descr.first().fadeIn();
-        }
-    });
-
-    function setSelectedItem(event, elem){
-        var selected ={};
-        var id = 0;
-
-        switch (event){
-            case 'load':
-                var url = jQuery(location).attr('href');
-                var pattern = new RegExp("#[0-9]*$");
-                var findUrl = url.match(pattern);
-                if (findUrl != null)
-                {
-                    id = findUrl[0].replace('#', '');
-                    $('#itemId').val(id);
-                    $('#itemId').selectmenu();
-                    selected = $('#itemDetails-' + id).fadeIn();
-
-                }
-
-                break;
-            case 'click':
-                var current = $('li[id^=itemId].selected');
-                current.removeClass('selected');
-                elem.addClass('selected');
-                pattern = new RegExp("[0-9]*$")
-                id = elem.attr('id').match(pattern);
-                $('div.caracteristics_bottom_right').hide();
-                $('#itemDetails-' + id).fadeIn();
-                break;
-            case 'change':
-                var current = $('select[id^=itemId]');
-                id = current.val();
-                window.location.hash = "#" + id;
-                $('div.caracteristics_bottom_right').hide();
-                $('#itemDetails-' + id).fadeIn();
-                break;
-            default:
-                break;
-        }
-
-        return selected;
-    }
     //]]>
 </script>

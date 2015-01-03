@@ -1,5 +1,5 @@
 <?php
-
+$config = Zend_Registry::get('config');
 if (!empty($this->category))
     $headerText = str_replace('##CATEGORY##', $this->category, $this->getCibleText('header_edit_'.$this->cleaction.'_text'));
 else
@@ -24,7 +24,8 @@ echo $this->partial('partials/header.pageDetails.phtml', array(
         $().manageImg({
             baseUrl: "<?php echo $this->BaseUrl()?>",
             imgList: <?php echo $this->moreImg?>,
-            imagesPath: "<?php echo $this->imagesPath?>"
+            imagesPath: "<?php echo $this->imagesPath?>",
+            nbImgLimit: "<?php echo $config->catalog->nbThumb?>",
         });
     });
     //]]>
