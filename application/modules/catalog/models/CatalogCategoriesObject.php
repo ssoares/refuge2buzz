@@ -182,9 +182,7 @@ class CatalogCategoriesObject extends DataObject
         $title = isset($menuCatalog['Title']) ? $menuCatalog['Title'] : '';
 
         $this->setQuery($this->getAll($langId, false));
-        if ($defaultCatId){
-            $this->_query->where($this->_foreignKey . ' = ?', $defaultCatId);
-        }
+        $this->_query->where($this->_foreignKey . ' = ?', $defaultCatId);
         $categories = $this->_db->fetchAll($this->_query);
         $catalog = array(
             'ID' => $id,
@@ -198,7 +196,7 @@ class CatalogCategoriesObject extends DataObject
             'child' => array()
         );
         $cat = $this->_getTree($categories, $catalog, $langId);
-
+        
         return $cat;
     }
 

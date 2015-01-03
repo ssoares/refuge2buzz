@@ -50,6 +50,7 @@ class ProductsObject extends DataObject
     public function setQuery(Zend_Db_Select $query)
     {
         $this->_query = $query;
+        return $this;
     }
 
     function getTitleField()

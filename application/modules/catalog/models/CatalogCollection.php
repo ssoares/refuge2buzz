@@ -307,19 +307,17 @@ class CatalogCollection
             $catQry = $this->_oCategory->getAll($this->_currentLang,false);
             $hasChildren = $this->_oCategory->setQuery($catQry)->hasChildren($categoryId);
 
-            if ($hasChildren)
+            if ($hasChildren){
                 $select = $this->_oCategory->getQuery();
-            else
-            {
-                $categoryQuery = $this->_oCategory->getAll(
+            }else{
+                $qry = $this->_oCategory->getAll(
                         $this->_currentLang,
                         false,
                         $categoryId);
-                $this->_oProducts->setQuery($categoryQuery);
-                $select = $this->_oProducts->getProducts($this->_currentLang, false);
+                $select = $this->_oProducts->setQuery($qry)
+                    ->getProducts($this->_currentLang, false);
                 $select->order('P_Seq ASC');
                 $this->_type = 'list-products.phtml';
-
             }
 
             if (count($this->_keywords))
@@ -369,7 +367,7 @@ class CatalogCollection
                     $relatedProd[]  = $tmp;
                 }
             }
-
+            
             $results['relatedProducts'] = $relatedProd;
         }
 
