@@ -41,7 +41,7 @@ class ProductsObject extends DataObject
     public function _categorySrc()
     {
         $oCat = new CatalogCategoriesObject();
-        $list = $oCat->getList();
+        $list = $oCat->getList(true);
 
         return $list;
     }

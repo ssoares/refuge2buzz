@@ -34,6 +34,18 @@ class CatalogCategoriesObject extends DataObject
     protected $_query;
     protected $_addSubFolder    = true;
     protected $_name            = 'categories';
+    protected $_id = 0;
+
+    public function getId()
+    {
+        return $this->_id;
+    }
+
+    public function setId($id)
+    {
+        $this->_id = $id;
+        return $this;
+    }
 
     public function getName()
     {
@@ -69,6 +81,18 @@ class CatalogCategoriesObject extends DataObject
             unset($data[0]);
 
         return $data;
+    }
+
+    public function getTitleValue()
+    {
+        $title = '';
+        $langId = Cible_Controller_Action::getDefaultEditLanguage();
+        if ($this->_id > 0){
+            $data = $this->populate($this->_id, $langId);
+            $title = $data[$this->_titleField];
+        }
+
+        return $title;
     }
 
     private function _formatOutputData(array $data)
@@ -176,5 +200,53 @@ class CatalogCategoriesObject extends DataObject
         }
 
         return $catalog;
+    }
+
+    public function getList($withKey = false, $langId = null, $noDefault = false)
+    {
+        $list = array();
+        if (is_null($langId))
+            $langId = Cible_Controller_Action::getDefaultEditLanguage();
+
+        if (!$noDefault)
+            $list[''] = Cible_Translation::getCibleText('form_select_default_label');
+
+        $temp = array();
+        if ($withKey){
+            $this->_list= array();
+            $this->_query = $this->getAll($langId, false);
+            $this->_query->where($this->_foreignKey . ' = ?', 0);
+            $data = $this->findData(null, true);
+            foreach ($data as $x => $values){
+                $this->_getParents($values);
+            }
+            $list = $list + $this->_list;
+
+        }else{
+            $data  = $this->getAll($langId);
+            foreach ($data as $values){
+                $list[$values[$this->_dataId]] = $values[$this->_titleField];
+            }
+        }
+
+        return $list;
+    }
+
+    private function _getParents($values, $name = array(), $list = array())
+    {
+        $parentId = $values[$this->_dataId];
+        $children = $this->findData(array($this->_foreignKey => $parentId));
+        if (!empty($children))
+        {
+            $name[] = $values[$this->_titleField];
+            foreach($children as $child)
+            {
+                $this->_getParents($child, $name);
+            }
+        }elseif(empty($name)){
+            $this->_list[$values[$this->_dataId]] = $values[$this->_titleField];
+        }else{
+            $this->_list[implode(' > ', $name)][$values[$this->_dataId]] = $values[$this->_titleField];
+        }
     }
 }

@@ -243,6 +243,14 @@
                                                 case 'dictionnary':
                                                     echo $this->getCibleText($this->field_list[$field]['postProcess']['prefix'] . $item[$field]);
                                                 break;
+                                                case 'retrieveById':
+                                                    $obj = $this->field_list[$field]['postProcess']['object'];
+                                                    $methode = $this->field_list[$field]['postProcess']['callMethod'];
+                                                    echo $obj->setId($item[$field])->$methode();
+                                                break;
+                                                case 'yesNo':
+                                                    echo $this->getCibleText('label_online_' . $item[$field]);
+                                                break;
 
                                                 default:;
                                             }
