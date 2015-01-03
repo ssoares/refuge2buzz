@@ -26,12 +26,8 @@ class ItemsObject extends DataObject
 {
 
     protected $_dataClass = 'ItemsData';
-//    protected $_dataId      = '';
-//    protected $_dataColumns = array();
     protected $_indexClass = 'ItemsIndex';
-//    protected $_indexId         = '';
     protected $_indexLanguageId = 'II_LanguageID';
-//    protected $_indexColumns    = array();
     protected $_constraint = 'I_ProductID';
     protected $_searchColumns = array(
         'data' => array(
@@ -47,7 +43,7 @@ class ItemsObject extends DataObject
     /**
      * Setter for id value
      *
-     * @param type $_id
+     * @param int $value
      */
     public function setId($value)
     {
@@ -63,7 +59,7 @@ class ItemsObject extends DataObject
      * Fetch items data for the product and build the rendering.
      *
      * @param int $id     Product id
-     * @param int $langId 
+     * @param int $langId
      *
      * @return string
      */
@@ -94,7 +90,7 @@ class ItemsObject extends DataObject
      * Fetch items data for the selected product.
      *
      * @param int $productId Product id.
-     * 
+     *
      * @return array
      */
     public function getItemsByProductId($productId)
@@ -111,7 +107,7 @@ class ItemsObject extends DataObject
 
     /**
      * Calculate the items price before tax.
-     * 
+     *
      * @param int $quantity Number of items to calculate.
      *
      * @return float
@@ -135,13 +131,13 @@ class ItemsObject extends DataObject
             $amount = $item['I_PriceVol2'] * $quantity;
         elseif ($quantity > $item['I_LimitVol2'])
             $amount = $item['I_PriceVol3'] * $quantity;
-        
+
         if ($special)
         {
             $specialPrice = $quantity * $item['I_PrixSpecial'];
-            
+
             $isBigger = Cible_FunctionsGeneral::compareFloats($amount, '>', $specialPrice);
-        
+
             if($isBigger)
                 $amount = $specialPrice;
         }

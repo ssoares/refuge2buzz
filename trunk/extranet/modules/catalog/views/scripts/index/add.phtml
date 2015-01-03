@@ -1,4 +1,5 @@
 <?php
+$config = Zend_Registry::get('config');
 echo $this->partial('partials/header.pageDetails.phtml', array(
     'pageTitle' => $this->getCibleText('header_add_'.$this->cleaction.'_text'),
     'pageDescription' => $this->getCibleText('header_add_'.$this->cleaction.'_description'),
@@ -20,7 +21,8 @@ $(document).ready(function(){
     $().manageImg({
         baseUrl: "<?php echo $this->BaseUrl() ?>",
         imgList: <?php echo $this->moreImg ?>,
-        imagesPath: "<?php echo $this->imagesPath ?>"
+        imagesPath: "<?php echo $this->imagesPath ?>",
+        nbImgLimit: "<?php echo $config->catalog->nbThumb?>",
     });
 });
 //]]>

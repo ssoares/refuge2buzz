@@ -1,1 +1,36 @@
-@import "vendor/bootstrap/mixins.less"; 
+@import "desktop-base.less";
+@slider-height : 255px;
+@max-thumb : 0.47;
+.vertical-slider{
+    position:relative;
+    padding: @line-height-computed 5px;
+    .thumbnail-container{
+        height: @slider-height;
+        overflow:hidden;
+        .thumbs-column{
+            position: relative;
+        }
+        img{
+            width: 100%;
+            max-height: @slider-height * @max-thumb;
+        }
+        .selected{
+            border: 3px solid @brand-info;
+        }
+    }
+    .side-up{
+        position: absolute;
+        text-align: center;
+        top:0;
+        width: 100% - (@grid-gutter-width /2);
+        .side-up-button{
+            .import-sprite('arrowTop');
+        }
+    }
+    .side-down{
+        text-align: center;
+        .side-down-button{
+            .import-sprite('arrowBottom');
+        }
+    }
+}
