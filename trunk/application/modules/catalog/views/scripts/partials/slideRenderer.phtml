@@ -2,82 +2,75 @@
 <?php
 $imagesData = $this->imagesData;
 ?>
-
-<div class="navLeftGallery invisible navControl l-<?php echo $random; ?>"><span class="control_fade leftControl">&nbsp;</span></div>
-<div class="navRightGallery invisible navControl r-<?php echo $random; ?>"><span class="control_fade rightControl">&nbsp;</span></div>
-<div class="galleryContainerImages" id="gci-<?php echo $random; ?>">
-    <div class="galleryContainer" id="img-<?php echo $random; ?>">
-        <?php
-        $imgID = 1;
-        $imgPerSlides = 4;
-        $nbImg = count($imagesData);
-        ?>
-        <div id="slideGallery-<?php echo $imgID ?>" class="slide">
-            <?php
-            foreach ($imagesData as $index => $image):
-                $url = $this->view->baseUrl() . $image['link'];
-                $title = $image['PI_Name'];
-                $rightImg = '';
-                if ($imgID % $imgPerSlides == 0) {
-                    $rightImg = 'rightImg';
-                }
+<div data-magnificcontainer="<?php echo $random ?>" class="imageslibrary slidelist module block <?php echo ($this->effect == "scrollVert") ? 'verticalslider' : 'horizontalslider' ?>">
+    <div class="imageslibrary-container">
+        <nav class='imageslibrary-nav'>
+            <div class="imageslibrary-prev" id="leftCycle-<?php echo $random; ?>">prev</div>
+            <div class="imageslibrary-next" id="rightCycle-<?php echo $random; ?>">next</div>
+        </nav>
+        <div class="imageslibrary-slidelist" id="slideshow-<?php echo $random; ?>">
+            <div class="imageslibrary-slidelist-group">
+                <?php
+                $imgID = 1;
+                $imgPerSlides = $this->view->nbRelated;
+                $nbImg = count($imagesData);
                 ?>
-                <div class="slideCell <?php echo $rightImg; ?>">
                     <?php
-                    $imageS = $this->moduleImage('catalog', 'products/' . $image['P_ID'], $image['P_Photo'], 'mini', array('getSource' => 'true', 'prettyPhoto' => array()));
-                    $imageSFull = $this->moduleImage('catalog', 'products/' . $image['P_ID'], $image['P_Photo'], 'original', array('getSource' => 'true', 'prettyPhoto' => array()));
-                    ?>
-                    <a href="<?php echo $url; ?>" title="<?php echo $title; ?>"><img src="<?php echo $imageS; ?>" /></a>
-                </div>
-                <span class="fixHeight"></span>
-    <?php if ($imgID % $imgPerSlides == 0 && $nbImg > $imgID): ?>
-                </div>
-                <div id="slideGallery-<?php echo $imgID ?>" class="slide">
-                <?php endif; ?>
-                <?php $imgID++; ?>
-<?php endforeach; ?>
-            <span class="fixHeight"></span>
+                    foreach ($imagesData as $index => $image):
+                        $url = $this->view->baseUrl() . $image['link'];
+                        $title = $image['PI_Name'];
+                        ?>
+                        <figure class="imageslibrary-slide-container <?php echo ''; ?> col-lg-3">
+                            <?php
+                            $imageSFull = '';
+                            $img = $this->clientImage('logo.png', array('class' => 'imageslibrary-slide-image'));
+                            if (!empty($image['P_Photo'])){
+                            $img = $this->moduleImage('catalog',
+                                'products/' . $image['P_ID'],
+                                $image['P_Photo'],
+                                'thumb',
+                                array('class' => 'imageslibrary-slide-image'));
+                            $imageSFull = $this->moduleImage('catalog',
+                                'products/' . $image['P_ID'],
+                                $image['P_Photo'], 'original',
+                                array('getSource' => 'true'));
+                            }
+                            echo $this->view->link($url, $img, array('title' => $title, 'class' => 'imageslibrary-slide'));
+                            ?>
+                            <figcaption class="imageslibrary-slide-label1"><?php echo $title; ?></figcaption>
+                                <?php if (!empty($image['PI_Description'])): ?>
+
+                            <figcaption class="imageslibrary-slide-description">
+                            <?php echo Cible_FunctionsGeneral::truncateString(strip_tags($image['PI_Description']), 150); ?>
+                            </figcaption>
+                        </figure>
+                                <?php endif; ?>
+                        <?php if ($imgID % $imgPerSlides == 0 && $nbImg > $imgID): ?>
+                        </div>
+                        <div class="imageslibrary-slidelist-group">
+                        <?php endif; ?>
+                        <?php $imgID++; ?>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
-    <div class="clear"></div>
 </div>
 <?php // $this->placeholder('footerScript')->captureStart();  ?>
 <?php if ($nbImg > $imgPerSlides): ?>
     <script type="text/javascript">
     //<![CDATA[
-        $(document).ready(function() {
-
-            $('.navLeftGallery').removeClass('invisible');
-            $('.navRightGallery').removeClass('invisible');
-
-            var timerToRotate = 0;
-            var autoP = 0;
-            var transitionTime = 0;
-            var currentPosition = 0;
-            var showNavi = 0;
-            var effectTrans = 0;
-
-            transitionTime = 1000;
-            showNavi = 1;
-            effectTrans = "scrollLeft";  // slide= scrollHorz , fading = fade
-
-            if (autoP)
-                timerToRotate = 8 * 1000;
-
-            $('#gci-<?php echo $random; ?>').append('<div id="masterControl_paginator-<?php echo $random; ?>" class="masterControl_paginator mc-<?php echo $random; ?>">')
-            $('#img-<?php echo $random; ?>')
-                    .cycle({
-                fx: effectTrans,
-                speed: transitionTime,
-                timeout: timerToRotate,
-                sync: 1,
-                easing: 'easeOutExpo',
-                pager: '#masterControl_paginator-<?php echo $random; ?>',
-                next: '.r-<?php echo $random; ?>',
-                prev: '.l-<?php echo $random; ?>'
-            });
-
+    $(window).load(function() {
+        var $slideshow = $('#slideshow-<?php echo $random; ?>');
+        $slideshow.cycle({
+            fx: "scrollHorz",
+            prev : '#leftCycle-<?php echo $random; ?>',
+            next : '#rightCycle-<?php echo $random; ?>',
+            slides : "> div",
+            swipe: true,
+            timeout: 0,
+            log: false
         });
+    }).resize();
     //]]>
     </script>
 <?php endif; ?>

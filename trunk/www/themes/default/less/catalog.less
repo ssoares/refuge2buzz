@@ -34,3 +34,29 @@
         }
     }
 }
+.items-list{
+    list-style: none;
+    background-color: @brand-grey-very-light;
+    .row{
+        line-height: @line-height-base + 2;
+        vertical-align: middle;
+        a {text-decoration: none;}
+        .add-to-cart:after{
+            .responsive-font(2.4rem);
+            line-height: @line-height-base;
+        }
+    }
+    .odd{
+    }
+    .even{
+    }
+}
+.border-right{
+    border-right: 1px solid @brand-white;
+    &.col-xs-12{
+        border: none;
+    }
+}
+.border-bottom{
+    border-bottom: 1px solid @brand-white;
+}

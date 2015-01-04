@@ -1,4 +1,5 @@
 <?php
+$this->headLink()->appendStylesheet($this->locateFile('imageslibrary.css'), 'all');
 $this->headScript()->appendFile($this->locateFile('ld.jquery.variableSlider.js'));
 //$url   = $this->baseUrl() . '/' . 'cart/index/ajax/';
 $product = $this->productDetails['data'];
@@ -25,8 +26,7 @@ $this->pageTitle($product['PI_Name']);
                 'catalog', 'products/' . $product['P_ID'],
                 $product['P_Photo'],
                 'medium',
-                array('prettyPhoto' => array('size' => 'original',
-                    'rel' => '', 'alt' => $product['P_Photo']))
+                array('class' => 'img-responsive')
             );
             ?>
             <?php
@@ -67,9 +67,20 @@ $this->pageTitle($product['PI_Name']);
         </div>
         <?php endif; ?>
         <div class="col-lg-5">
-        <?php foreach ($items as $item): ?>
-            <?php echo $item['II_Name']; ?> : <?php echo $item['I_PriceDetail']; ?> $
-        <?php endforeach; ?>
+            <ul class="items-list container col-lg-12">
+            <?php foreach ($items as $i => $item): ?>
+                <?php
+                $values = array($product['P_ID'], $item['I_ID']);
+                $options = array('class' => 'add-to-cart icon-icon icon-cart',
+                    'data-cart-values' => implode('-', $values));
+                ?>
+                <li class="row <?php echo $i %2 == 0 ? 'even' : 'odd'; ?> border-bottom">
+                    <span class="item-label col-xs-12 col-md-6 border-right"><?php echo $item['II_Name']; ?></span>
+                    <span class="item-price col-xs-6 col-md-4 border-right text-center"><?php echo $item['I_PriceDetail']; ?> $</span>
+                    <span class="item-addtocart col-xs-6 col-md-2 text-center"><?php echo $this->link('javascript:void(0);', 'Cart', $options); ?></span>
+                </li>
+            <?php endforeach; ?>
+            </ul>
         </div>
     </div>
     <?php
@@ -105,6 +116,12 @@ $this->pageTitle($product['PI_Name']);
             <h3><?php echo $this->getCibleText('product_label_notePublic'); ?></h3>
         </header>
         <?php echo $product['PI_Notes']; ?>
+    </div>
+    <?php endif; ?>
+    <?php if (!empty($relatedP)): ?>
+    <div class="relatedProducts">
+        <h2><?php echo $this->getCibleText('form_label_related_products'); ?></h2>
+        <?php echo $this->partial('partials/slideRenderer.phtml', array('imagesData' => $relatedP, 'view' => $this)); ?>
     </div>
     <?php endif; ?>
 </section>

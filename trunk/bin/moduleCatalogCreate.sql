@@ -604,4 +604,6 @@ REPLACE INTO Static_Texts (ST_Identifier, ST_LangID, ST_Value, ST_Type, ST_Desc_
 ('form_label_II_Name', 1, "Nom de l'item", "cible", "", 0, 14, 0),
 ('form_label_II_Name', 2, "Item name", "cible", "", 0, 14, 0),
 ('form_label_I_Number', 1, "Code de l'item", "cible", "", 0, 14, 0),
-('form_label_I_Number', 2, "Item code", "cible", "", 0, 14, 0);
+('form_label_I_Number', 2, "Item code", "cible", "", 0, 14, 0),
+('form_label_related_products', 1, "Nous vous suggérons aussi", "cible", "", 0, 14, 0),
+('form_label_related_products', 2, "We also suggest", "cible", "", 0, 14, 0);

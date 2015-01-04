@@ -170,7 +170,7 @@
                     that.thisHeight = that.$this.width();
                     that.containerHeight = that.$container.width();
                 }
-                console.log(that.thisHeight, that.containerHeight);
+                
                 if (that.thisHeight > that.containerHeight) {
                     if (that.settings.sliderTooShortCallback) {
                         var e = {
