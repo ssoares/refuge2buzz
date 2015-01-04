@@ -144,6 +144,8 @@ class Catalog_IndexController extends Cible_Controller_Action
         }
         else
         {
+            $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.min.js', 'jquery'));
+            $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.swipe.min.js', 'jquery'));
 //            $this->_registry->set('category', $this->_registry->get('catId_'));
 //            $this->_registry->set('productCase','1');
             $url = $this->view->absolute_web_root
@@ -152,6 +154,7 @@ class Catalog_IndexController extends Cible_Controller_Action
             $this->_registry->set('selectedCatalogPage', $products['data']['CCI_ValUrl']);
             $this->view->imgProductPath = $this->_rootImgPath . 'products/';
             $this->view->assign('productDetails', $products);
+            $this->view->assign('nbRelated', $this->_config->catalog->nbRelated);
             $this->renderScript('index/detail-product.phtml');
         }
     }
@@ -159,7 +162,9 @@ class Catalog_IndexController extends Cible_Controller_Action
 
     public function detailproductAction()
     {
-            $this->listAction ();
+        $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.min.js', 'jquery'));
+        $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.swipe.min.js', 'jquery'));
+        $this->listAction ();
     }
 
     public function downloadAction()

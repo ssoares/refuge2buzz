@@ -361,13 +361,17 @@ class CatalogCollection
                 {
                     $tmp = $this->_oProducts->populate($relProd['AP_RelatedProductID'], $this->_currentLang);
                     $category  = $this->_oCategory->getAll($this->_currentLang, true, $tmp['P_CategoryId']);
+                    $stringUrl = '/';
+                    $stringUrl .= implode('/', $this->_oCategory->setCategoriesLink(true)->getLink());
+                    $stringUrl .= '/' . $tmp['PI_ValUrl'];
+                    $tmp['link'] = $stringUrl;
                     $tmpCat    = $category[0];
                     $tmp       = array_merge($tmp, $tmpCat);
 
                     $relatedProd[]  = $tmp;
                 }
             }
-            
+
             $results['relatedProducts'] = $relatedProd;
         }
 
