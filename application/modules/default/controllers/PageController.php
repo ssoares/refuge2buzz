@@ -68,7 +68,10 @@ class PageController extends Cible_Controller_Action {
         Zend_Registry::set('pageIndex', $Row['PI_PageIndex']);
         $theme = Cible_FunctionsPages::getCurrentTheme($Row);
         if (empty($theme))
+            $theme = Cible_FunctionsPages::getTheme('Default');
+        if (empty($theme))
             $theme = $this->_config->site->defaultTheme;
+
         Zend_Registry::set('currentTheme', $theme);
         $this->view->assign('currentTheme', $theme);
         $this->view->assign('themeClass', str_replace('/','-', $theme));

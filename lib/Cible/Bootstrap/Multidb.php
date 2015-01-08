@@ -93,13 +93,16 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
 
     protected function _initConfig() {
         // Load the config files with parameters form the front-office and back-office.
-
-        try {
-            $imgCfg = new Zend_Config_Ini($this->_applicationPath . "config.ini", 'Image-' . $this->session->currentSite, true);
+        try
+        {
+            $imgConfig = $this->session->currentSite;
+            if (!$this->session->currentSite){
+                $imgConfig = APPLICATION_ENV;
+            }
+            $imgCfg = new Zend_Config_Ini($this->_applicationPath . "config.ini", 'Image-' . $imgConfig, true);
         } catch (Exception $ex) {
         $imgCfg = new Zend_Config_Ini($this->_applicationPath . "config.ini", 'Images', true);
         }
-
 
         $cfg = new Zend_Config_Ini($this->_appPath . "config.ini", 'general', true);
         $config = new Zend_Config($this->getOptions(), true);
@@ -312,7 +315,6 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
                 . PATH_SEPARATOR . implode(PATH_SEPARATOR, $path));
 
         array_push($modules, array('M_MVCModuleTitle' => 'menu'));
-
 
         if (preg_match(self::BO_NAME, FRONTEND))
             foreach ($this->config->multisite as $params) {
