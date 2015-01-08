@@ -655,13 +655,13 @@ abstract class Cible_FunctionsPages extends DataObject
         $theme = '';
 
         if (!empty($page['P_ThemeID']))
-            $theme = self::getTheme($page['P_ThemeID']);
+            $theme = self::getTheme((int)$page['P_ThemeID']);
         elseif (!empty($page['P_ParentID']))
         {
             $parentId = $page['P_ParentID'];
             $page = self::getPageDetails($parentId);
             if (!empty($page['P_ThemeID']))
-                $theme = self::getTheme($page['P_ThemeID']);
+                $theme = self::getTheme((int)$page['P_ThemeID']);
             else
                 $theme = self::getCurrentTheme($page);
         }
@@ -672,15 +672,20 @@ abstract class Cible_FunctionsPages extends DataObject
     /**
      * Retrieve the theme folder.
      *
-     * @param int $id
+     * @param int|string $id Id or name
      * @return string
      */
     public static function getTheme($id)
     {
         $db = Zend_Registry::get('db');
         $query = $db->select()
-            ->from('Page_Themes', array('PT_Folder'))
-            ->where('PT_ID = ?', $id);
+            ->from('Page_Themes', array('PT_Folder'));
+
+        if (is_numeric($id) && $id > 0){
+            $query->where('PT_ID = ?', $id);
+        }elseif(is_string($id) && !empty ($id)){
+            $query->where('PT_Name = ?', $id);
+        }
 
         $theme = $db->fetchOne($query);
 
