@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS `CartItems` (
   `CI_CartID` int(11) NOT NULL,
   `CI_ID` varchar(50) NOT NULL,
   `CI_ItemID` int(11) NOT NULL,
+  `CI_PromoId` INT(11) NOT NULL DEFAULT '0',
   `CI_Quantity` int(11) NOT NULL,
   `CI_Total` float default '0',
   PRIMARY KEY  (`CI_CartItemsID`)

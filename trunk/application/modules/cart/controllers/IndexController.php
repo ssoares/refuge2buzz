@@ -78,12 +78,18 @@ class Cart_IndexController extends Cible_Controller_Action
                             'maxHeight' => $height)
                         );
             }
-            else
+            else{
                 $itemID = $this->_getParam('itemID');
-
+            }
             if (($itemID <> ''))
             {
-                $cart->addItem($itemID, 1, array('langId' => $langId));
+                try{
+                    $cart->addItem($itemID, 1, array('langId' => $langId));
+                }
+                catch(Exception $exc){
+                    echo $exc->getMessage();
+                    echo $exc->getTraceAsString();exit;
+                }
             }
         }
         elseif ($action == 'update')
@@ -110,11 +116,6 @@ class Cart_IndexController extends Cible_Controller_Action
         }
     }
 
-    public function cartsummaryAction()
-    {
-
-    }
-
     /**
      * Controller action to manage the details of the cart.
      * Update/delete items or load the list.
@@ -124,8 +125,8 @@ class Cart_IndexController extends Cible_Controller_Action
     public function cartdetailsAction()
     {
         $account = Cible_FunctionsGeneral::getAuthentication();
-        if(!$account)
-            $this->_redirect (Cible_FunctionsPages::getPageNameByID (1, Zend_Registry::get('languageID')));
+//        if(!$account)
+//            $this->_redirect (Cible_FunctionsPages::getPageNameByID (1, Zend_Registry::get('languageID')));
 
         $productData = array();
         $cart        = new Cart();
@@ -139,23 +140,21 @@ class Cart_IndexController extends Cible_Controller_Action
             $productId = $this->_getParam('pId');
             $itemId    = $this->_getParam('itemId');
             $quantity  = $this->_getParam('quantity');
-            $size      = $this->_getParam('size');
             $category  = $this->_getParam('category');
             $disable   = $this->_getParam('disable');
             $cartId    = $this->_getParam('cartItemsId');
 
             if ($action == 'update' && !empty($productId))
             {
-                if (!empty($size))
+                if (!empty($size)){
                     $cart->updateItem(
                                 $productId,
                                 -1,
                                 array(
-                                    'CI_TailleID'    => $size,
                                     'CI_ItemID'      => $itemId,
                                     'CI_CartItemsID' => $cartId)
                         );
-                elseif (!empty($category))
+                }elseif (!empty($category)){
                     $cart->updateItem(
                                 $productId,
                                 -1,
@@ -164,8 +163,7 @@ class Cart_IndexController extends Cible_Controller_Action
                                     'CI_ItemID'      => $itemId,
                                     'CI_CartItemsID' => $cartId)
                         );
-                else
-                {
+                }else{
                     $oItem  = new ItemsObject();
                     $oItem->setId($itemId);
                     $amount = $oItem->getPrice($quantity);
@@ -179,7 +177,7 @@ class Cart_IndexController extends Cible_Controller_Action
                                 'CI_CartItemsID' => $cartId)
                             );
                 }
-                echo 'updated';
+                echo json_encode(array('status' => 'updated', 'value' => $amount));
             }
             elseif ($action == 'delete' && !empty($productId))
             {
@@ -192,13 +190,13 @@ class Cart_IndexController extends Cible_Controller_Action
                                 'CI_ItemID'      => $itemId,
                                 'CI_CartItemsID' => $cartId)
                             );
-                    echo 'deletedRow';
+                    echo json_encode(array('status' => 'deletedRow'));
                 }
                 else
                 {
                     $cart->updateItem($productId);
 
-                    echo 'deleted';
+                    echo json_encode(array('status' => 'deleted'));
                 }
             }
             elseif ($action == 'disable' && !empty($productId))
@@ -247,29 +245,19 @@ class Cart_IndexController extends Cible_Controller_Action
             if (count($urls) > 1)
                 $urlBack     = $urls[1];
 
-            $account = Cible_FunctionsGeneral::getAuthentication();
-
-            $profile = new MemberProfile();
-            $memberData = $profile->findMember(array('email' => $account['email']));
-            $memberData = $profile->addTaxRate($memberData);
-
-//            if ($memberData['validatedEmail'] == '')
-//                $this->view->assign('valide', true);
-//            else
-//                $this->view->assign('valide', false);
-
             $cartData = $cart->getAllIds();
             $allIds   = $cartData['cartId'];
 
-            if (count($allIds))
-                $urlNextStep = $this->view->baseUrl() . '/'
-                        . Cible_FunctionsPages::getPageNameByID($this->_orderPageId, Zend_Registry::get('languageID'))
-                        . '/auth-order/';
+            if (count($allIds)){
+                $urlNextStep = $this->view->baseUrl() . '/';
+                $urlNextStep .= Cible_FunctionsCategories::getPagePerCategoryView(0, 'order', 17, null, true);
+                $urlNextStep .= '/auth-order/';
+            }
 
             $this->view->assign('itemCount', count($allIds));
             $this->view->assign('cartTotal', $cart->getTotalItem());
 
-            $oProduct    = new ProductsCollection();
+            $oProduct    = new CatalogCollection();
 //            $orderPageId = Cible_FunctionsCategories::getPagePerCategoryView(0, 'order', 17);
             $resume      = false;
 
@@ -291,26 +279,49 @@ class Cart_IndexController extends Cible_Controller_Action
                     $renderItem  = $cart->renderCartLine($cartDetails, $itemId);
 
                 $productData[$id]['items']['render'] = $renderItem;
-                $productData[$id]['cart']['disable'] = $cartDetails['Disable'];
+                if (isset($cartDetails['Disable'])){
+                    $productData[$id]['cart']['disable'] = $cartDetails['Disable'];
+                }
                 $productData[$id]['cart']['promoId'] = $cartDetails['PromoId'];
             }
 
             $hasBonus    = $oProduct->getBonus();
             $orderParams = Cible_FunctionsGeneral::getParameters ();
-
-            $parameters = array(
+            $params = array(
                 'nbPoint'     => 0,
-                'taxeProv'    => $memberData['taxProv'],
-                'taxeCode'    => $memberData['taxCode'],
+                'limitOrder'  => 0,
                 'tpsFee'      => $orderParams['CP_ShippingFees'],
                 'limitTpsFee' => $orderParams['CP_ShippingFeesLimit'],
                 'CODFees'     => $orderParams['CP_MontantFraisCOD'],
-                'noProvTax'   => $memberData['noProvTax'],
-                'noFedTax'    => $memberData['noFedTax']
             );
+            if($account){
+                $profile = new MemberProfile();
+                $memberData = $profile->findMember(array('email' => $account['email']));
+                $memberData = $profile->addTaxRate($memberData);
+    //            if ($memberData['validatedEmail'] == '')
+    //                $this->view->assign('valide', true);
+    //            else
+    //                $this->view->assign('valide', false);
+                $tmp = array(
+                    'taxeProv'    => $memberData['taxProv'],
+                    'taxeCode'    => $memberData['taxCode'],
+                    'noProvTax'   => $memberData['noProvTax'],
+                    'noFedTax'    => $memberData['noFedTax']
+                );
+                if($memberData['taxCode'] == 'QC')
+                    $parameters['taxeFed'] = $orderParams['CP_TauxTaxeFed'];
+            }else{
+                $oTaxes = new TaxesObject();
+                $stateId = '11';
+                $taxRate = $oTaxes->getTaxData($stateId);
+                $tmp = array(
+                    'taxeProv'    => $taxRate['TP_Rate'],
+                    'taxeCode'    => $taxRate['TZ_GroupName'],
+                );
+            }
 
-            if($memberData['taxCode'] == 'QC')
-                $parameters['taxeFed'] = $orderParams['CP_TauxTaxeFed'];
+            $parameters = $params + $tmp;
+
             if($hasBonus)
                 $parameters['nbPoint'] = $orderParams['CP_BonusPointDollar'];
 

@@ -70,5 +70,9 @@ if ($imageFirstALT == "") {
                 <li><input type="hidden" id="search-url" value="<? echo ($this->baseUrl()."/".Cible_FunctionsCategories::getPagePerCategoryView(0,'index',10)."/words");?>"/><input type="text" id="search-box-terme" name="search-box-terme" value="" /><a id="searchLink" href="#"><?php echo $this->clientImage('btn-search-' . Zend_Registry::get("languageSuffix") . '.png') ?></a></li>
             </ul>-->
     </nav>
-
+    <div class="cart-icon-data col-md-1 hidden">
+        <?php $cartPage = '/' . Cible_FunctionsCategories::getPagePerCategoryView(0,
+                'cart_details', 15, null, false); ?>
+        <?php echo $this->link($this->baseUrl() . $cartPage,'<span class="icon-icon icon-cart"></span><span class="cart-icon-arrow"><span class="cart-item-count"></span></span>', array('class' =>'')); ?>
+    </div>
 </div>

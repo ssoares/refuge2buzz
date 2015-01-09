@@ -65,11 +65,12 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
 
         // add the > after the breadcrumb when only on item is found
         $return = '';
-        if( count($breadcrumb) == 1 && !empty($breadcrumb[0]) )
+        if( count($breadcrumb) == 1 && !empty($breadcrumb[0]) ){
             $return = $breadcrumb[0];
-        else
+            $return .= $addPageTitle ? " {$options['separator']} " : '';
+        }else{
             $return = implode( " {$options['separator']} ", $breadcrumb);
-
+        }
         if ($addPageTitle)
             $return .= $this->view->pageTitle()->toString(null, null, true);
 
