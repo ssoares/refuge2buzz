@@ -182,25 +182,6 @@ CREATE TABLE `Catalog_ProductsImages` (
 --   PRIMARY KEY  (`SCI_SousCategoryID`,`SCI_LanguageID`)
 -- ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
--- --------------------------------------------------------
-
---
--- Table structure for table `Catalog_parameters`
---
-
-DROP TABLE IF EXISTS `Catalog_Parameters`;
-CREATE TABLE IF NOT EXISTS `Catalog_Parameters` (
-  `CP_ID` INT(11) NOT NULL AUTO_INCREMENT ,
-  `CP_ShippingFees` FLOAT NULL DEFAULT '9.95' ,
-  `CP_ShippingFeesLimit` FLOAT NULL DEFAULT '300' ,
-  `CP_MontantFraisCOD` FLOAT NULL DEFAULT '4.5' ,
-  `CP_AdminOrdersEmail` VARCHAR(255) NULL DEFAULT NULL ,
-  `CP_FreeItemID` INT(11) NULL DEFAULT NULL ,
-  `CP_FreeMiniAmount` INT(11) NULL DEFAULT NULL ,
-  `CP_BonusPointDollar` INT(11) NULL DEFAULT '2' ,
-  `CP_TauxTaxeFed` FLOAT NULL DEFAULT NULL ,
-  PRIMARY KEY (`CP_ID`)
-) ENGINE = MyISAM DEFAULT CHARACTER SET = utf8;
 
 -- --------------------------------------------------------
 

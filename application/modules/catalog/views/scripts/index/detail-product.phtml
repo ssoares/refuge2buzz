@@ -66,13 +66,13 @@ $this->pageTitle($product['PI_Name']);
             <div class="side-down"><a href="javascript:void(0)" class="side-down-button">&nbsp;</a></div>
         </div>
         <?php endif; ?>
-        <div class="col-lg-5">
+        <div class="product-items col-lg-5">
             <ul class="items-list container col-lg-12">
             <?php foreach ($items as $i => $item): ?>
                 <?php
                 $values = array($product['P_ID'], $item['I_ID']);
                 $options = array('class' => 'add-to-cart icon-icon icon-cart',
-                    'data-cart-values' => implode('-', $values));
+                    'data-order-id' => implode('-', $values));
                 ?>
                 <li class="row <?php echo $i %2 == 0 ? 'even' : 'odd'; ?> border-bottom">
                     <span class="item-label col-xs-12 col-md-6 border-right"><?php echo $item['II_Name']; ?></span>
@@ -125,6 +125,7 @@ $this->pageTitle($product['PI_Name']);
     </div>
     <?php endif; ?>
 </section>
+<?php echo $this->partial('partials/jsCatalog.phtml'); ?>
 <script type="text/javascript">
     //<![CDATA[
     $(window).load(function() {

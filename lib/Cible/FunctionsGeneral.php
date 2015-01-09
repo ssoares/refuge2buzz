@@ -1393,7 +1393,7 @@ abstract class Cible_FunctionsGeneral
 
     public static function getParameters($param = '')
     {
-        $oParameters = new ParametersObject();
+        $oParameters = new OrderParametersObject();
         $parameters  = $oParameters->getAll();
 
         if(!empty($param))

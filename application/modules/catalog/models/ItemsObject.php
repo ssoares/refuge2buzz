@@ -122,15 +122,15 @@ class ItemsObject extends DataObject
 
         $special = $item['I_Special'];
 
-        $amount = $item['I_PricePro'] * $quantity;
+        $amount = $item['I_PriceDetail'] * $quantity;
 
-        if ($quantity <= $item['I_LimitVol1'])
-            $amount = $item['I_PriceVol1'] * $quantity;
-        elseif ($quantity > $item['I_LimitVol1']
-                && $quantity <= $item['I_LimitVol2'])
-            $amount = $item['I_PriceVol2'] * $quantity;
-        elseif ($quantity > $item['I_LimitVol2'])
-            $amount = $item['I_PriceVol3'] * $quantity;
+//        if ($quantity <= $item['I_LimitVol1'])
+//            $amount = $item['I_PriceVol1'] * $quantity;
+//        elseif ($quantity > $item['I_LimitVol1']
+//                && $quantity <= $item['I_LimitVol2'])
+//            $amount = $item['I_PriceVol2'] * $quantity;
+//        elseif ($quantity > $item['I_LimitVol2'])
+//            $amount = $item['I_PriceVol3'] * $quantity;
 
         if ($special)
         {

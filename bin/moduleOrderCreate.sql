@@ -117,6 +117,25 @@ ALTER TABLE MemberProfiles
   ADD `MP_NoProvTax` TINYINT(1) NULL DEFAULT 1 ,
   ADD `MP_NoFedTax` TINYINT(1) NULL DEFAULT 1 ;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `Catalog_parameters`
+--
+
+DROP TABLE IF EXISTS `Order_Parameters`;
+CREATE TABLE IF NOT EXISTS `Order_Parameters` (
+  `CP_ID` INT(11) NOT NULL AUTO_INCREMENT ,
+  `CP_ShippingFees` FLOAT NULL DEFAULT '9.95' ,
+  `CP_ShippingFeesLimit` FLOAT NULL DEFAULT '300' ,
+  `CP_MontantFraisCOD` FLOAT NULL DEFAULT '4.5' ,
+  `CP_AdminOrdersEmail` VARCHAR(255) NULL DEFAULT NULL ,
+  `CP_FreeItemID` INT(11) NULL DEFAULT NULL ,
+  `CP_FreeMiniAmount` INT(11) NULL DEFAULT NULL ,
+  `CP_BonusPointDollar` INT(11) NULL DEFAULT '2' ,
+  `CP_TauxTaxeFed` FLOAT NULL DEFAULT NULL ,
+  PRIMARY KEY (`CP_ID`)
+) ENGINE = MyISAM DEFAULT CHARACTER SET = utf8;
 --
 -- Données pour activer module et les liens dans le back end
 --
@@ -379,4 +398,52 @@ REPLACE INTO Static_Texts (ST_Identifier, ST_LangID, ST_Value, ST_Type, ST_Desc_
 ('profile_tab_title_order', '1', 'Commandes', 'cible', '', '0', '17'),
 ('profile_tab_title_order', '2', 'Orders', 'cible', '', '0', '17'),
 ('add_into_option_label', 1, "Dans l'option ##X##", 'client', '', 0, 17),
-('add_into_option_label', 2, 'To the option ##X##', 'client', '', 0, 17);
+('add_into_option_label', 2, 'To the option ##X##', 'client', '', 0, 17),
+('management_module_order_parameters',1,"Paramètres de commande",'cible','', 0, 17),
+('management_module_order_parameters',2,'Order parameters','cible','', 0, 17);
+
+REPLACE INTO `Static_Texts` (`ST_Identifier`, `ST_LangID`, `ST_Value`, `ST_Type`, `ST_Desc_backend`, `ST_Editable`, `ST_ModuleID`) VALUES
+('form_parameters_montant_label', 1, "Frais de transport", 'cible', '', 0, 17),
+('form_parameters_montant_label', 2, 'Transportation fees', 'cible', '', 0, 17),
+('form_parameters_limit_transport_label', 1, "Limit des frais de transport", 'cible', '', 0, 17),
+('form_parameters_limit_transport_label', 2, 'Limit transportation costs', 'cible', '', 0, 17),
+('form_parameters_COD_label', 1, "Frais pour le COD", 'cible', '', 0, 17),
+('form_parameters_COD_label', 2, 'Fees for COD', 'cible', '', 0, 17),
+('form_parameters_email_label', 1, "Courriel pour les commandes", 'cible', '', 0, 17),
+('form_parameters_email_label', 2, 'Email for orders', 'cible', '', 0, 17),
+('form_parameters_free_item_label', 1, "Item gratuit", 'cible', '', 0, 17),
+('form_parameters_free_item_label', 2, 'Free item', 'cible', '', 0, 17),
+('form_parameters_free_item_minimum_label', 1, "Montant minimum pour l'item gratuit", 'cible', '', 0, 17),
+('form_parameters_free_item_minimum_label', 2, 'Minimum amount for the item free', 'cible', '', 0, 17),
+('form_parameters_bonus_label', 1, "Point bonis par dollar d'achat", 'cible', '', 0, 17),
+('form_parameters_bonus_label', 2, 'Bonus Point per dollar', 'cible', '', 0, 17),
+('form_parameters_taxe_label', 1, "Taxe fédérale", 'cible', '', 0, 17),
+('form_parameters_taxe_label', 2, 'Federal tax', 'cible', '', 0, 17),
+('header_list_parameters_text', 1, "Liste des paramètres", 'cible', '', 0, 17),
+('header_list_parameters_text', 2, 'Parameters list', 'cible', '', 0, 17),
+('header_list_parameters_description', 1, "Gestion des préférences de commande", 'cible', '', 0, 17),
+('header_list_parameters_description', 2, 'Management command parameters', 'cible', '', 0, 17),
+('header_edit_parameters_text', 1, "Modification", 'cible', '', 0, 17),
+('header_edit_parameters_text', 2, 'Edit', 'cible', '', 0, 17),
+('header_edit_parameters_description', 1, "Cette page permet de modifier les préférences de commande.", 'cible', '', 0, 17),
+('header_edit_parameters_description', 2, 'This is the page to edit the command parameters.', 'cible', '', 0, 17),
+('list_column_CP_ShippingFees', 1, "Frais de transport", 'cible', '', 0, 17),
+('list_column_CP_ShippingFees', 2, 'Transportation fees', 'cible', '', 0, 17),
+('list_column_CP_ShippingFeesLimit', 1, "Limit des frais de transport", 'cible', '', 0, 17),
+('list_column_CP_ShippingFeesLimit', 2, 'Limit transportation costs', 'cible', '', 0, 17),
+('list_column_CP_MontantFraisCOD', 1, "Frais pour le COD", 'cible', '', 0, 17),
+('list_column_CP_MontantFraisCOD', 2, 'Fees for COD', 'cible', '', 0, 17),
+('list_column_CP_AdminOrdersEmail', 1, "Courriel pour les commandes", 'cible', '', 0, 17),
+('list_column_CP_AdminOrdersEmail', 2, 'Email for orders', 'cible', '', 0, 17),
+('list_column_CP_FreeItemID', 1, "Item gratuit", 'cible', '', 0, 17),
+('list_column_CP_FreeItemID', 2, 'Free item', 'cible', '', 0, 17),
+('list_column_CP_FreeMiniAmount', 1, "Montant minimum pour l'item gratuit", 'cible', '', 0, 17),
+('list_column_CP_FreeMiniAmount', 2, 'Minimum amount for the item free', 'cible', '', 0, 17),
+('list_column_CP_BonusPointDollar', 1, "Point bonis par dollar d'achat", 'cible', '', 0, 17),
+('list_column_CP_BonusPointDollar', 2, 'Bonus Point per dollar', 'cible', '', 0, 17),
+('list_column_CP_TauxTaxeFed', 1, "Taxe fédérale", 'cible', '', 0, 17),
+('list_column_CP_TauxTaxeFed', 2, 'Federal tax', 'cible', '', 0, 17),
+('management_module_catalog_parameters',1,"Paramètres de commande",'cible','', 0, 17),
+('management_module_catalog_parameters',2,'Order parameters','cible','', 0, 17),
+('list_column_parameters_taxe_label', 1, "Taxe fédérale", 'cible', '', 0, 17),
+('list_column_parameters_taxe_label', 2, 'Federal tax', 'cible', '', 0, 17);

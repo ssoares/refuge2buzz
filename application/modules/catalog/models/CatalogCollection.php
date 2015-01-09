@@ -495,4 +495,21 @@ class CatalogCollection
 
        return $productsURLValid;
     }
+
+    public function getDetails($id, $itemId = 0, $resume = false)
+    {
+        $products   = array();
+
+        $oProduct = new ProductsObject();
+        $oItem    = new ItemsObject();
+
+        $products['data'] = $oProduct->populate(
+                    $id,
+                    $this->_currentLang);
+
+        if($itemId)
+            $products['items'] = $oItem->populate($itemId, $this->_currentLang);
+
+        return $products;
+    }
 }

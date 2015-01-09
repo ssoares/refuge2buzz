@@ -34,6 +34,7 @@
         }
     }
 }
+.product-items{padding-top: @line-height-computed;}
 .items-list{
     list-style: none;
     background-color: @brand-grey-very-light;
@@ -53,8 +54,10 @@
 }
 .border-right{
     border-right: 1px solid @brand-white;
-    &.col-xs-12{
-        border: none;
+    @media @mq-phone{
+        &.col-xs-12{
+            border: none;
+        }
     }
 }
 .border-bottom{

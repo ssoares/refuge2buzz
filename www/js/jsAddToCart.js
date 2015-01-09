@@ -18,12 +18,15 @@ function updateCart(url, action){
 
             if( qty != 'null')
             {
+                var itemLbl = ' <span class="item-label">##label##</span>';
 //                var test = $('#cart-item-count').attr('id');
-                if (parseInt(qty) > 1)
-                    $('#cart-item-count').text(qty + ' items');
-                else
-                    $('#cart-item-count').text(qty+ ' item');
-
+                if (parseInt(qty) > 0){
+                    $('.cart-icon-data').removeClass('hidden');
+                    $('.cart-item-count').html(qty + itemLbl.replace('##label##', 'items'));
+                }else{
+                    $('.cart-icon-data').addClass('hidden');
+                    $('.cart-item-count').html(qty+ itemLbl.replace('##label##', 'item'));
+                }
             }
 
             if( subtot != null)
@@ -40,7 +43,7 @@ function updateCart(url, action){
 function addToCart(url, itemId, lang){
     $.post(url,{actionAjax : 'addToCart', itemID : itemId, langId: lang},
         function(data){
-            updateCart(url);
+                updateCart(url);
         }
     );
 }
@@ -58,16 +61,16 @@ var cartActions = {
             null,
             function(data)
             {
-                if (data == 'deletedRow')
+                if (data.status == 'deletedRow')
                     cartActions.removeLine();
-                if (data == 'deleted')
+                if (data.status == 'deleted')
                     updateCart(defaultProperties.baseUrl + '/cart/index/ajax');
-                if (data == 'updated')
-                    cartActions.updateLine();
-
-                var tmpArray = data.split('-');
-                if (tmpArray[0] == 'inserted')
-                    cartActions.newLine(tmpArray[1]);
+                if (data.status == 'updated')
+                    cartActions.updateLine(data.value);
+                updateCart(defaultProperties.cartUrl, 'refresh');
+//                var tmpArray = data.value.split('-');
+//                if (tmpArray[0] == 'inserted')
+//                    cartActions.newLine(tmpArray[1]);
             },
             'json'
         );
@@ -178,31 +181,14 @@ var cartActions = {
 
         return total.toFixed(2);
     },
-    updateLine: function()
+    updateLine: function(value)
     {
-        var url = defaultProperties.baseUrl + '/cart/index/ajax/actionAjax/';
-        url += defaultProperties.setUrlParams();
-
-        $.post(url,{},
-            function(data)
-            {
-                var parent   = defaultProperties.currentElem.parent();
-                var nextDiv  = $(parent).nextAll('.sumLine');
-                var sumField = nextDiv.children('span');
-
-                if(data == '')
-                    data = '0';
-
-                if( data != null)
-                {
-                    var subTot   = parseFloat(data).toFixed(2);
-                    $(sumField).text(subTot);
-                    cartActions.calculate();
-                }
-            },
-            'json'
-
-        );
+        var parent   = defaultProperties.currentElem.parent();
+        var nextDiv  = parent.nextAll('.sumLine');
+        var sumField = nextDiv.children('span');
+        var subTot   = parseFloat(value).toFixed(2);
+        sumField.text(subTot);
+        cartActions.calculate();
     },
     calculate: function()
     {
@@ -302,6 +288,7 @@ var defaultProperties = {
     limitShip: 0,
     limitOrder: 25,
     format: true,
+    cartUrl: '',
     init: function(
         baseUrl,
         currentElem,
@@ -366,6 +353,12 @@ var defaultProperties = {
     setBaseUrl: function(url)
     {
          defaultProperties.baseUrl = url;
+    },
+    setLangId: function (langue) {
+        defaultProperties.langId = langue;
+    },
+    setCartUrl: function (url) {
+        defaultProperties.cartUrl = url;
     },
     setCategory: function(category)
     {
