@@ -36,7 +36,7 @@
     @media @mq-phone {
         &, &.clinched, &.always-clinched {
             margin-top:0;
-            position:fixed;
+            position:relative;
             padding-top:0;
             background:@brand-white;
             min-height:@mobile-menu-height;
@@ -67,6 +67,9 @@
     img {
         max-width:70%;
         vertical-align:middle;
+        @media @mq-phone{
+            max-width:65%;
+        }
     }
 }
 .site-baseline {
@@ -83,9 +86,9 @@
 .site-menu-principal {
     min-height:@header-line-height;
     text-align:right;
-    .make-md-column(8);
+    /*.make-md-column(8);*/
     @media @mq-tablet {
-        text-align:left;
+        /*text-align:left;*/
     }
 }
 .cart-icon-data {
@@ -115,7 +118,6 @@
         .responsive-font(2.4rem);
         line-height: @line-height-base;
     }
-    }
     .cart-icon-arrow{
 
     }
@@ -133,4 +135,13 @@
         border-width: 8px;
         margin-top: -8px;
         top: 50%;
+    }
+    @media @mq-phone{
+        position: absolute;
+        top: 58px;
+        right: -3px;
+        max-width: 90px;
+        max-height: 50px;
+        line-height: normal;
+    }
 }

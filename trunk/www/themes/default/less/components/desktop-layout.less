@@ -71,6 +71,9 @@ html, body {
         background:@brand-primary url(../images/backgrounds/site-banner-text-background.jpg) center;
         height: 350px;
         margin-bottom:28px;
+        @media @mq-phone {
+            display:none;
+        }
         @media @print {
             display:none;
         }
@@ -95,6 +98,9 @@ html, body {
     }
     .text {
         .blue-zone;//défini plus bas
+    }
+    @media @mq-phone {
+        display:none;
     }
 }
 .site-header-banner {
