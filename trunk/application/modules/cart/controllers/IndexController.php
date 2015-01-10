@@ -231,7 +231,7 @@ class Cart_IndexController extends Cible_Controller_Action
         else
         {
             $url = $this->view->absolute_web_root
-                 . $this->getRequest()->getPathInfo();
+                 . ltrim($this->getRequest()->getPathInfo(), '/');
 
             $exclude = preg_match('/resume-order/', $url);
 

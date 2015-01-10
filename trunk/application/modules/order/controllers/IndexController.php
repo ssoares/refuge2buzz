@@ -17,8 +17,6 @@ class Order_IndexController extends Cible_Controller_Action
     public function init()
     {
         parent::init();
-        if (!$this->_isXmlHttpRequest)
-            $this->view->headlink()->appendStylesheet($this->view->locateFile('profile.css'), 'all');
     }
 
     public function ajaxAction()
@@ -204,323 +202,234 @@ class Order_IndexController extends Cible_Controller_Action
 
     public function orderAction()
     {
-        $this->view->headLink()->prependStylesheet($this->view->LocateFile('cart.css'),'all');
-
         $session = new Zend_Session_Namespace('order');
-
         $urlBack     = '';
         $urlNextStep = '';
         $urls        = Cible_View_Helper_LastVisited::getLastVisited();
-
-        $profile  = new MemberProfile();
+        $memberInfos = array();
+        $profile  = new MemberProfilesObject();
         $oAddress = new AddressObject();
 
         $authentication = Cible_FunctionsGeneral::getAuthentication();
 
-        $memberInfos = $profile->findMember(array(
-                    'email' => $authentication['email']
-                ));
         $page = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list_collections', 14);
 
         // If authentication is not present or if cart is empty, redirect to the cart page
         if (!is_null($authentication))
         {
+            $memberInfos = $profile->findData(array(
+                'email' => $authentication['email']
+            ));
 //            $memberInfos = $profile->addTaxRate($memberInfos);
+        }
 
-            if (!empty($memberInfos['addrBill']))
-                $billAddr = $oAddress->populate($memberInfos['addrBill'], $this->_defaultInterfaceLanguage);
-            if (!empty($memberInfos['addrShip']))
-                $shipAddr = $oAddress->populate($memberInfos['addrShip'], $this->_defaultInterfaceLanguage);
+        $return = $this->_getParam('return');
+        if ($return && isset($_COOKIE['returnUrl']))
+        {
+            $returnUrl = $_COOKIE['returnUrl'];
+            $this->view->assign('return', $returnUrl);
+        }
 
-//            $oRetailer = new RetailersObject();
+        $pageOrderName = Cible_FunctionsCategories::getPagePerCategoryView(0, 'order', $this->_moduleID, null, true);
+        $stepValues = array(
+            'auth-order' => array(
+                'step' => 2,
+                'next' => $pageOrderName . '/resume-order',
+                'prev' => ''),
+            'resume-order' => array(
+                'step' => 3,
+                'next' => $pageOrderName . '/send-order',
+                'prev' => 'auth-order'),
+            'send-order' => array(
+                'step' => 4,
+                'next' => '',
+                'prev' => 'resume-order')
+        );
+        $stepAction = $this->_getParam('action');
+        $urlBack = $stepValues[$stepAction]['prev'];
 
+        if (empty($stepValues[$stepAction]['prev']) && isset($urls[0])){
+            $urlBack = $urls[0];
+        }
+        $this->view->assign('step', $stepValues[$stepAction]['step']);
+        $this->view->assign('nextStep', $stepValues[$stepAction]['next']);
+        $this->view->assign('urlBack', $urlBack);
+        $orderParams = Cible_FunctionsGeneral::getParameters ();
 
-//            $memberInfos['AI_FirstTel'] = $billAddr['AI_FirstTel'];
-//            $memberInfos['AI_SecondTel'] = $billAddr['AI_SecondTel'];
-//            $memberInfos['A_Fax'] = $billAddr['A_Fax'];
+        switch ($stepAction)
+        {
+            case 'resume-order':
+                if(empty($session->customer))
+                    $this->_redirect(Cible_FunctionsPages::getPageNameByID (1));
+                $this->view->headLink()->offsetSetStylesheet($this->_moduleID, $this->view->locateFile('cart.css'), 'all');
+        $this->view->headLink()->appendStylesheet($this->view->locateFile('cart.css'), 'all');
+                // Create this form to fill with values used for the read-only rendering
+                $formOrder = new FormOrder(array('resume' => true));
+                // Store the state id in the session to allow tax calculation
+                $session->stateId = $billAddr['A_StateId'];
+                // Calculate totals to display and for the bill.
+                $totals = $this->calculateTotal($memberInfos);
 
-            if (isset($billAddr['AI_WebSite']))
-                $memberInfos['AI_WebSite'] = $billAddr['AI_WebSite'];
+                $session->order['charge_total'] = $totals['total'];
+                $session->order['subTotal']     = $totals['subTot'];
+                $session->order['taxFed']       = $totals['taxFed'];
+                $session->order['taxProv']      = $totals['taxProv'];
+                $session->order['nbPoint']      = $totals['nbPoint'];
+                $session->order['shipFee']      = $orderParams['CP_ShippingFees'];
+                $session->order['limitShip']    = $orderParams['CP_ShippingFeesLimit'];
+                $session->order['CODFees']      = $orderParams['CP_MontantFraisCOD'];
+                $session->order['rateFed']      = 0;
 
-            $memberInfos['addressFact'] = $billAddr;
+                if($session->stateId == 11)
+                    $session->order['rateFed'] = $orderParams['CP_TauxTaxeFed'];
 
-            if (isset($shipAddr['A_Duplicate']) && !$shipAddr['A_Duplicate'])
-                $shipAddr['duplicate'] = 0;
+                if(isset($session->customer['addressShipping']['duplicate']) && $session->customer['addressShipping']['duplicate'])
+                {
+                    unset($session->customer['addressShipping']);
+                    $session->customer['addressShipping'] = $session->customer['addressFact'];
+                }
 
-            $memberInfos['addressShipping'] = $shipAddr;
+                $dataBill = $this->getAddrData($session->customer['addressFact'], 'addressFact', $session);
+                $dataShip = $this->getAddrData($session->customer['addressShipping'], 'addressShipping', $session);
 
-            $current_state = $billAddr['A_StateId'] . '||' . $shipAddr['A_StateId'] . '||';
-            $currentCity = $billAddr['A_CityId'] . '||' . $shipAddr['A_CityId'] . '||';
+                $salut = Cible_FunctionsGeneral::getSalutations(
+                    $memberInfos['salutation'],
+                    Zend_Registry::get('languageID')
+                );
 
-//            $onWeb = $oRetailer->getRetailerInfos($memberInfos['member_id'], $this->_defaultInterfaceLanguage);
+                if (isset($salut[$memberInfos['salutation']]))
+                    $session->customer['identification']['salutation'] = $salut[$memberInfos['salutation']];
+                else
+                    $session->customer['identification']['salutation'] = "-";
 
-//            if ($onWeb && !empty($onWeb['R_AddressId']))
-//            {
-//                $webAddr = $oAddress->populate($onWeb['R_AddressId'], $this->_defaultInterfaceLanguage);
-//
-//                $webAddr['isDistributeur'] = $onWeb['R_Status'];
-//                $memberInfos['addressDetaillant'] = $webAddr;
-//
-//                $current_state .= $webAddr['A_StateId'] . '||';
-//                $currentCity .= $webAddr['A_CityId'] . '||';
-//            }
+                $formOrder->populate($session->customer);
 
-            $return = $this->_getParam('return');
-            if ($return && isset($_COOKIE['returnUrl']))
-            {
-                $returnUrl = $_COOKIE['returnUrl'];
-                $this->view->assign('return', $returnUrl);
-            }
+                $formOrder->getSubForm('addressShipping')->removeElement('duplicate');
+                $formOrder->getSubForm('identification')->removeElement('password');
+                $formOrder->getSubForm('identification')->removeElement('passwordConfirmation');
+                $formOrder->getSubForm('identification')->removeElement('noFedTax');
+                $formOrder->getSubForm('identification')->removeElement('noProvTax');
+                $formOrder->getSubForm('identification')->removeElement('AI_FirstTel');
+                $formOrder->getSubForm('identification')->removeElement('AI_SecondTel');
+                $formOrder->getSubForm('identification')->removeElement('AI_WebSite');
+                $formOrder->getSubForm('identification')->removeElement('A_Fax');
 
+                $readOnly = new Cible_View_Helper_FormReadOnly();
+                $readOnly->setAddSeparator(true);
+                $readOnly->setSeparatorClass('dotLine');
+                $readOnly->setListOpened(false);
+                $readOnly->setSeparatorPositon(array(1));
+                $readOnlyForm = $readOnly->subFormRender($formOrder);
 
-            $pageOrderName = Cible_FunctionsCategories::getPagePerCategoryView(0, 'order', $this->_moduleID);
-            $tmp = explode('/', $pageOrderName);
-            $tmp = array_unique($tmp);
-            $pageOrderName = $tmp[0];
-
-            $stepValues = array(
-                'auth-order' => array(
-                    'step' => 2,
-                    'next' => $pageOrderName . '/resume-order',
-                    'prev' => ''),
-                'resume-order' => array(
-                    'step' => 3,
-                    'next' => $pageOrderName . '/send-order',
-                    'prev' => 'auth-order'),
-                'send-order' => array(
-                    'step' => 4,
-                    'next' => '',
-                    'prev' => 'resume-order')
-            );
-            $stepAction = $this->_getParam('action');
-
-            $urlBack = $stepValues[$stepAction]['prev'];
-
-            if (empty($stepValues[$stepAction]['prev']) && isset($urls[0]))
-                $urlBack = $urls[0];
-
-            $this->view->assign('step', $stepValues[$stepAction]['step']);
-            $this->view->assign('nextStep', $stepValues[$stepAction]['next']);
-            $this->view->assign('urlBack', $urlBack);
-            $orderParams = Cible_FunctionsGeneral::getParameters ();
-
-            switch ($stepAction)
-            {
-                case 'resume-order':
-                    if(empty($session->customer))
-                        $this->_redirect(Cible_FunctionsPages::getPageNameByID (1));
-
-                    // Create this form to fill with values used for the read-only rendering
-                    $formOrder = new FormOrder(array('resume' => true));
-                    // Store the state id in the session to allow tax calculation
-                    $session->stateId = $billAddr['A_StateId'];
-                    // Calculate totals to display and for the bill.
-                    $totals = $this->calculateTotal($memberInfos);
-
-                    $session->order['charge_total'] = $totals['total'];
-                    $session->order['subTotal']     = $totals['subTot'];
-                    $session->order['taxFed']       = $totals['taxFed'];
-                    $session->order['taxProv']      = $totals['taxProv'];
-                    $session->order['nbPoint']      = $totals['nbPoint'];
-                    $session->order['shipFee']      = $orderParams['CP_ShippingFees'];
-                    $session->order['limitShip']    = $orderParams['CP_ShippingFeesLimit'];
-                    $session->order['CODFees']      = $orderParams['CP_MontantFraisCOD'];
-                    $session->order['rateFed']      = 0;
-
-                    if($session->stateId == 11)
-                        $session->order['rateFed'] = $orderParams['CP_TauxTaxeFed'];
-
-                    if(isset($session->customer['addressShipping']['duplicate']) && $session->customer['addressShipping']['duplicate'])
-                    {
-                        unset($session->customer['addressShipping']);
-                        $session->customer['addressShipping'] = $session->customer['addressFact'];
-                    }
-
-                    $dataBill = $this->getAddrData($session->customer['addressFact'], 'addressFact', $session);
-                    $dataShip = $this->getAddrData($session->customer['addressShipping'], 'addressShipping', $session);
-
-                    $salut = Cible_FunctionsGeneral::getSalutations(
-                        $memberInfos['salutation'],
-                        Zend_Registry::get('languageID')
+                $formPayment = new FormOrderPayment(
+                    array(
+                        'readOnlyForm' => $readOnlyForm,
+                        'payMean'      => $session->customer['paymentMeans'])
                     );
-
-                    if (isset($salut[$memberInfos['salutation']]))
-                        $session->customer['identification']['salutation'] = $salut[$memberInfos['salutation']];
-                    else
-                        $session->customer['identification']['salutation'] = "-";
-
-                    $formOrder->populate($session->customer);
-
-                    $formOrder->getSubForm('addressShipping')->removeElement('duplicate');
-                    $formOrder->getSubForm('identification')->removeElement('password');
-                    $formOrder->getSubForm('identification')->removeElement('passwordConfirmation');
-                    $formOrder->getSubForm('identification')->removeElement('noFedTax');
-                    $formOrder->getSubForm('identification')->removeElement('noProvTax');
-                    $formOrder->getSubForm('identification')->removeElement('AI_FirstTel');
-                    $formOrder->getSubForm('identification')->removeElement('AI_SecondTel');
-                    $formOrder->getSubForm('identification')->removeElement('AI_WebSite');
-                    $formOrder->getSubForm('identification')->removeElement('A_Fax');
-
-                    $readOnly = new Cible_View_Helper_FormReadOnly();
-                    $readOnly->setAddSeparator(true);
-                    $readOnly->setSeparatorClass('dotLine');
-                    $readOnly->setListOpened(false);
-                    $readOnly->setSeparatorPositon(array(1));
-                    $readOnlyForm = $readOnly->subFormRender($formOrder);
-
-                    $formPayment = new FormOrderPayment(
-                        array(
-                            'readOnlyForm' => $readOnlyForm,
-                            'payMean'      => $session->customer['paymentMeans'])
-                        );
 //                    $formPayment->populate($session->order);
 
-                    if ($this->_request->isPost() && array_key_exists('submit', $_POST))
-                    {
-                        $formData = $this->_request->getPost();
-                        $session->customer['invoice'] = $formData;
+                if ($this->_request->isPost() && array_key_exists('submit', $_POST))
+                {
+                    $formData = $this->_request->getPost();
+                    $session->customer['invoice'] = $formData;
 //                        $session->customer['indentification'] = $memberInfos;
 
-                        $this->_redirect($stepValues[$stepAction]['next']);
-                    }
+                    $this->_redirect($stepValues[$stepAction]['next']);
+                }
 
-                    $session->customer['charge_total'] = sprintf('%.2f', $totals['total']);
-                    $formPayment->populate($session->customer);
-                    $this->view->assign('CODFees',$orderParams['CP_MontantFraisCOD']);
-                    $this->view->assign('memberInfos', $memberInfos);
-                    $this->view->assign('formOrder', $formPayment);
-                    $this->renderScript('index/order-summary.phtml');
+                $session->customer['charge_total'] = sprintf('%.2f', $totals['total']);
+                $formPayment->populate($session->customer);
+                $this->view->assign('CODFees',$orderParams['CP_MontantFraisCOD']);
+                $this->view->assign('memberInfos', $memberInfos);
+                $this->view->assign('formOrder', $formPayment);
+                $this->renderScript('index/order-summary.phtml');
 
-                    break;
+                break;
 
-                case 'send-order':
-                    if ($this->_request->isPost())
-                    {
+            case 'send-order':
+                if ($this->_request->isPost())
+                {
 //                        if ($this->_request->getParam('response_code') > 50)
-                        if ($this->_request->getParam('response_code') < 50 &&
-                            $this->_request->getParam('response_code') != 'null')
-                        {
-                            $session->order['confirmation'] = $_POST;
-                        }
-                        else
-                        {
-                            $this->view->assign('errorValidation', $this->view->getClientText('card_payment_error_message'));
-                            $session->customer['message'] = $this->view->getClientText('card_payment_error_message');
-                            $this->_redirect($pageOrderName .'/'.$stepValues['resume-order']['prev'] . '/errorValidation/1');
-                        }
-                    }
-
-                    $this->sendOrder();
-                    $urlBack = $this->view->BaseUrl() . '/' . $page;
-                    $this->view->assign('backHomeLink', $urlBack    );
-                    $this->renderScript('index/order-sent.phtml');
-
-                    break;
-
-                default:
-//                    $oCart = new Cart();
-//                    $cartHeader = $oCart->getCartData();
-//                    $cartId = $oCart->getId();
-//                    $files = $oCart->manageFileUpload();
-
-                    $form = new FormOrderAddr(
-                        array('hasAccount' => $memberInfos['hasAccount'])
-                        );
-
-//                    $this->getAddrData($memberInfos['addressFact'], 'addressFact', $session);
-//                    $address = array_merge($memberInfos['addressFact'], $session->customer['addressFact']);
-//                    $form->getSubForm('addressFact')->populate($address);
-//
-//                    $readOnly = new Cible_View_Helper_FormReadOnly();
-//                    $readOnly->setAddSeparator(true);
-//                    $readOnly->setSeparatorClass('dotLine');
-//                    $readOnly->setListOpened(true);
-//                    $readOnly->setSeparatorPosition(array(1));
-//                    $readOnlyForm = $readOnly->subFormRender($form, 'addressFact');
-//
-//                    $newForm = new FormOrderAddr(array('readOnlyBillAddr' => $readOnlyForm));
-
-                    if ($this->_request->isPost())
+                    if ($this->_request->getParam('response_code') < 50 &&
+                        $this->_request->getParam('response_code') != 'null')
                     {
-                        $statePost = '';
-                        $cityPost = '';
-
-                        $data = $this->_request->getPost();
-                        $currentCity  = 0;
-                        $current_state  = $data['addressFact']['A_StateId'] . '||';
-                        $current_state .= $data['addressShipping']['A_StateId']  ;
-
-//                        $currentCity = (empty($cityPost)) ? substr($currentCity, 0, -1) : substr($cityPost, 0, -1);
-//                        $current_state = (empty($statePost)) ? substr($current_state, 0, -1) : substr($statePost, 0, -1);
-                        $memberInfos['selectedState'] = $session->customer['selectedState'];
-                        $memberInfos['selectedCity']  = $session->customer['selectedCity'];
+                        $session->order['confirmation'] = $_POST;
                     }
-
-
-                    if ($this->_request->isPost() && array_key_exists('submit', $_POST))
+                    else
                     {
-                        $formData = $this->_request->getPost();
-                        $formData['selectedState'] = $current_state;
-                        $formData['selectedCity']  = $currentCity;
+                        $this->view->assign('errorValidation', $this->view->getClientText('card_payment_error_message'));
+                        $session->customer['message'] = $this->view->getClientText('card_payment_error_message');
+                        $this->_redirect($pageOrderName .'/'.$stepValues['resume-order']['prev'] . '/errorValidation/1');
+                    }
+                }
 
-                        //Remove data validation if not a new address
-                        $addrSource = $newForm->getSubForm('addressShipping')->getElement('addrSource')->getValue();
+                $this->sendOrder();
+                $urlBack = $this->view->BaseUrl() . '/' . $page;
+                $this->view->assign('backHomeLink', $urlBack    );
+                $this->renderScript('index/order-sent.phtml');
 
-                        if ($addrSource == 1 || $addrSource == 3)
-                        {
-                            $subFormShip = $form->getSubForm('addressShipping');
-                            foreach ($subFormShip as $key => $value)
-                            {
-                                $value->clearValidators()->setRequired(false);
-                            }
-                        }
+                break;
 
-//                        if ($formData['paymentMeans'] == 'compte' && !$memberInfos['hasAccount'])
-//                        {
-//                            $newForm->getElement('paymentMeans')->setErrors(array($this->view->getClientText('no_customer_account')));
-//                            $formData['paymentMeans'] = null;
-//                        }
+            default:
+                $options = array();
+                if (!is_null($authentication)){
+                    $options['MP_HasAccount'] = $memberInfos['MP_HasAccount'];
+                    $this->view->assign('accountValidate', $memberInfos['validatedEmail']);
+                }
+                $form = new FormOrderAddr($options);
 
-                        if($form->isValid($formData))
-                        {
+                if ($this->_request->isPost())
+                {
+                    $data = $this->_request->getPost();
+                    $currentCity  = 0;
+                    $current_state  = $data['address']['A_StateId'] . '||';
+                    $current_state .= $data['addressShipping']['A_StateId']  ;
+
+                    $memberInfos['selectedState'] = $session->customer['selectedState'];
+                    $memberInfos['selectedCity']  = $session->customer['selectedCity'];
+                }
+
+                if ($this->_request->isPost() && array_key_exists('submit', $_POST))
+                {
+                    $formData = $this->_request->getPost();
+                    $formData['selectedState'] = $current_state;
+                    $formData['selectedCity']  = $currentCity;
+
+                    if($form->isValid($formData)){
 //                            if($formData['paymentMeans'] == 'cod')
 //                                $session->order['cod'] = $formData['paymentMeans'];
 //                            elseif(isset($session->order['cod']))
 //                                unset($session->order['cod']);
 
-                            $session->customer = $formData;
-                            $session->customer['identification'] = $memberInfos;
-                            $this->_redirect($stepValues[$stepAction]['next']);
-                        }
-                        else
-                        {
-                            $form->populate($formData);
-                        }
+                        $session->customer = $formData;
+                        $session->customer['identification'] = $memberInfos;
+                        $this->_redirect($stepValues[$stepAction]['next']);
                     }
-//                    else
-//                        if($session->customer)
-//                        {
-//                            $form->populate($session->customer);
-//                            $errorValidation = $this->_getParam('errorValidation');
-//                            if(isset($session->customer['message']) && !empty($errorValidation))
-//                                $this->view->assign('message', $session->customer['message']);
-//                        }
-                        else
+                    else{
+                        $form->populate($formData);
+                    }
+                }
+                    else
+                        if($session->customer)
                         {
-                            $memberInfos['selectedState'] = $current_state;
-                            $memberInfos['selectedCity']  = $currentCity;
-                            $form->populate($memberInfos);
+                            $form->populate($session->customer);
+                            $errorValidation = $this->_getParam('errorValidation');
+                            if(isset($session->customer['message']) && !empty($errorValidation))
+                                $this->view->assign('message', $session->customer['message']);
                         }
+                    else
+                    {
+                        $form->populate($memberInfos);
+                    }
 
-                    $this->view->assign('CODFees',$orderParams['CP_MontantFraisCOD']);
-                    $this->view->assign('form', $form);
-                    $this->view->assign('memberInfos', $memberInfos);
-                    $this->view->assign('accountValidate', $memberInfos['validatedEmail']);
-                    break;
-            }
+                $this->view->assign('CODFees',$orderParams['CP_MontantFraisCOD']);
+                $this->view->assign('form', $form);
+                $this->view->assign('memberInfos', $memberInfos);
+                break;
         }
-        else
-            $this->_redirect(Cible_FunctionsPages::getPageNameByID(1));
+//        }
+//        else
+//            $this->_redirect(Cible_FunctionsPages::getPageNameByID(1));
 
     }
 

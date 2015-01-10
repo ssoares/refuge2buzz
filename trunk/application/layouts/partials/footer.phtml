@@ -85,19 +85,22 @@ if ($config->searchbox->embeded)
         //polyfill activation
         $("[placeholder]").not('[data-sticky-ignore]').stickyPlaceholders();
         $("[placeholder][data-sticky-alt]").stickyPlaceholders({placeholderOpacity: 1});
-        $('select').selectpicker();
-        $('select').live('cible.creation', function() {
-            $(this).selectpicker();
-        })
-        $('select').live('cible.destruction', function() {
-            $(this).selectpicker('destroy');
-        })
-        $('select').live('cible.modification', function() {
-            $(this).selectpicker('refresh');
-        })
-        $('[type=checkbox], [type=radio]').each(function() {
-            $(this).prettyCheckable();
-        });
+        //select enhancer
+        if (jQuery.fn.selectpicker) {
+            $('select').selectpicker();
+            $('select').live('cible.creation', function() {
+                $(this).selectpicker();
+            });
+            $('select').live('cible.destruction', function() {
+                $(this).selectpicker('destroy');
+            });
+            $('select').live('cible.modification', function() {
+                $(this).selectpicker('refresh');
+            });
+        }
+//        $('[type=checkbox], [type=radio]').each(function() {
+//            $(this).prettyCheckable();
+//        });
         $('.google-map').cibleGoogleMaps({icon: "<?php echo $this->locateFile('map-icon.png'); ?>"});
         //script qui permet de rajouter des data-toggle sur des éléments html
         var options = [

@@ -1,26 +1,25 @@
 <div id="cart" class="block">
-    <?php echo $this->partial('partials/stepTopLine.phtml', array('step' => $this->step)); ?>
+    <?php echo $this->partial('partials/stepTopLine.phtml', 'cart', array('step' => $this->step)); ?>
     <div id="explication-text">
-    <?php echo $this->getClientText('cart_step_'.$this->step.'_explication_text') ?>
     <?php if($this->message): ?>
         <div id="alertPayment" style="color:red; font-weight: bold;">
             <?php echo $this->getClientText('card_payment_error_message') ?>
         </div>
     <?php endif;?>
     </div>
-    <div class="dotLine"></div>
     <?php echo $this->form;?>
-    <?php echo $this->partial(
-                'partials/cartNavigationLinks.phtml',
-                array(
-                    'urlBack'  => $this->urlBack,
-                    'nextStep' => $this->nextStep,
-                    'step'     => $this->step,
-                    'moreClass'=> 'stepTwoBottom'
-                    )
-                );
+    <?php echo $this->partial('partials/cartNavigationLinks.phtml', 'cart',
+            array(
+                'urlBack'  => $this->urlBack,
+                'nextStep' => $this->nextStep,
+                'step'     => $this->step,
+                'customNext'=> 'customNext',
+                'moreClass'=> 'stepTwoBottom'
+                )
+            );
     ?>
 </div>
+<?php echo $this->partial("partials/autocomplete.phtml");  ?>
 <script type="text/javascript">
 //<![CDATA[
     $(window).load(function(){

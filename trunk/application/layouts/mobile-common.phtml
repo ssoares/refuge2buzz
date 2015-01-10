@@ -19,7 +19,6 @@
         <link rel="shortcut icon" href="<?php echo $this->absolute_web_root ?>/favicon.ico" />
         <![endif]-->
         <link rel="icon" type="image/png" href="<?php echo $this->absolute_web_root ?>/favicon.png" />
-        <?php $this->jQuery()->addJavascriptFile("{$this->baseUrl()}/js/initMenus.js"); ?>
         <?php $this->jQuery()->addJavascriptFile($this->locateFile('modernizr.js')); ?>
         <?php echo $this->jQuery(); ?>
         <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
@@ -41,7 +40,7 @@
         ?>
     </head>
 
-    <body class="front-end template <?php echo $this->templateName; ?>" <?php echo $bgStyle; ?> >        
+    <body class="front-end template <?php echo $this->templateName; ?>" <?php echo $bgStyle; ?> >
         <div class="site-wrap" data-speed="4" data-type="background">
             <div class="site-container container">
                 <!-- Start : HEADER -->
@@ -68,6 +67,6 @@
         </div>
 
         <?php echo $this->partial('partials/jsPrettyPhoto.phtml') ?>
-        
+
     </body>
 </html>

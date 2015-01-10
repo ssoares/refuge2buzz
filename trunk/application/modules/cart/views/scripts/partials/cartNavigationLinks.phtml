@@ -29,7 +29,7 @@ if (isset($this->moreClass))
 
         <?php if (!empty($this->customNext)): ?>
             <li class="module-navigation-arrow module-navigation-next">
-                <a id="stepTopNext" href="javascript:void();" class="<?php echo $this->customNext ?>"><?php echo $this->getCibleText($customSubmitLabel) ?></a>
+                <a id="stepTopNext" href="#" class="<?php echo $this->customNext ?>"><?php echo $this->getCibleText($customSubmitLabel) ?></a>
             </li>
         <?php endif; ?>
         <?php if (!empty($this->customSubmit)): ?>
@@ -45,11 +45,10 @@ if (isset($this->moreClass))
     // Permet du soumettre le formulaire en simulant le clique sur le submit
     $(document).ready(function() {
 
-        $('#stepTopNext').click(function()
-        {
-            $('#submitOrder').submit();
-            $('#accountManagement').submit();
-
+        $('#stepTopNext').click(function(e){
+            e.preventDefault();
+//            $('#submitOrder').submit();
+            $('#submit').click();
         });
 
     });

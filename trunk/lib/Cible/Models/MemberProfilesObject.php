@@ -73,7 +73,7 @@ class MemberProfilesObject extends DataObject
         parent::save($id, $data, $langId);
     }
 
-    public function findData($filters = array())
+    public function findData($filters = array(), $useQry = false)
     {
         $billAddr = array();
         $shipAddr = array();
@@ -91,7 +91,7 @@ class MemberProfilesObject extends DataObject
 
         if (!empty($data))
         {
-            $data = $data[0];
+            $data = array_merge($genericData, $data[0]);
             $data['currentLanguage'] = $langId;
             $addrId = $data[$this->_addrField];
             if (!empty($data[$this->_addrShipField]))
@@ -136,6 +136,31 @@ class MemberProfilesObject extends DataObject
         $dates = array_unique($dates);
 
         return $dates;
+    }
+
+    /**
+     * Allows to add values of taxes for orders to the customer data.
+     *
+     * @param array $memberData
+     *
+     * @return array
+     */
+    public function addTaxRate(array $memberData)
+    {
+        $data = array();
+        $memberId = $memberData['member_id'];
+        $addrId = $memberData['addrBill'];
+
+        $oAddres = new AddressObject();
+        $oTaxes = new TaxesObject();
+
+        $stateId = $oAddres->getStateId($addrId);
+        $taxRate = $oTaxes->getTaxData($stateId);
+
+        $memberData['taxProv'] = $taxRate['TP_Rate'];
+        $memberData['taxCode'] = $taxRate['TZ_GroupName'];
+
+        return $memberData;
     }
 
 }
