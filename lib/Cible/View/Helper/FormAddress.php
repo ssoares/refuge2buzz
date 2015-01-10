@@ -72,7 +72,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
     protected $_stateDisplay         = true;
     protected $_cityDisplay          = true;
     protected $_cityTxtDisplay       = true;
-    protected $_stateTxtDisplay      = true;
+    protected $_stateTxtDisplay      = false;
     protected $_zipCodeDisplay       = true;
     protected $_firstAddressDisplay  = true;
     protected $_secondAddressDisplay = true;
@@ -463,9 +463,9 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
         if($this->$disp)
         {
             $countries = Cible_FunctionsGeneral::getCountries();
-            if($this->_addScript)
+            if($this->_addScript){
                 $this->jsLocationScript($countries);
-
+            }
             $field = new Zend_Form_Element_Select($this->$property);
             $field->setRequired ($this->$req)
                     ->setAttrib('class', 'stdSelect')
@@ -562,7 +562,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
                 ->addFilter('StripTags')
                 ->addFilter('StringTrim')
                 ->addFilter('StringToLower')
-                ->setAttrib('class', 'stdTextInput')
+                ->setAttrib('class', 'fullTextInput')
                 ->addValidator($regexValidate);
 
             if($this->$seq)
@@ -616,7 +616,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
         {
             $field = new Zend_Form_Element_Text($this->$property);
             $field->setRequired ($this->$req)
-                ->setAttrib('class', 'stdTextInput')
+                ->setAttrib('class', 'fullTextInput')
                 ->setLabel($this->view->getCibleText('form_label' . $property));
 
             if($this->$seq)
@@ -624,7 +624,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
             if ($this->$req)
             {
-                $field->setAttrib('class', 'stdTextInput ' . $req);
+                $field->setAttrib('class', 'fullTextInput ' . $req);
                 $this->_addRequiredValidator ($field);
             }
             $label = $field->getDecorator('Label');
@@ -645,7 +645,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
             $field = new Zend_Form_Element_Text($this->$property);
             $field->setRequired ($this->$req)
                     ->setLabel($this->view->getCibleText('form_label' . $property))
-                    ->setAttrib('class', 'stdTextInput');
+                    ->setAttrib('class', 'fullTextInput');
 
 
             if($this->$seq)
@@ -653,7 +653,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
             if ($this->$req)
             {
-                $field->setAttrib('class', 'stdTextInput ' . $req);
+                $field->setAttrib('class', 'fullTextInput ' . $req);
                 $this->_addRequiredValidator ($field);
             }
 
@@ -791,7 +791,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
             $field = new Zend_Form_Element_Text($this->$property);
             $field->setRequired ($this->$req)
                     ->setLabel($this->view->getCibleText('form_label' . $property))
-                    ->setAttrib('class', 'stdTextInput');
+                    ->setAttrib('class', 'fullTextInput');
 
 
             if($this->$seq)
@@ -799,7 +799,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
             if ($this->$req)
             {
-                $field->setAttrib('class', 'stdTextInput ' . $req);
+                $field->setAttrib('class', 'fullTextInput ' . $req);
                 $this->_addRequiredValidator ($field);
             }
             $label = $field->getDecorator('Label');
@@ -856,12 +856,11 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
             var ctl_states = $('#{$idPrefix}{$this->_state}')
             var ctl_cities = $('#{$idPrefix}{$this->_city}')
             var states_list = [];
-            ctl_states.empty();
-            ctl_cities.empty();
-
             $.getJSON(
                 '{$this->view->baseUrl()}/default/index/ajax-states/countryId/' + $(this).val() + '/langId/' + langId,
                 function(states_list){
+                    ctl_states.empty();
+                    ctl_cities.empty();
                     $('<option value="-1" label="">{$this->view->getCibleText('form_label_select_state')}</option>').appendTo(ctl_states);
                     $.each(states_list, function(i, item){
                         if(selectedState[{$index}] == item.id){
@@ -873,6 +872,8 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
                             $('<option value="'+item.id+'" label="'+item.name+'">'+item.name+'</option>').appendTo(ctl_states);
 
                     });
+
+                    $('#{$idPrefix}{$this->_state}').trigger('cible.modification');
                     if ($('#{$idPrefix}{$this->_state} option').length < 2)
                     {
                         ctl_states.parent('dd').addClass('hidden');
@@ -953,9 +954,9 @@ EOS;
 
             $script =<<< EOS
             $('.zipCode_format').mask('a9a 9a9');
-            $('.phoneNum').mask('(999) 999-9999');
-            $('.faxNum').mask('(999) 999-9999');
-            $('.phoneFree').mask('1-999-999-9999');
+//            $('.phoneNum').mask('(999) 999-9999');
+//            $('.faxNum').mask('(999) 999-9999');
+//            $('.phoneFree').mask('1-999-999-9999');
 //            $('#fax').mask('(999)999-9999');
 EOS;
             $this->_script    .= $script;

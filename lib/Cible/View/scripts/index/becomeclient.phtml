@@ -1,27 +1,20 @@
 <?php if($this->updatedName): ?>
     <?php $this->jQuery()->onLoadCaptureStart() ?>
-
     var currentUserElement = $('span#currentUser');
-
     if( currentUserElement.text() != '<?php echo $this->updatedName ?>'){
         currentUserElement.fadeOut('slow', function(){
             currentUserElement.text('<?php echo $this->updatedName ?>').fadeIn('slow');
         });
     }
-
     <?php $this->jQuery()->onLoadCaptureEnd() ?>
 <?php endif; ?>
 
 <?php $this->headStyle()->captureStart() ?>
-
 td.checkbox-alignment {
     text-align: right;
     padding: 0px 5px;
 }
-
-<?php $this->headStyle()->captureEnd();
-
-?>
+<?php $this->headStyle()->captureEnd();?>
 
 <?php if($this->mode == 'add'): ?>
     <div class="block">
@@ -68,3 +61,4 @@ td.checkbox-alignment {
         </div>
     <?php endif; ?>
 </div>
+<?php echo $this->partial("partials/autocomplete.phtml");  ?>

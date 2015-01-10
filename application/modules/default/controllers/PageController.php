@@ -240,7 +240,7 @@ class PageController extends Cible_Controller_Action {
         //form polyfills
         $this->view->headScript()->appendFile($this->view->locateFile('bootstrap-select.min.js', 'jquery'));
         $this->view->headScript()->appendFile($this->view->locateFile('sticky-placeholder.js', 'jquery'));
-        $this->view->headScript()->appendFile($this->view->locateFile('prettyCheckable.js', 'jquery'));
+//        $this->view->headScript()->appendFile($this->view->locateFile('prettyCheckable.js', 'jquery'));
         $this->view->headScript()->appendFile($this->view->locateFile('jquery.inputnumber.js', 'jquery'));
         //magnific popup
         $this->view->headScript()->appendFile($this->view->locateFile('jquery.touchSwipe.min.js', 'jquery'));

@@ -129,3 +129,43 @@
     margin:15px 0 0 0;
     .responsive-font(@font-size-base - 2);
 }
+#accountManagement{
+    input[type="text"], input[type="search"] {
+        height: 29px !important;
+        line-height: 19px !important;
+        margin-bottom: 12px;
+        padding: 5px 15px;
+        width: 100%;
+    }
+    .stdTextInput{
+        max-width: 300px;
+        width: 50%
+    }
+    .duplicate {
+        position: absolute;
+        right: 14px;
+        top: -46px;
+        input{
+            vertical-align: top;
+        }
+    }
+    label{
+        .responsive-font(1.4rem);
+    }
+    .bootstrap-select {
+        .btn{
+            height: 35px;
+            padding: 6px 12px;
+        }
+        &.btn-group{
+            .btn {
+                .caret{
+                    line-height: 35px;
+                }
+                .caret:after{
+                    .responsive-font(1.8rem);
+                }
+            }
+        }
+    }
+}

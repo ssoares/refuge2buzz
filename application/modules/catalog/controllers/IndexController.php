@@ -82,7 +82,7 @@ class Catalog_IndexController extends Cible_Controller_Action
         $productId   = $oProducts->getProdId();
 
         $url = $this->view->absolute_web_root
-                 . $this->getRequest()->getPathInfo();
+                 . ltrim($this->getRequest()->getPathInfo(), '/');
         Cible_View_Helper_LastVisited::saveThis($url);
         if (!$categorieId && !empty($blockParams[1])){
             $categorieId = $blockParams[1];
