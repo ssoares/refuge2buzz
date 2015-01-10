@@ -21,10 +21,10 @@ function updateCart(url, action){
                 var itemLbl = ' <span class="item-label">##label##</span>';
 //                var test = $('#cart-item-count').attr('id');
                 if (parseInt(qty) > 0){
-                    $('.cart-icon-data').removeClass('hidden');
+                    $('.cart-icon-data a').removeClass('hidden');
                     $('.cart-item-count').html(qty + itemLbl.replace('##label##', 'items'));
                 }else{
-                    $('.cart-icon-data').addClass('hidden');
+                    $('.cart-icon-data a').addClass('hidden');
                     $('.cart-item-count').html(qty+ itemLbl.replace('##label##', 'item'));
                 }
             }
