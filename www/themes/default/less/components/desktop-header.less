@@ -67,6 +67,9 @@
     img {
         max-width:70%;
         vertical-align:middle;
+        @media @mq-tablet{
+            max-width:100px;
+        }
         @media @mq-phone{
             max-width:65%;
         }
@@ -143,5 +146,8 @@
         max-width: 90px;
         max-height: 50px;
         line-height: normal;
+        &.col-xs-1{
+            right: 64px;
+        }
     }
 }

@@ -196,7 +196,7 @@ class CatalogCategoriesObject extends DataObject
             'child' => array()
         );
         $cat = $this->_getTree($categories, $catalog, $langId);
-        
+
         return $cat;
     }
 

@@ -22,17 +22,16 @@
 //        }
         var link = {};
 
-        $('.items-list').on('click', '.add-to-cart', function(e) {
+        $('.add-to-cart').click(function(e) {
             e.preventDefault();
             link = $(this);
             $(this).addClass('loading').attr('disabled', true);
-            setTimeout(function(){
-                var info = link.attr('data-order-id').split("-");
-                var quantite = 1;
-                var pId = info[0];
-                var itemId = info[1];
-                addToCart('<?php echo $cartUrl; ?>', pId + '-' + itemId + '-' + quantite, '<?php echo $langId; ?>');
-            },1000);
+            var info = link.attr('data-order-id').split("-");
+            var quantite = 1;
+            var pId = info[0];
+            var itemId = info[1];
+            addToCart('<?php echo $cartUrl; ?>', pId + '-' + itemId + '-' + quantite, '<?php echo $langId; ?>');
+            return false;
 
         });
     });

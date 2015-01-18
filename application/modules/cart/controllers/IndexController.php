@@ -253,7 +253,9 @@ class Cart_IndexController extends Cible_Controller_Action
                 $urlNextStep .= Cible_FunctionsCategories::getPagePerCategoryView(0, 'order', 17, null, true);
                 $urlNextStep .= '/auth-order/';
             }
+            $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(1, 'list', 14, null, true);
 
+            $this->view->assign('catalogPage', $catalogPage);
             $this->view->assign('itemCount', count($allIds));
             $this->view->assign('cartTotal', $cart->getTotalItem());
 
@@ -263,7 +265,7 @@ class Cart_IndexController extends Cible_Controller_Action
 
             if ($this->_registry->pageID == $this->_orderPageId)
                 $resume = true;
-
+            $index = 1;
             foreach ($allIds as $key => $id)
             {
                 $itemId = $cartData['itemId'][$key];
@@ -272,7 +274,7 @@ class Cart_IndexController extends Cible_Controller_Action
                 $productData[$id] = $oProduct->getDetails($prodId, $itemId, $resume);
 
                 $cartDetails = $cart->getItem($id, $itemId);
-
+                $cartDetails['index'] = $index;
                 if($resume)
                     $renderItem  = $cart->renderResume ($cartDetails, $itemId);
                 else
@@ -283,6 +285,7 @@ class Cart_IndexController extends Cible_Controller_Action
                     $productData[$id]['cart']['disable'] = $cartDetails['Disable'];
                 }
                 $productData[$id]['cart']['promoId'] = $cartDetails['PromoId'];
+                $index++;
             }
 
             $hasBonus    = $oProduct->getBonus();
@@ -293,6 +296,7 @@ class Cart_IndexController extends Cible_Controller_Action
                 'tpsFee'      => $orderParams['CP_ShippingFees'],
                 'limitTpsFee' => $orderParams['CP_ShippingFeesLimit'],
                 'CODFees'     => $orderParams['CP_MontantFraisCOD'],
+                'includeTaxs' => $orderParams['CP_IncludeTaxes']
             );
             if($account){
                 $profile = new MemberProfile();
@@ -306,7 +310,7 @@ class Cart_IndexController extends Cible_Controller_Action
                     'taxeProv'    => $memberData['taxProv'],
                     'taxeCode'    => $memberData['taxCode'],
                     'noProvTax'   => $memberData['noProvTax'],
-                    'noFedTax'    => $memberData['noFedTax']
+                    'noFedTax'    => $memberData['noFedTax'],
                 );
                 if($memberData['taxCode'] == 'QC')
                     $parameters['taxeFed'] = $orderParams['CP_TauxTaxeFed'];
@@ -318,6 +322,10 @@ class Cart_IndexController extends Cible_Controller_Action
                     'taxeProv'    => $taxRate['TP_Rate'],
                     'taxeCode'    => $taxRate['TZ_GroupName'],
                 );
+                $tmp['taxeFed'] = $orderParams['CP_TauxTaxeFed'];
+                if($orderParams['CP_IncludeTaxes']){
+                    $tmp['taxeProv'] = 0;
+                }
             }
 
             $parameters = $params + $tmp;

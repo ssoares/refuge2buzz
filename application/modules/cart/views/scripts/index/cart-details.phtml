@@ -1,5 +1,4 @@
 <?php
-$this->headLink()->prependStylesheet($this->LocateFile('cart.css'));
 $taxFed = 0;
 if(!empty($this->parameters['taxeFed']))
     $taxFed = $this->parameters['taxeFed'];
@@ -8,14 +7,14 @@ $cartTotalCount = $this->cartTotal;
 $url = $this->baseUrl() . '/' . 'cart/index/ajax/';
 $this->headLink()->appendStylesheet($this->locateFile('cart.css'),'all');
 $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery'));
-$this->jQuery()->addJavascriptFile($this->locateFile('jsAddToCart.js'));
 ?>
 <section class="block cart-details">
+    <?php echo $this->partial('partials/paypalinfo.phtml', 'catalog'); ?>
     <input type="hidden" id="userTaxProv" name="userTaxProv" value="<?php echo $this->parameters['noProvTax']; ?>"/>
     <input type="hidden" id="userTaxFed" name="userTaxFed" value="<?php echo $this->parameters['noFedTax']; ?>"/>
     <?php if(!empty($this->productData)): ?>
         <?php
-        echo $this->partial('partials/stepTopLine.phtml', array('step' => $this->step));
+//        echo $this->partial('partials/stepTopLine.phtml', array('step' => $this->step));
         ?>
         <?php echo $this->partial(
                 'partials/cartNavigationLinks.phtml',
@@ -23,7 +22,8 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jsAddToCart.js'));
                     'urlBack'   => $this->urlBack,
                     'itemCount' => $this->itemCount,
                     'nextStep'  => $this->nextStep,
-                    'step'      => $this->step
+                    'step'      => $this->step,
+                    'moreClass' => 'paypal-button'
                     )
                 );
         ?>
@@ -70,7 +70,7 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jsAddToCart.js'));
                     </div>
                     <div class="product-description col-lg-10">
                         <p class="">
-                            <?php echo $currProd['PI_Name'] . ' | ' . $currItem['II_Name'] ?>
+                            <span class="product-item-label"><?php echo $currProd['PI_Name'] . ' | ' . $currItem['II_Name'] ?></span>
                             <br /><span class="alertSpecial"><?php echo $labelPromo ; ?></span>
                         </p>
                         <?php echo $this->link(
@@ -90,16 +90,26 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jsAddToCart.js'));
             <?php endif; ?>
         <?php endforeach;?>
         </div>
-        <div class="totalSummary ">
-            <div class="col-lg-7">
+        <div class="totalSummary row">
+            <div class="info-data col-lg-7">
             <?php if($this->parameters['nbPoint']): ?>
                 <?php echo $this->getClientText('cart_label_bonus_points'); ?>
             <?php endif; ?>
                 <p class="infoTpsFees">
                     <?php echo $this->getClientText('cart_label_tpFees_limit', null, array('##TP_FEES_LIMIT##' => $this->parameters['limitTpsFee'])); ?>
                 </p>
+                    <?php if (empty($this->parameters['tpsFee'])): ?>
+                    <p class="tps-included">
+                        <?php echo $this->getCibleText('cart_label_tpFees_included',
+ null,
+ array('##TP_ORDER_LIMIT##' => $this->parameters['limitOrder'])); ?>
+                    </p>
+<?php endif; ?>
                 <p class="infoLimitOrder infoTpsFees">
                     <?php echo $this->getClientText('cart_label_order_limit', null, array('##TP_ORDER_LIMIT##' => $this->parameters['limitOrder'])); ?>
+                </p>
+                <p class="infoTaxesIncluded">
+                    <?php echo $this->getCibleText('cart_label_taxes_included', null, array('##TP_ORDER_LIMIT##' => $this->parameters['limitOrder'])); ?>
                 </p>
             </div>
             <div class="col-lg-5 text-right">
@@ -138,17 +148,28 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jsAddToCart.js'));
                 <p id="totalValue" class="col-lg-3 number bold-secondary"> </p>
             </div>
         </div>
+        <form id="sendToPaypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+            <input type="hidden" name="cmd" value="_cart"/>
+            <input type="hidden" name="upload" value="1" />
+            <input type="hidden" name="business" value="refugedebuzz@hotmail.ca" />
+            <input type="hidden" name="charset" value="UTF-8"/>
+            <input type="submit" id="submit" class="hidden" />
+            <input type="hidden" name="return" value="<?php echo Zend_Registry::get('absolute_web_root') . $this->catalogPage; ?>" />
+        </form>
+<!--<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+
+</form>-->
             <?php echo $this->partial(
                 'partials/cartNavigationLinks.phtml',
                 array(
                     'urlBack'   => $this->urlBack,
                     'itemCount' => $this->itemCount,
                     'nextStep'  => $this->nextStep,
-                    'step'      => $this->step
+                    'step'      => $this->step,
+                    'moreClass' => 'paypal-button'
                     )
                 );
         ?>
-
         <?php
             $account = Cible_FunctionsGeneral::getAuthentication();
             if( $account && $cartTotalCount ): ?>
@@ -191,7 +212,10 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jsAddToCart.js'));
 
         <?php endif; ?>
     <?php else : ?>
-        <div id="no-item"><?php echo $this->getClientText('cart_no_item') ?></div>
+        <div id="no-item">
+            <?php echo $this->getClientText('cart_no_item') ?><br />
+            <?php echo $this->link($this->urlBack, $this->getClientText('btn_cart_add_another')); ?>
+        </div>
     <?php endif; ?>
 </section>
 <script type="text/javascript">
@@ -202,7 +226,7 @@ $(document).ready(function(){
     var langId    = '<?php echo Zend_Registry::get('languageID')?>';
     var taxProv   = '<?php echo $this->parameters['taxeProv']; ?>';
 
-    var taxFed    = '<?php echo $taxFed; ?>';
+    var taxFed    = '<?php echo !$this->parameters['includeTaxs'] ? $taxFed : 0; ?>';
     var nbPoint   = '<?php echo $this->parameters['nbPoint']; ?>';
     var shipFee   = '<?php echo $this->parameters['tpsFee']; ?>';
     var limitOrder   = '<?php echo $this->parameters['tpsFee']; ?>';
@@ -237,13 +261,10 @@ $(document).ready(function(){
         var idsData  = ($(this).attr('data-number-id')).split("-");
         defaultProperties.init(baseUrl, $(this), idsData, 'delete', null, null);
         cartActions.ajax();
-        cartActions.removeLine();
+//        cartActions.removeLine();
 //        location.reload();
     });
 
-    if ($('input.quantity').length == 0){
-        location.reload();
-    };
 });
 //]]>
 </script>

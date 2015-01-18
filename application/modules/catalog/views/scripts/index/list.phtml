@@ -4,6 +4,7 @@ $this->pageTitle($this->title);
 ?>
 
 <section id="contentCatalog" class="block catalog row">
+    <?php echo $this->partial('partials/paypalinfo.phtml'); ?>
     <?php foreach ($this->paginator as $name => $data): ?>
         <?php
         $url = rtrim($this->url(), '/');
@@ -20,7 +21,7 @@ $this->pageTitle($this->title);
                     <?php
                         $img = $this->moduleImage(
                             'catalog', 'categories/' . $data['CC_ID'],
-                            $data['CC_imageCat'], 'thumb',
+                            $data['CC_imageCat'], 'medium',
                             array(
                                 'class' => '',
                                 'key' => 'category',

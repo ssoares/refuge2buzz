@@ -361,6 +361,7 @@ class CatalogCollection
                 {
                     $tmp = $this->_oProducts->populate($relProd['AP_RelatedProductID'], $this->_currentLang);
                     $category  = $this->_oCategory->getAll($this->_currentLang, true, $tmp['P_CategoryId']);
+                    $this->_oCategory->getDataCatagory($this->_currentLang, false, $tmp['P_CategoryId']);
                     $stringUrl = '/';
                     $stringUrl .= implode('/', $this->_oCategory->setCategoriesLink(true)->getLink());
                     $stringUrl .= '/' . $tmp['PI_ValUrl'];
