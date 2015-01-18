@@ -36,7 +36,7 @@ class AuthController extends Cible_Extranet_Controller_Action
             'Errors',
             'Label',
             array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'username')),
-            array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'openOnly' => true))
+            array(array('row' => 'HtmlTag'), array('tag' => 'tr'))
         ));
         $form->addElement($username);
 
@@ -54,7 +54,7 @@ class AuthController extends Cible_Extranet_Controller_Action
             'Errors',
             'Label',
             array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'password')),
-            array(array('row' => 'HtmlTag'), array('tag' => 'tr', 'closeOnly' => true))
+            array(array('row' => 'HtmlTag'), array('tag' => 'tr'))
         ));
 
         $form->addElement($password);
@@ -69,7 +69,7 @@ class AuthController extends Cible_Extranet_Controller_Action
                 'ViewHelper',
                 'Description',
                 'Errors',
-                array(array('data' => 'HtmlTag'), array('tag' => 'td', 'colspan' => '2', 'align' => 'right', 'class' => 'submit')),
+                array(array('data' => 'HtmlTag'), array('tag' => 'td', 'class' => 'submit')),
                 array(array('row' => 'HtmlTag'), array('tag' => 'tr'))
             ));
 

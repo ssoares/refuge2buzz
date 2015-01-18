@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <?php $config = Zend_Registry::get('config'); ?>
-        <title>Cible Solutions d'Affaires - EDITH <?php echo $config->edith->version ?> - <?php echo $this->escape($this->title); ?></title>
+        <title>Refuge de Buzz - Administration</title>
         <?php $this->jQuery()->enable() ?>
 
         <?php $this->headScript()->captureStart() ?>
@@ -193,26 +193,34 @@
     </head>
     <body>
         <div id="content">
-            <?php $tmpVal =  $this->siteList();?>
+            <?php
+            $tmpVal =  $this->siteList();
+            $AdminName = '';
+            $Credentials = $this->user;
+            if (!empty($Credentials))
+            {
+                $AdminName = $Credentials['EU_FName'] . ' ' . $Credentials['EU_LName'];
+            }
+            if ($Credentials){
+            ?>
             <!-- Start : Top Banner -->
             <div id="topBanner">
                 <div id="topBanner_logo">
                     <div>
                         <?php
-                        // Affichage du logo de la compagnie
-                        if (!empty($tmpVal))
-                            echo $this->image($this->locateFile($config->clientLogo->src, null, 'front', $this->currentSite), array(
-                                'height' => $config->clientLogo->height,
-//                                'width' => $config->clientLogo->width,
-                                'alt' => $config->clientLogoAlt,
-                            ));
-                        else
-                        echo $this->image($this->locateFile($config->clientLogo->src, null, 'front', $this->currentSite), array(
-                            'height' => $config->clientLogo->height,
-//                            'width' => $config->clientLogo->width,
-                            'alt' => $config->clientLogoAlt,
-                        ));
-
+//                       Affichage du logo de la compagnie
+                           if (!empty($tmpVal))
+                               echo $this->image($this->locateFile($config->clientLogo->src, null, 'front', $this->currentSite), array(
+                                   'height' => $config->clientLogo->height,
+   //                                'width' => $config->clientLogo->width,
+                                   'alt' => $config->clientLogoAlt,
+                               ));
+                           else
+                           echo $this->image($this->locateFile($config->clientLogo->src, null, 'front', $this->currentSite), array(
+                               'height' => $config->clientLogo->height,
+   //                            'width' => $config->clientLogo->width,
+                               'alt' => $config->clientLogoAlt,
+                           ));
                         ?>
                     </div>
                 </div>
@@ -220,18 +228,12 @@
                     <div id="interface_lang_switcher">
                         <?php echo $this->partial('partials/languages.widget.phtml', array('currentLangID' => Zend_Registry::get('languageID'), 'params' => $this->params)); ?>
                     </div>
-                    <div id="topBanner_titre_titre_gestion"><?php echo $this->image("{$this->baseUrl()}/icons/logo-edith.gif"); //echo $this->getCibleText('outil_gestion_title')  ?></div>
-                    <div id="topBanner_version">v.<?php echo $config->edith->version ?></div>
+                    <div id="topBanner_titre_titre_gestion"></div>
+                    <div id="topBanner_version"></div>
                 </div>
-
+                <?php } ?>
                 <div id="topBanner_credentials">
                     <?php
-                    $AdminName = '';
-                    $Credentials = $this->user;
-                    if (!empty($Credentials))
-                    {
-                        $AdminName = $Credentials['EU_FName'] . ' ' . $Credentials['EU_LName'];
-                    }
                     if ($Credentials != null)
                     {
                         ?>
@@ -438,9 +440,9 @@
             <!-- End : Container -->
 
             <!-- Start : Footer -->
-            <div id="footer"><?php echo str_replace("##YEAR##", date('Y'), $this->getCibleText('cible_all_right_reserved')) ?></div>
+            <div id="footer"><?php // echo str_replace("##YEAR##", date('Y'), $this->getCibleText('cible_all_right_reserved')) ?></div>
             <!-- End : Footer -->
-        <?php echo $this->placeholder('footerScript'); ?>
+        <?php // echo $this->placeholder('footerScript'); ?>
         </div>
         <?php echo $this->partial('partials/jsPrettyPhoto.phtml') ?>
 
