@@ -17,9 +17,10 @@ $this->headTitle($product['PI_Name']);
 $this->pageTitle($product['PI_Name']);
 ?>
 <section class="block catalog">
+    <?php echo $this->partial('partials/paypalinfo.phtml'); ?>
     <?php echo $descr; ?>
     <div class="caracteristics_top row">
-        <figure class="medium col-lg-5">
+        <figure class="medium col-lg-5 text-center">
         <?php if (!empty($product['P_Photo'])): ?>
             <?php
             echo $this->moduleImage(
@@ -119,13 +120,12 @@ $this->pageTitle($product['PI_Name']);
     </div>
     <?php endif; ?>
     <?php if (!empty($relatedP)): ?>
-    <div class="relatedProducts">
+    <div class="relatedProducts col-lg-12">
         <h2><?php echo $this->getCibleText('form_label_related_products'); ?></h2>
         <?php echo $this->partial('partials/slideRenderer.phtml', array('imagesData' => $relatedP, 'view' => $this)); ?>
     </div>
     <?php endif; ?>
 </section>
-<?php echo $this->partial('partials/jsCatalog.phtml'); ?>
 <script type="text/javascript">
     //<![CDATA[
     $(window).load(function() {
@@ -153,13 +153,12 @@ $this->pageTitle($product['PI_Name']);
 //            setSelectedItem(e.type, $(this));
 //        });
 
-        $('.small_images p').click(function(e){
+        $('.thumbnail-catalog').click(function(e){
             var large = '<?php echo $large; ?>'
             var medium = '<?php echo $medium; ?>'
             var small = '<?php echo $small; ?>'
             var imgPath = '<?php echo $imgPath; ?>';
-            var imgDest = $('.picture-frame').find('img');
-            var thisImg = $(this).find('input');
+            var imgDest = $('figure.medium').find('img');
             var imgSrc = $(this).find('input').val();
             var linkImg = $('.picture-frame').find('a');
             var explode = imgDest.attr('src').split('/');

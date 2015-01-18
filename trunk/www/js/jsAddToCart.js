@@ -63,8 +63,8 @@ var cartActions = {
             {
                 if (data.status == 'deletedRow')
                     cartActions.removeLine();
-                if (data.status == 'deleted')
-                    updateCart(defaultProperties.baseUrl + '/cart/index/ajax');
+//                if (data.status == 'deleted')
+//                    updateCart(defaultProperties.baseUrl + '/cart/index/ajax');
                 if (data.status == 'updated')
                     cartActions.updateLine(data.value);
                 updateCart(defaultProperties.cartUrl, 'refresh');
@@ -123,9 +123,12 @@ var cartActions = {
     },
     removeLine: function()
     {
-        var container = defaultProperties.currentElem.parents('div.product:first');
+        var container = defaultProperties.currentElem.parents('article:first');
         container.remove();
         cartActions.calculate();
+        if ($('input.quantity').length == 0){
+            location.reload();
+        };
     },
     filterSelect: function(select, langId, upload)
     {
@@ -192,6 +195,8 @@ var cartActions = {
     },
     calculate: function()
     {
+        var form = $('#sendToPaypal');
+        $('input.rowToSend').remove();
         $('#subTotalValue span').text(cartActions.total('sumLine'));
         var subTot = parseFloat($('#subTotalValue span').text());
 
@@ -248,12 +253,29 @@ var cartActions = {
             $('#tvqValue span').text(defaultProperties.getTvqValue(value));
         }
 
-        $('.unitPrice').each(function(){
+        $('.unitPrice').each(function(i){
+            i++;
             var subTot = parseFloat($(this).parent().next().children('span').text());
             var tmpQty = parseFloat($(this).parent().prev().children('input').val());
 
             var unitPrice = subTot / tmpQty;
             $(this).text(unitPrice.toFixed(2));
+            var label = $(this).parents('article.row').find('span.product-item-label').text();
+            var inputL = $('<input>').attr('type', 'hidden')
+                .attr('class', 'rowToSend')
+                .attr('name', 'item_name_' + i)
+                .attr('value', label);
+            var inputQ = $('<input>').attr('type', 'hidden')
+                .attr('class', 'rowToSend')
+                .attr('name', 'quantity_' + i)
+                .attr('value', tmpQty);
+            var inputT = $('<input>').attr('type', 'hidden')
+                .attr('class', 'rowToSend')
+                .attr('name', 'amount_' + i)
+                .attr('value', unitPrice.toFixed(2));
+            inputL.appendTo(form);
+            inputQ.appendTo(form);
+            inputT.appendTo(form);
         });
         if(defaultProperties.nbPoint)
         {

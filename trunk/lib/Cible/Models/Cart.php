@@ -538,12 +538,12 @@ class Cart
                 $this->_db->delete('CartItems', $where);
                 //  Récupérer le total du cart
                 $data = $this->getTotalItem();
-                foreach($dataPromo as $promo)
-                if($data['Subtotal'] < $promo['IP_ConditionAmount'])
-                {
-                    $where = $this->_db->quoteInto('CI_PromoId = ?', $promo['IP_ID']);
-                    $this->_db->delete('CartItems', $where);
-                }
+//                foreach($dataPromo as $promo)
+//                if($data['Subtotal'] < $promo['IP_ConditionAmount'])
+//                {
+//                    $where = $this->_db->quoteInto('CI_PromoId = ?', $promo['IP_ID']);
+//                    $this->_db->delete('CartItems', $where);
+//                }
 //            }
         }
 

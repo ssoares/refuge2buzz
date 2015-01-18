@@ -144,7 +144,6 @@ class Catalog_IndexController extends Cible_Controller_Action
         }
         else
         {
-            $this->view->headScript()->appendFile($this->view->locateFile('jsAddToCart.js'));
             $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.min.js', 'jquery'));
             $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.swipe.min.js', 'jquery'));
 //            $this->_registry->set('category', $this->_registry->get('catId_'));

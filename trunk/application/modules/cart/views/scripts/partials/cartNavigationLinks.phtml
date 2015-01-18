@@ -23,7 +23,7 @@ if (isset($this->moreClass))
 
         <?php if (!empty($this->itemCount)): ?>
             <li class="module-navigation-arrow module-navigation-next">
-                <a href="<?php echo $this->nextStep; ?>"><?php echo $this->getCibleText("form_label_next_step_btn") ?></a>
+                <a id="stepToNext" href="#"><?php echo $this->getClientText("form_label_paypal_pay") ?></a>
             </li>
         <?php endif; ?>
 
@@ -34,7 +34,7 @@ if (isset($this->moreClass))
         <?php endif; ?>
         <?php if (!empty($this->customSubmit)): ?>
             <li class="module-navigation-arrow module-navigation-submit">
-                <button id="stepTopNext" class="<?php echo $this->customSubmit ?> button-submit"><?php echo $this->getCibleText($customSubmitLabel) ?></button>
+                <button id="toexternalpage" class="<?php echo $this->customSubmit ?> button-submit"><?php echo $this->getCibleText($customSubmitLabel) ?></button>
             </li>
         <?php endif; ?>
 
@@ -44,13 +44,14 @@ if (isset($this->moreClass))
     //<![CDATA[
     // Permet du soumettre le formulaire en simulant le clique sur le submit
     $(document).ready(function() {
-
-        $('#stepTopNext').click(function(e){
+        $('#stepToNext').click(function(e){
             e.preventDefault();
-//            $('#submitOrder').submit();
             $('#submit').click();
         });
-
+        $('a#stepToNext').click(function(e){
+            e.preventDefault();
+            $('#submit').click();
+        });
     });
 
     //]]>

@@ -292,9 +292,18 @@ class FormParameters extends Cible_Form
                 )
                 ->setAttrib('class', 'stdTextInput');
 
-            $label = $valueTauxTaxeFed->getDecorator('Label');
-            $label->setOption('class', $this->_labelCSS);
+        $label = $valueTauxTaxeFed->getDecorator('Label');
+        $label->setOption('class', $this->_labelCSS);
 
+        $includeTax = new Zend_Form_Element_Checkbox('CP_IncludeTaxes');
+        $includeTax->setLabel($this->getView()->getCibleText('form_label_CP_IncludeTaxes'));
+        $label = $includeTax->getDecorator('Label');
+        $label->setOption('class', $this->_labelCSS);
+        $includeTax->setDecorators(array(
+            'ViewHelper',
+            array('label', array('placement' => 'append')),
+            array(array('row' => 'HtmlTag'), array('tag' => 'dd', 'class' => 'label_after_checkbox')),
+        ));
 
         $this->addElement($valueShippingFees);
         $this->addElement($valueShippingFeesLimit);
@@ -303,6 +312,7 @@ class FormParameters extends Cible_Form
 //        $this->addElement($itemID);
         $this->addElement($valueFreeMiniAmount);
         $this->addElement($valueTauxTaxeFed);
+        $this->addElement($includeTax);
 
     }
 }
