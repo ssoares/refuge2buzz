@@ -1,7 +1,6 @@
 <section class="news details module block">
     <?php
     echo $this->showBlockTitle('h2', array('class' => 'news-title'));
-
     $viewAllList = $this->getClientText('see_all_news_text');
     if (!empty($this->newsCategoryDetails['CI_ReturnToList'])) {
         if (trim($this->newsCategoryDetails['CI_ReturnToList']) != "") {

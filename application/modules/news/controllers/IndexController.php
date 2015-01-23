@@ -84,10 +84,19 @@ class News_IndexController extends Cible_Controller_Action
         $detailsPageView = 'details';
         $newsObject = new NewsCollection($this->_blockId);
         $newsObject->setBlock();
-        $detailsPaginator = $this->_homePage? $newsObject->getBlockParam(2) : false;
-        $limit = null;
-        $pageDetails = Cible_FunctionsPages::getPageDetails(Zend_Registry::get('pageID'), $this->_getParam('lang'));
-        $childPageDetails = Cible_FunctionsPages::findChildPage($pageDetails['P_ID'], $this->_getParam('lang'), 's');
+        $detailsPaginator = false;
+        $category = $newsObject->getBlockParam(1);
+        $limit = $this->_homePage? $newsObject->getBlockParam(2) : null;
+        $listall_page = Cible_FunctionsCategories::getPagePerCategoryView($category, 'listall', $this->_moduleID, null, true);
+        if ($this->_homePage){
+            $oPage = new PagesObject();
+            $page = $oPage->pageIdByController($listall_page);
+            $pageId = $page[$oPage->getDataId()];
+        }else{
+            $pageId = Zend_Registry::get('pageID');
+        }
+        $pageDetails = Cible_FunctionsPages::getPageDetails($pageId);
+        $childPageDetails = Cible_FunctionsPages::findChildPage($pageDetails['P_ID'])->toArray();
         $oBlock = new BlocksObject();
         foreach($childPageDetails as $childPage)
         {
@@ -100,10 +109,9 @@ class News_IndexController extends Cible_Controller_Action
             }
         }
 
-        $listall_page = Cible_FunctionsCategories::getPagePerCategoryView($newsObject->getBlockParam(1), 'listall', $this->_moduleID, null, true);
-        $details_page = Cible_FunctionsCategories::getPagePerCategoryView($newsObject->getBlockParam(1), $detailsPageView, $this->_moduleID, null, true);
-        $this->view->assign('listall_page', $listall_page);
-        $this->view->assign('details_page', $details_page);
+        $details_page = Cible_FunctionsCategories::getPagePerCategoryView($category, $detailsPageView, $this->_moduleID, null, true);
+        $this->view->assign('listall_page', '/' . $listall_page);
+        $this->view->assign('details_page', '/' . $details_page);
         $this->_testDuplicatedContent(true);
         if (!empty($this->_duplicateData))
             $newsObject->setDb($this->_db)
@@ -129,16 +137,16 @@ class News_IndexController extends Cible_Controller_Action
             $this->view->assign('paginator', $paginator);
             $this->view->assign('detailsPageWithPaginator', $detailsPaginator);
         }
-
         $this->view->assign('params', $newsObject->getBlockParams());
     }
 
     public function detailswithpreviousnextAction()
     {
-        $newsCategoryDetails = Cible_FunctionsCategories::getCategoryDetails($news[0]['ND_CategoryID']);
+        $this->listallAction();
+        $news = $this->view->paginator->getItem(0);
+        $newsCategoryDetails = Cible_FunctionsCategories::getCategoryDetails($news['ND_CategoryID']);
         $this->view->assign('newsCategoryDetails', $newsCategoryDetails);
 
-        $this->listallAction();
     }
 
     public function listall2Action()

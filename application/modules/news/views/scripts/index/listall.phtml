@@ -17,11 +17,11 @@
                     $currentPageNumber = $this->paginator->getCurrentPageNumber();
                     if ($currentPageNumber > 1) {
                         $page = ($currentPageNumber - 1) * $itemCountPerPage + $count;
-                        $href = $this->baseUrl() . '/' . $this->details_page . "/" . $news['ND_Date'] . "/" . $news['NI_ValUrl'] . "/page/" . $page;
+                        $href = $this->baseUrl() . $this->details_page . "/" . $news['ND_Date'] . "/" . $news['NI_ValUrl'] . "/page/" . $page;
                     } else
-                        $href = $this->baseUrl() . '/' . $this->details_page . "/" . $news['ND_Date'] . "/" . $news['NI_ValUrl'] . "/page/" . $count;
+                        $href = $this->baseUrl() . $this->details_page . "/" . $news['ND_Date'] . "/" . $news['NI_ValUrl'] . "/page/" . $count;
                 } else
-                    $href = $this->baseUrl() . '/' . $this->details_page . "/" . $news['ND_Date'] . "/" . $news['NI_ValUrl'];
+                    $href = $this->baseUrl() . $this->details_page . "/" . $news['ND_Date'] . "/" . $news['NI_ValUrl'];
 //            $last = $count == $this->paginator->getItemCountPerPage() ? ' last' : '';
                 ?>
 
