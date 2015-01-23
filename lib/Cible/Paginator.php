@@ -153,8 +153,9 @@ class Cible_Paginator extends Zend_Paginator
                 foreach ($tmpData as $key => $tmp)
                 {
                     $index = key($tmp);
-                    if ($this->_view->isInArrays($tmp[$index], $options['adapterData'])){
-                        $data[$key] = $options['adapterData'][$key];
+                    foreach($options['adapterData'] as $optData){
+                        if ($tmp[$index] == $optData[$index])
+                            $data[$key] = $optData;
                     }
                 }
                 $this->_adapter = new Zend_Paginator_Adapter_Array($data);
