@@ -125,8 +125,8 @@ class Imageslibrary_IndexController extends Cible_Controller_Action {
         if ($imgId > 0) {
             $this->_currentAction = 'details';
             $this->_itemPerPage = 100000;
-            $pageRealisation = Cible_FunctionsCategories::getPagePerCategoryView(0, 'slidelist', $this->_moduleID, Zend_Registry::get('languageID'), true); 
-           
+            $pageRealisation = Cible_FunctionsCategories::getPagePerCategoryView(0, 'slidelist', $this->_moduleID, Zend_Registry::get('languageID'), true);
+
             $uriBack = $this->view->url(array(
                 'controller' => $pageRealisation,
                 'img' => null,
@@ -213,7 +213,7 @@ class Imageslibrary_IndexController extends Cible_Controller_Action {
         $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.min.js', 'jquery'));
         $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.swipe.min.js', 'jquery'));
         $blockId = $this->_getParam('BlockID');
-        $objectName = $this->_objectList[$this->_currentAction]; 
+        $objectName = $this->_objectList[$this->_currentAction];
         $oData = new $objectName();
         if (!empty($blockId)) {
             $blockData = Cible_FunctionsBlocks::getBlockDetails($blockId);
@@ -222,8 +222,13 @@ class Imageslibrary_IndexController extends Cible_Controller_Action {
             $oData->setBlockParams();
         } else
             $oData->setBlockParams($this->_getParam('parameters'));
-        
+
         switch($oData->getBlockParams('5')){
+            case("carousel"):
+                $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.carousel.min.js', 'jquery'));
+//                $this->_helper->viewRenderer->setRender('carrousel');
+                $this->view->vertical = $oData->getBlockParams('8');
+                break;
             case("scrollVert"):
                 $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.scrollVert.min.js', 'jquery'));
                 break;
@@ -242,7 +247,7 @@ class Imageslibrary_IndexController extends Cible_Controller_Action {
                 break;
         }
 
-        $detailsPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'details', $this->_moduleID, Zend_Registry::get('languageID'), true);
+        $detailsPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'details', $this->_moduleID, $this->_lang, true);
         $this->view->detailsPage = $detailsPage;
         // Slider parameters
         $this->view->autoPlay = $oData->getBlockParams('1');
@@ -250,58 +255,6 @@ class Imageslibrary_IndexController extends Cible_Controller_Action {
         $this->view->transition = $oData->getBlockParams('3');
         $this->view->navi = $oData->getBlockParams('4');
         $this->view->effect = $oData->getBlockParams('5');
-        $this->view->vertical = $oData->getBlockParams('8');
-        $this->view->prettyPhoto = $oData->getBlockParams('9');
-        
-        
-
-        $keywordsIds = $oData->getBlockParams('7');
-
-        if (!empty($keywordsIds)) {
-            $this->view->keywordsIds = $keywordsIds;
-            $keywordsIds = explode(',', $keywordsIds);
-            array_push($this->_joinTables, array('name' => 'ImageslibraryKeywordsObject', 'clause' => $keywordsIds));
-        }
-        $this->_colTitle = array(
-            'idField' => 'IL_ID',
-            'filenameField' => $this->_imageSrc,
-            'format' => 'thumbList'
-        );
-
-        $this->_redirectAction();
-    }
-
-    /**
-     * Controller for carrousel
-     *
-     * @return void
-     */
-    public function carrouselAction() {
-        $this->_itemPerPage = 100000;
-        
-        $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.min.js', 'jquery'));
-        $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.carousel.min.js', 'jquery'));
-        $this->view->headScript()->appendFile($this->view->locateFile('jquery.cycle2.swipe.min.js', 'jquery'));
-        $blockId = $this->_getParam('BlockID');
-
-        $objectName = $this->_objectList[$this->_currentAction];
-        $oData = new $objectName();
-        if (!empty($blockId)) {
-            $blockData = Cible_FunctionsBlocks::getBlockDetails($blockId);
-            $this->view->title = $blockData['BI_BlockTitle'];
-            $oData->setBlockID($blockId);
-            $oData->setBlockParams();
-        } else
-            $oData->setBlockParams($this->_getParam('parameters'));
-
-        $detailsPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'details', $this->_moduleID, Zend_Registry::get('languageID'), true);
-        $this->view->detailsPage = $detailsPage;
-        // Slider parameters
-        $this->view->autoPlay = $oData->getBlockParams('1');
-        $this->view->delais = $oData->getBlockParams('2');
-        $this->view->transition = $oData->getBlockParams('3');
-        $this->view->navi = $oData->getBlockParams('4');
-        $this->view->vertical = $oData->getBlockParams('8');
         $this->view->prettyPhoto = $oData->getBlockParams('9');
 
         $keywordsIds = $oData->getBlockParams('7');
@@ -318,6 +271,9 @@ class Imageslibrary_IndexController extends Cible_Controller_Action {
         );
 
         $this->_redirectAction();
+        if ($oData->getBlockParams(5) == "carousel"){
+            $this->renderScript('index/carrousel.phtml');
+        }
     }
 
     /**

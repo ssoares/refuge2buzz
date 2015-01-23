@@ -60,7 +60,7 @@ class FormBlockImageslibrary extends Cible_Form_Block
             array('label', array('placement' => 'append','class' => '')),
             array(array('row' => 'HtmlTag'), array('tag' => 'dd', 'class' => 'label_after_checkbox')),
         ));
-        
+
         // direction
         $direction = new Zend_Form_Element_Checkbox('Param8');
         $direction->setLabel(Cible_Translation::getCibleText('banners_direction_block_page'));
@@ -69,7 +69,7 @@ class FormBlockImageslibrary extends Cible_Form_Block
             array('label', array('placement' => 'append','class' => '')),
             array(array('row' => 'HtmlTag'), array('tag' => 'dd', 'class' => 'label_after_checkbox')),
         ));
-        
+
         // prettyphoto
         $prettyphoto = new Zend_Form_Element_Checkbox('Param9');
         $prettyphoto->setLabel(Cible_Translation::getCibleText('banners_prettyphoto_block_page'));
@@ -78,18 +78,19 @@ class FormBlockImageslibrary extends Cible_Form_Block
             array('label', array('placement' => 'append','class' => '')),
             array(array('row' => 'HtmlTag'), array('tag' => 'dd', 'class' => 'label_after_checkbox')),
         ));
-        
+
         $blockEffect = new Zend_Form_Element_Select('Param5');
         $blockEffect->setLabel(Cible_Translation::getCibleText('banners_effect_block_page'))
         ->setAttrib('class','largeSelect');
 
         $effects = array(
             'none' =>'Aucun',
+            'carousel' =>'carousel',
             'fade' =>'fading',
             'fadeout' =>'fading out',
             'scrollHorz' =>'slide horizontal',
             'scrollVert' =>'slide vertical',
-            'shuffle' =>'shuffle', 
+            'shuffle' =>'shuffle',
             'tileSlide' =>'tile slide',
             'tileBlind' =>'tile blind',
             'flipHorz' =>'flip horizontal',
@@ -148,12 +149,12 @@ class FormBlockImageslibrary extends Cible_Form_Block
             )
         );
         $this->addElement($listKeywords);
-        $this->addDisplayGroup(array('Param1','Param2','Param3','Param4','Param8', 'Param5','Param7','Param9','Param999'),'parameters');
+        $this->addDisplayGroup(array('Param1','Param2','Param3','Param4', 'Param5','Param7','Param8','Param9','Param999'),'parameters');
         $parameters = $this->getDisplayGroup('parameters');
 
     }
 
-    public function render(\Zend_View_Interface $view = null)
+    public function render(Zend_View_Interface $view = null)
     {
         $keywords = explode(',', $this->getElement('Param7')->getValue());
         $oRef = new ReferencesObject();

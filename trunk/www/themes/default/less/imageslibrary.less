@@ -24,20 +24,23 @@
 .imageslibrary-slide {
     vertical-align:top;
 }
-.imageslibrary-slide-image {
+.imageslibrary-slide-image{
     min-height: 100%;
     min-width: 100%;
-    top: -9999px;
+/*    top: -9999px;
     bottom: -9999px;
     right: -9999px;
     left: -9999px;
     position: absolute;
-    margin: auto;
+    margin: auto;*/
 }
 .imageslibrary-slide-container {
     display:inline-block;
     position:relative;
     height:@slidelist-height;
+    @media @mq-phone{
+        height: @slidelist-height * 0.25;
+    }
 
 }
 .imageslibrary-container {
@@ -152,7 +155,7 @@
     width:unit(100 / @slidelist-slide-number, %);
 }
 .slidelist .imageslibrary-slide-image {
-    //width:100%;
+    width:100%;
 }
 .carrousel.verticalslider .imageslibrary-slide-image {
     max-width:none;

@@ -22,12 +22,14 @@ if (in_array('sandboxes', $host) || in_array('localhost', $host))
     $devUri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
     $envVar = $devUri[1] . '-dev';
 }
-elseif (in_array('dev', $host))
+elseif (in_array('dev', $host)||in_array('devld', $host)){
     $envVar = str_replace(array('-fr', '-portail2013', '-cp'), array('', '', ''), $host[0]) . '-dev';
+    define('ISDEV', true);
+}
 elseif (in_array('staging', $host))
     $envVar = str_replace(array('csss-iugs'), array('c3s'), $host[0]) . '-staging';
 else
-    $envVar = str_replace(array('demo'), array('edith'), $host[0]);
+    $envVar = str_replace(array('v2'), array('refugebuzz'), $host[0]);
 
 define('APPLICATION_ENV', $envVar);
 define('APPLICATION_PATH', $rootDir);
