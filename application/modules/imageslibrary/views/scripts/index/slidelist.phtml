@@ -1,7 +1,7 @@
 <?php
 $imagesData = !empty($this->mylist) ? $this->mylist : $this->imagesData;
 $random = rand(1, 100000000);
-$nbToDisplay = 3;
+$nbToDisplay = 4;
 if (isset($_SESSION['imgIndex']))
     $imgIndex = $_SESSION['imgIndex'];
 else
@@ -102,25 +102,27 @@ if ($countImages > 0):
 <?php $this->placeholder('footerScript')->captureStart(); ?>
 <script type="text/javascript">
 //<![CDATA[
-    $(window).load(function() {
+$(window).load(function() {
+    var navi = '<?php echo $this->navi ?>';
+    var fx = '<?php echo $this->effect ?>';
+    var params = {
+        fx: fx,
+        slides : "> div",
+        speed : <?php echo $this->delais * 1000 ?>,
+        timeout : <?php echo ($this->autoPlay && $this->transition) ? $this->transition : 0 ?>,
+        //manualTrump:false,
+        log: false
+    }
+    if (navi.length > 0){
+        params.prev = '#leftCycle-<?php echo $random; ?>',
+        params.next = '#rightCycle-<?php echo $random; ?>'
+    }
+    if (fx != "scrollVert"){
+        params.swipe= true
+    }
     var $slideshow = $('#slideshow-<?php echo $random; ?>');
-            $slideshow.cycle({
-            fx: "<?php echo $this->effect ?>",
-<?php if ($this->navi) : ?>
-                prev : '#leftCycle-<?php echo $random; ?>',
-                        next : '#rightCycle-<?php echo $random; ?>',
-<?php endif; ?>
-            slides : "> div",
-<?php if ($this->fx != "scrollVert"): ?>
-                swipe: true,
-<?php endif; ?>
-            speed : <?php echo $this->delais * 1000 ?>,
-                    timeout : <?php echo ($this->autoPlay) ? $this->transition : 0 ?>,
-                    //manualTrump:false,
-                    log: false
-
-            });
-    }).resize();
+    $slideshow.cycle(params);
+}).resize();
 //]]>
 </script>
 <?php $this->placeholder('footerScript')->captureEnd(); ?>

@@ -46,27 +46,6 @@
                 $('#Param9').show();
                 $('label[for=Param9]').show();
             }
-            else if ($(this).val() == 'carrousel')
-            {
-                $('#Param1').show();
-                $('label[for=Param1]').show();
-                $('#Param2').show();
-                $('label[for=Param2]').show();
-                $('#Param3').show();
-                $('label[for=Param3]').show();
-                $('#Param4').show();
-                $('label[for=Param4]').show();
-                $('#Param5').hide();
-                $('label[for=Param5]').hide();
-                $('#IFC_Param6-collections').show();
-                $('#Param6_Labels').show();
-                $('#IFK_Param7-keywords').show();
-                $('#Param7_Labels').show();
-                $('#Param8').show();
-                $('label[for=Param8]').show();
-                $('#Param9').show();
-                $('label[for=Param9]').show();
-            }
             else
             {
                 $('#Param1').hide();
@@ -87,6 +66,16 @@
                 $('label[for=Param8]').hide();
                 $('#Param9').hide();
                 $('label[for=Param9]').hide();
+            }
+        }).change();
+        $('#Param5').change(function()
+        {
+            if ($(this).val() != 'carousel'){
+                $('#Param8').hide();
+                $('label[for=Param8]').hide();
+            }else{
+                $('#Param8').show();
+                $('label[for=Param8]').show();
             }
         }).change();
     });

@@ -1,11 +1,11 @@
-///** 
+///**
 //* style général et gimmicks, visible partout dans le front-end
-//**/ 
+//**/
 
-h1 { 
-    .font-weight('light', "sans-serif");      
+h1 {
+    .font-weight('light', "sans-serif");
     color: @brand-primary;
-    line-height: 1.15em; 
+    line-height: 1.15em;
     margin:0 0 20px 0;
     .home .module > & {
         .h2-style();
@@ -27,7 +27,7 @@ h1 {
     @media @print {
         .print-font(@font-size-h1);
     }
-} 
+}
 .thumbnail {
     display:inline-block;
     width:200px;
@@ -40,13 +40,16 @@ h1 {
         max-width:none;
     }
 }
-.image-placeholder { 
+.image-placeholder {
     background:@brand-white url(../../images/common/logo.png) no-repeat center;
+    @media @mq-phone{
+        background-size: contain;
+    }
 }
-.unscroll { 
+.unscroll {
     overflow:hidden;
 }
-a {  
+a {
     .transition(color, 0.2s);
 }
 .selection(@text-color-inverted, @brand-primary);

@@ -1,22 +1,22 @@
 //editor only
-#tinymce.mce-content-body {    
-    td { 
+#tinymce.mce-content-body {
+    td {
         font-size:inherit;
         line-height:inherit;
         font-family:inherit;
-    }    
+    }
 }
 //back-end and front-end
 #preview-box, #compare-box, .content-box, .mce-content-body, .previewText, .front-end {
-    
+
 }
 //back-end and content
-#preview-box, #compare-box, .content-box, .mce-content-body, .previewText, .content { 
+#preview-box, #compare-box, .content-box, .mce-content-body, .previewText, .content {
     table {
         max-width:100%;
         margin:0 0 10px 0;
-        border-collapse:collapse;  
-        height:auto !important; 
+        border-collapse:collapse;
+        height:auto !important;
         & when (@device-type = 'desktop') {
             width:100%;
         }
@@ -28,6 +28,7 @@
                 display:inline-block;
                 td {
                     min-width:160px;
+                    padding: 5px 10px;
                 }
             }
         }
@@ -44,9 +45,10 @@
         }
     }
     tr td {
-        padding: 2px 0px; 
+        padding: 5px 10px;
         vertical-align: top;
         border:1px solid @brand-grey-light;
+        min-width: 195px;
     }
     tr+tr td {
     }

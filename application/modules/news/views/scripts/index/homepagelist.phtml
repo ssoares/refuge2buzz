@@ -14,24 +14,22 @@
                 $href = $this->baseUrl() . $this->details_page . "/" . $date_string_url . "/" . $news['NI_ValUrl'];
                 ?>
                 <article class="news-article">
-
                     <?php if ($this->params['6']): ?>
                         <?php
                         if (!empty($news['NI_ImageSrc'])) {
                             $class = '';
-                        }
-                        else {
+                        } else {
                             $class = 'image-placeholder';
                         }
                         ?>
                         <div class='news-article-image <?php echo $class ?>'>
                             <?php
                             if (!empty($news['NI_ImageSrc'])) {
-                                $normal = $this->newsImage($news['ND_ID'], $news['NI_ImageSrc'], 'medium', array('class' => 'news-article-image-image'));
+                                $normal = $this->newsImage($news['ND_ID'], $news['NI_ImageSrc'], 'medium', array('class' => 'news-article-image-image img-responsive'));
                                 $large = $this->newsImage($news['ND_ID'], $news['NI_ImageSrc'], 'original', array(
                                     'getSource' => true,
                                 ));
-                                echo $this->link($large, $normal, array('class' => 'news-article-image-link thumbnail prettyPhoto'));
+                                echo $this->link($large, $normal, array('class' => 'news-article-image-link prettyPhoto'));
                             }
                             ?>
                         </div>

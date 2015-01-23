@@ -64,27 +64,33 @@ if ($countImages > 0):
 <?php $this->placeholder('footerScript')->captureStart(); ?>
 <script type="text/javascript">
 //<![CDATA[
-    $(window).load(function() {
+$(window).load(function() {
+    var navi = '<?php echo $this->navi ?>';
+    var vertical = '<?php echo $this->vertical ?>';
+    var fx = '<?php echo $this->effect ?>';
+    var params = {
+        fx: fx,
+        slides : "> a",
+        speed : <?php echo $this->delais * 1000 ?>,
+        timeout : <?php echo ($this->autoPlay && $this->transition) ? $this->transition : 0 ?>,
+        //manualTrump:false,
+        carouselFluid : true,
+                carouselVertical : false,
+        log: false
+    }
+    if (navi.length > 0){
+        params.prev = '#leftCycle-<?php echo $random; ?>',
+        params.next = '#rightCycle-<?php echo $random; ?>'
+    }
+    if (vertical == 1){
+        params.carouselVertical = true;
+    }
+    if (!vertical){
+        params.swipe = true;
+    }
     var $slideshow = $('#slideshow-<?php echo $random; ?>');
-            $slideshow.cycle({
-            fx: "carousel",
-<?php if ($this->navi) : ?>
-                prev : '#leftCycle-<?php echo $random; ?>',
-                        next : '#rightCycle-<?php echo $random; ?>',
-<?php endif; ?>
-            slides : "> a",
-                    speed : <?php echo $this->delais * 1000 ?>,
-                    timeout : <?php echo ($this->autoPlay && $this->transition) ? $this->transition : 0 ?>,
-<?php if ($this->vertical) : ?>
-                carouselVertical : true,
-<?php endif; ?>
-<?php if (!$this->vertical) : ?>
-                swipe: true,
-<?php endif; ?>
-            carouselFluid : true,
-                    log: false
-            });
-    })
+    $slideshow.cycle(params);
+}).resize();
 //]]>
 </script>
 <?php $this->placeholder('footerScript')->captureEnd(); ?>

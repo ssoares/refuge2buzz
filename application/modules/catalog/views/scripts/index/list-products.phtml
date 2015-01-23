@@ -15,7 +15,7 @@ $this->pageTitle($this->title);
                 <?php if (!empty($data['P_Photo'])) : ?>
                 <?php $img = $this->moduleImage(
                             'catalog', 'products/' . $data['P_ID'],
-                            $data['P_Photo'], 'medium');
+                            $data['P_Photo'], 'medium', array('class' => 'img-responsive'));
                 ?>
                 <?php endif; ?>
                 <?php echo $this->link($url, $img); ?>

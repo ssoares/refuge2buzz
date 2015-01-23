@@ -34,7 +34,7 @@ elseif (in_array('staging', $host))
 }
 else
 {
-    $envVar = str_replace(array('demo'), array('edith'), $host[0]);
+    $envVar = str_replace(array('v2'), array('refugebuzz'), $host[0]);
     define('ISDEV', false);
 }
 
