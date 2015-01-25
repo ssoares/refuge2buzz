@@ -104,6 +104,10 @@
                 }
             }
             .responsive-font(@font-size-base - 2);
+            .ie8 & {
+                background: #0B8E21;
+                border:1px solid @brand-primary;
+            }
         }
         & when (@device-type = 'mobile') {
             background:@brand-primary;
