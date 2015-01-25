@@ -148,13 +148,15 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                 <p id="totalValue" class="col-lg-3 number bold-secondary"> </p>
             </div>
         </div>
-        <form id="sendToPaypal" action="https://www.paypal.com/cgi-bin/webscr" method="post">
+        <form id="sendToPaypal" action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
             <input type="hidden" name="cmd" value="_cart"/>
             <input type="hidden" name="upload" value="1" />
-            <input type="hidden" name="business" value="refugedebuzz@hotmail.ca" />
+            <input type="hidden" name="business" value="refugedebuzz-buyer@hotmail.ca" />
             <input type="hidden" name="charset" value="UTF-8"/>
-            <input type="submit" id="submit" class="hidden" />
+            <input type="hidden" name="currency_code" value="CAD"/>
             <input type="hidden" name="return" value="<?php echo Zend_Registry::get('absolute_web_root') . $this->catalogPage; ?>" />
+            <input type="hidden" name="shopping_url" value="<?php echo Zend_Registry::get('absolute_web_root') . $this->catalogPage; ?>" />
+            <input type="submit" id="submit" class="hidden" />
         </form>
 <!--<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 
