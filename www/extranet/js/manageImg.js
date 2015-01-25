@@ -21,7 +21,7 @@
                     container.add(img);
                 });
                 init.countImg();
-                if (o.nbImg == o.nbImgLimit)
+                if (o.nbImg == o.nbImgLimit && o.nbImgLimit != 0)
                     $('#moreImg').hide();
             },
             countImg: function(){
