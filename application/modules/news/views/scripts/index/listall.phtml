@@ -42,7 +42,7 @@
                                 $large = $this->newsImage($news['ND_ID'], $news['NI_ImageSrc'], 'original', array(
                                     'getSource' => true,
                                 ));
-                                echo $this->link($large, $normal, array('class' => 'news-article-image-link thumbnail prettyPhoto'));
+                                echo $this->link($href, $normal, array('class' => 'news-article-image-link thumbnail'));
                                 ?>
                             <?php } ?>
                         </div>

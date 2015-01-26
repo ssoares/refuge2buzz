@@ -23,12 +23,15 @@ $this->pageTitle($product['PI_Name']);
         <figure class="medium col-lg-5 text-center">
         <?php if (!empty($product['P_Photo'])): ?>
             <?php
-            echo $this->moduleImage(
+            $img = $this->moduleImage(
                 'catalog', 'products/' . $product['P_ID'],
                 $product['P_Photo'],
                 'medium',
                 array('class' => 'img-responsive')
             );
+            $large = $this->moduleImage('catalog', 'products/' . $product['P_ID'],
+                $product['P_Photo'], 'original', array('getSource' => true));
+            echo $this->link($large, $img, array('class' => 'prettyPhoto'));
             ?>
             <?php
         else:
@@ -78,7 +81,11 @@ $this->pageTitle($product['PI_Name']);
                 <li class="row <?php echo $i %2 == 0 ? 'even' : 'odd'; ?> border-bottom">
                     <span class="item-label col-xs-12 col-md-6 border-right"><?php echo $item['II_Name']; ?></span>
                     <span class="item-price col-xs-6 col-md-4 border-right text-center"><?php echo $item['I_PriceDetail']; ?> $</span>
-                    <span class="item-addtocart col-xs-6 col-md-2 text-center"><?php echo $this->link('javascript:void(0);', 'Cart', $options); ?></span>
+                    <span class="item-addtocart col-xs-6 col-md-2 text-center">
+                    <?php if (!$item['I_NoAddToCart']): ?>
+                    <?php echo $this->link('javascript:void(0);','Cart', $options); ?>
+                    <?php endif; ?>
+                    </span>
                 </li>
             <?php endforeach; ?>
             </ul>
