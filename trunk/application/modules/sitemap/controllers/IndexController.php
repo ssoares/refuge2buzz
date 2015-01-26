@@ -17,37 +17,35 @@ class Sitemap_IndexController extends Cible_Controller_Action
     }
 
     public function indexAction()
-    {         
+    {
         $tmp        = array();
         $arrayData  = array();
         $groupMenu  = '';
         $layoutFile = Cible_FunctionsPages::getLayoutPath($this->view->currentPageID);
-       
+
         foreach ($this->_menusLayout as $key => $value)
         {
             if (preg_match('/' . $key . '/', $layoutFile))
                 $groupMenu = $key;
         }
-        $menusList  = MenuObject::getAllMenuList($groupMenu, true);     
-        
+        $menusList  = MenuObject::getAllMenuList($groupMenu, true);
+
         $this->_menusLayout[$groupMenu] = $menusList;
         foreach ($this->_menusLayout[$groupMenu] as $menuId)
-        {           
+        {
             $oMenu = new MenuObject($menuId);
             $oMenu->setIsSiteMap(true);
 
-            if (!empty ($tmp))
+            if (!empty ($tmp)){
                 $arrayData = $this->appendIfNotFound($oMenu->populate(), $tmp, $arrayData);
-            }
-            else
-            {               
+            }else{
                 $arrayData = $oMenu->populate();
             }
             $tmp = $this->verifyChildren($arrayData);
         }
-        
+
         $this->view->assign('menus', $arrayData);
-       
+
     }
 
     private function verifyChildren($children, $tmp = array())

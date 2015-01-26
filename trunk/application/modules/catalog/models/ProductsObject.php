@@ -121,9 +121,10 @@ class ProductsObject extends DataObject
                     ->from($this->_oDataTableName);
         }
         $select->joinLeft(
-                    $this->_oIndexTableName,
-                    $this->_dataId . " = " . $this->_indexId
-                    );
+            $this->_oIndexTableName,
+            $this->_dataId . " = " . $this->_indexId
+            );
+        $select->where('P_Inactive = ?', 0);
         /**
          * @todo Else case for direct product list.
          */
