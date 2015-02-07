@@ -8,7 +8,7 @@ $this->pageTitle($this->title);
         <article class="list col-lg-4">
             <?php
             $name = $data["PI_Name"];
-            $url = $this->Url(array('action' => null)) . '/' . $this->stringUrl . '/' . $data['PI_ValUrl'];
+            $url = $this->request->getRequestUri() . '/' . $data['PI_ValUrl'];
             ?>
             <figure class="picture">
                 <?php $img = $this->clientImage('logo.png'); ?>
