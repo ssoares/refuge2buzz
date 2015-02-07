@@ -152,6 +152,10 @@ class CatalogCategoriesObject extends DataObject
             $this->_buildOnCatalog = $options['buildOnCatalog'];
         if (!empty($options) && isset($options['currentPath']))
             $this->_currentPath = $options['currentPath'];
+        if(isset($menuCatalog['Link'])){
+            $this->_link[] = $menuCatalog['Link'];
+            $this->_level++;
+        }
         if(Zend_Registry::isRegistered('defaultCategory')
             && !is_null(Zend_Registry::get('defaultCategory'))
             && Zend_Registry::get('defaultCategory') > 0)
@@ -161,9 +165,6 @@ class CatalogCategoriesObject extends DataObject
             if(empty ($tmpCat[$this->_valurlField]))
                 $tmpCat[$this->_valurlField] = "";
             $this->_link[] = $tmpCat[$this->_valurlField];
-            $this->_level++;
-        }elseif(isset($menuCatalog['Link'])){
-            $this->_link[] = $menuCatalog['Link'];
             $this->_level++;
         }
         if (!$defaultCatId && isset($menuCatalog['PageID'])){
