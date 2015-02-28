@@ -34,9 +34,11 @@
                     <?php // if ($this->params['6']): ?>
                         <?php
                         if (!empty($news['NI_ImageSrc'])) {
-                            $class = '';
+                            $class = 'col-md-4';
+                            $classTxt = 'col-md-8';
                         } else {
-                            $class = 'image-placeholder';
+                            $classTxt = '';
+                            $class = '';
                         }
                         ?>
                         <div class='news-article-image <?php echo $class ?>'>
@@ -46,12 +48,12 @@
                                 $large = $this->newsImage($news['ND_ID'], $news['NI_ImageSrc'], 'original', array(
                                     'getSource' => true,
                                 ));
-                                echo $this->link($large, $normal, array('class' => 'news-article-image-link thumbnail prettyPhoto'));
+                                echo $this->link($large, $normal, array('class' => 'news-article-image-link prettyPhoto'));
                                 ?>
                             <?php } ?>
                         </div>
                     <?php // endif; ?>
-                    <div class="news-article-content content">
+                    <div class="news-article-content content <?php echo $classTxt ?>">
                         <?php echo $this->decorateImage($news['NI_Text']); ?>
                     </div>
                     <div class="news-article-navigation navigation">
