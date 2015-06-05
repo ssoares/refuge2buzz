@@ -144,3 +144,15 @@ echo $this->partial('partials/header.pageDetails.phtml', array(
         <?php } ?>
     });
 </script>
+
+<script type="text/javascript">
+//<![CDATA[
+FB.ui({
+  method: 'share_open_graph',
+  action_type: 'og.likes',
+  action_properties: JSON.stringify({
+      object:'https://developers.facebook.com/docs/',
+  })
+}, function(response){});
+//]]>
+</script>

@@ -21,9 +21,13 @@ if (isset($this->moreClass))
             </li>
         <?php endif; ?>
 
-        <?php if (!empty($this->itemCount)): ?>
+        <?php if ($moreClasses == 'paypal-button'): ?>
             <li class="module-navigation-arrow module-navigation-next">
                 <a id="stepToNext" href="#"><?php echo $this->getClientText("form_label_paypal_pay") ?></a>
+            </li>
+        <?php elseif (!empty($this->itemCount)): ?>
+            <li class="module-navigation-arrow module-navigation-next">
+                <a href="<?php echo $this->nextStep; ?>"><?php echo $this->getCibleText("form_label_next_step_btn") ?></a>
             </li>
         <?php endif; ?>
 
@@ -44,11 +48,7 @@ if (isset($this->moreClass))
     //<![CDATA[
     // Permet du soumettre le formulaire en simulant le clique sur le submit
     $(document).ready(function() {
-        $('#stepToNext').click(function(e){
-            e.preventDefault();
-            $('#submit').click();
-        });
-        $('a#stepToNext').click(function(e){
+        $('#stepTopNext').click(function(e){
             e.preventDefault();
             $('#submit').click();
         });

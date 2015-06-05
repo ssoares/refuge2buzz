@@ -31,45 +31,45 @@ class MemberProfilesObject extends DataObject
     protected $_addrShipField   = 'MP_ShippingAddrId';
     protected $_addrDataField   = 'address';
     protected $_addrShipDataField  = 'addressShipping';
+    protected $_oGeneric  = null;
 
+    public function getOGeneric(){
+        return $this->_oGeneric;
+    }
+    public function setOGeneric($oGeneric = '')
+    {
+        if (!empty($oGeneric)){
+            $this->_oGeneric = new $oGeneric();
+        }else{
+            $this->_oGeneric = new GenericProfilesObject();
+        }
+        return $this;
+    }
+    public function addProfile($data, $langId = 0)
+    {
+        if (!$langId && !empty($data['languageId'])){
+            $langId = $data['languageId'];
+        }elseif(!$langId){
+            $langId = Zend_Registry::get('languageID');
+        }
+        $data = $this->_setAddressData($data);
+        var_dump($data);
+        exit;
+        return $this->_oGeneric->insert($data, $langId);
+    }
     public function save($id, $data, $langId)
     {
         $addrId = 0;
-        $oGP = new GenericProfilesObject();
-        $genData = $oGP->findData(array($oGP->getDataId() => $id));
-        if ($genData[0]['GP_Language'] != $langId)
+        $genData = $this->_oGeneric->findData(array($this->_oGeneric->getDataId() => $id));
+        if ($genData[0]['GP_Language'] != $langId){
             $langId = $genData[0]['GP_Language'];
-
-        if (isset($data[$this->_addrDataField]))
-        {
-            $oAdress = new AddressObject();
-            $addrBill = $data[$this->_addrDataField];
-            if (!empty($data[$this->_addrShipDataField]))
-                $addrShip = $data[$this->_addrShipDataField];
         }
-
-        if (!empty($addrBill))
-        {
-            $addrId = $oAdress->save($data[$this->_addrField], $addrBill, $langId);
-
-            if (isset($addrShip['duplicate']) && $addrShip['duplicate'] == 1)
-            {
-                $addrBill['A_Duplicate'] = $billId;
-                $shipId = $oAdress->save($addrShip[$this->_addrShipField], $addrBill, $langId);
-            }
-            elseif (!empty($data[$this->_addrShipDataField]))
-            {
-                $addrShip['A_Duplicate'] = 0;
-                $shipId = $oAdress->save($addrShip[$this->_addrShipField], $addrShip, $langId);
-            }
-            $data[$this->_addrField] = $addrId;
-        }
-
-        if (!empty($data['MP_Password']))
+        $data = $this->_setAddressData($data);
+        if (!empty($data['MP_Password'])){
             $data['MP_Password'] = md5($data['MP_Password']);
-        else
+        }else{
             unset($data['MP_Password']);
-
+        }
         parent::save($id, $data, $langId);
     }
 
@@ -82,10 +82,10 @@ class MemberProfilesObject extends DataObject
         if (isset($filters[$this->_foreignKey]))
         {
             $genericData = $oGeneric->populate($filters[$this->_foreignKey], 1);
-            $langId   = $genericData['GP_Language'];
+            $langId = $genericData['GP_Language'];
         }
         else
-            $langId   = Zend_Registry::get('languageID');
+            $langId = Zend_Registry::get('languageID');
 
         $data = parent::findData($filters);
 
@@ -148,8 +148,7 @@ class MemberProfilesObject extends DataObject
     public function addTaxRate(array $memberData)
     {
         $data = array();
-        $memberId = $memberData['member_id'];
-        $addrId = $memberData['addrBill'];
+        $addrId = $memberData[$this->_addrField];
 
         $oAddres = new AddressObject();
         $oTaxes = new TaxesObject();
@@ -161,6 +160,30 @@ class MemberProfilesObject extends DataObject
         $memberData['taxCode'] = $taxRate['TZ_GroupName'];
 
         return $memberData;
+    }
+
+    protected function _setAddressData($data)
+    {
+        if (isset($data[$this->_addrDataField])){
+            $oAdress = new AddressObject();
+            $firstAddr = $data[$this->_addrDataField];
+            if (!empty($data[$this->_addrShipDataField])){
+                $secAddr = $data[$this->_addrShipDataField];
+            }
+        }
+        if (!empty($firstAddr)){
+            $addrId = $oAdress->save(null, $firstAddr, $langId);
+            if (isset($secAddr['duplicate']) && $secAddr['duplicate'] == 1){
+                $firstAddr['A_Duplicate'] = $billId;
+                $shipId = $oAdress->save($secAddr[$this->_addrShipField], $firstAddr, $langId);
+            }elseif (!empty($data[$this->_addrShipDataField])){
+                $secAddr['A_Duplicate'] = 0;
+                $shipId = $oAdress->save($secAddr[$this->_addrShipField], $secAddr, $langId);
+            }
+            $data[$this->_addrField] = $addrId;
+        }
+
+        return $data;
     }
 
 }

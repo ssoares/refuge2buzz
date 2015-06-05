@@ -19,18 +19,21 @@ class FormOrderAddr extends Cible_Form
         $addressFacturationSub->setAttrib('class', 'col-lg-6');
         $billingAddr = new Cible_View_Helper_FormAddress($addressFacturationSub);
         $billingAddr->setProperty('addScriptState', false);
-        $billingAddr->enableFields(
-                array(
-                    'firstAddress',
-                    'secondAddress',
-                    'cityTxt',
-                    'state',
-                    'stateTxt',
-                    'zipCode',
-                    'country',
-                    'firstTel',
-                    'secondTel')
-                );
+        $fields = array(
+            'firstAddress',
+            'secondAddress',
+            'cityTxt',
+            'state',
+            'stateTxt',
+            'zipCode',
+            'country',
+            'firstTel',
+            'secondTel');
+        if (!$this->getView()->user){
+            array_unshift($fields, 'email');
+            array_unshift($fields, 'name');
+        }
+        $billingAddr->enableFields($fields);
 
         $billingAddr->formAddress();
         $addrBill = new Zend_Form_Element_Hidden('addrBill');
@@ -51,18 +54,7 @@ class FormOrderAddr extends Cible_Form
         $shipAddr = new Cible_View_Helper_FormAddress($addressShippingSub);
         $shipAddr->duplicateAddress($addressShippingSub);
         $shipAddr->setProperty('addScriptState', false);
-        $shipAddr->enableFields(
-            array(
-                'firstAddress',
-                'secondAddress',
-                'cityTxt',
-                'state',
-                'stateTxt',
-                'zipCode',
-                'country',
-                'firstTel',
-                'secondTel')
-            );
+        $shipAddr->enableFields($fields);
 
         $shipAddr->formAddress();
 

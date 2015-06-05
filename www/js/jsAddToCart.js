@@ -200,7 +200,7 @@ var cartActions = {
         $('#subTotalValue span').text(cartActions.total('sumLine'));
         var subTot = parseFloat($('#subTotalValue span').text());
 
-        if (subTot > defaultProperties.limitShip)
+        if (subTot > defaultProperties.limitShip && defaultProperties.limitShip >= 0)
         {
             $('#transportValue span').text(0);
             $('p.infoTpsFees').hide();

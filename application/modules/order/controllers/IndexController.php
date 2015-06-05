@@ -59,147 +59,6 @@ class Order_IndexController extends Cible_Controller_Action
         }
     }
 
-
-    public function loginwithinscriptionAction()
-    {
-        $account = Cible_FunctionsGeneral::getAuthentication();
-
-        if (is_null($account))
-        {
-            $path = Zend_Registry::get('web_root') . '/';
-            setcookie('returnUrl', $this->view->selectedPage, 0, $path);
-
-            $form = new FormLogin();
-
-            if ($this->_request->isPost())
-            {
-                $formData = $this->_request->getPost();
-
-                if ($form->isValid($formData))
-                {
-                    $result = Cible_FunctionsGeneral::authenticate($formData['email'], $formData['password']);
-
-                    if ($result['success'] == 'true'
-                        && empty($result['validatedEmail'])
-                        && $result['status'] == 2)
-                    {
-                        $this->disableView();
-                        $path = Zend_Registry::get('web_root') . '/';
-                        $hash = md5(session_id());
-                        $duration = $formData['stayOn'] ? time() + (60 * 60 * 24 * 365) : 0;
-                        $cookie = array(
-                            'lastName' => $result['lastName'],
-                            'firstName' => $result['firstName'],
-                            'email' => $result['email'],
-                            'hash' => $hash,
-                            'status' => $result['status']
-                        );
-                        setcookie("authentication", json_encode($cookie), $duration, $path);
-
-                        $memberProfile = new MemberProfile();
-                        $memberProfile->updateMember($result['member_id'], array('hash' => $hash));
-
-                        $this->_redirect(Cible_FunctionsPages::getPageNameByID($this->_config->catalog->pageId));
-                    }
-                    else
-                    {
-                        if ($result['success'] == 'true')
-                        {
-                            if(!empty($result['validatedEmail']) || $result['status'] < 2)
-                            {
-                                setcookie("authentication");
-                                $url  = Cible_FunctionsCategories::getPagePerCategoryView(0, 'confirm_email', $this->_moduleID);
-                                $url .= '/email/' . $formData['email'];
-                                $this->_redirect($url);
-                            }
-                        }
-                        else
-                        {
-                            $error = Cible_Translation::getClientText('login_form_auth_fail_error');
-                            $this->view->assign('error', $error);
-                        }
-                    }
-                }
-            }
-
-            $this->view->assign('form', $form);
-        }
-        else
-        {
-            if (Zend_Registry::get('pageID') == $this->_config->authentication->pageId)
-            {
-                if ($account['status'] == 0)
-                {
-                    setcookie("authentication");
-                    $this->_redirect(Cible_FunctionsCategories::getPagePerCategoryView(0, 'confirm_email', $this->_moduleID));
-                }
-                elseif ($account['status'] == 1)
-                {
-                    setcookie("authentication");
-                    $this->_redirect(Cible_FunctionsCategories::getPagePerCategoryView(0, 'become_client', $this->_moduleID));
-                }
-                elseif ($account['status'] == 2)
-                {
-                    $this->_redirect(Cible_FunctionsCategories::getPagePerCategoryView(0, 'modify_inscription', $this->_moduleID));
-                }
-            }
-            $this->disableView();
-        }
-    }
-
-    public function loginStepTwoAction()
-    {
-        $account = Cible_FunctionsGeneral::getAuthentication();
-
-        if (is_null($account))
-        {
-            $path = Zend_Registry::get('web_root') . '/';
-            setcookie('returnUrl', $this->view->selectedPage, 0, $path);
-            $path = Zend_Registry::get('web_root') . '/';
-            $url = $this->view->selectedPage . '/resume-order/';
-
-            setcookie('returnUrl', $url, 0, $path);
-
-            $form = new FormLogin();
-
-            if ($this->_request->isPost() && array_key_exists('submit_login', $_POST))
-            {
-                $formData = $this->_request->getPost();
-
-                if ($form->isValid($formData))
-                {
-                    $result = Cible_FunctionsGeneral::authenticate($formData['email'], $formData['password']);
-
-                    if ($result['success'] == 'true')
-                    {
-                        $this->disableView();
-                        $hash = md5(session_id());
-                        $duration = $formData['stayOn'] ? time() + (60 * 60 * 24 * 365) : 0;
-                        $cookie = array(
-                            'lastName' => $result['lastName'],
-                            'firstName' => $result['firstName'],
-                            'email' => $result['email'],
-                            'hash' => $hash
-                        );
-                        setcookie("authentication", json_encode($cookie), $duration, $path);
-
-                        $memberProfile = new MemberProfile();
-                        $memberProfile->updateMember($result['member_id'], array('hash' => $hash));
-
-                        $this->_redirect($url);
-                    }
-                    else
-                    {
-                        $error = Cible_Translation::getClientText('login_form_auth_fail_error');
-                        $this->view->assign('error', $error);
-                    }
-                }
-            }
-
-            $this->view->assign('form', $form);
-        }
-    }
-
     public function orderAction()
     {
         $session = new Zend_Session_Namespace('order');
@@ -220,7 +79,8 @@ class Order_IndexController extends Cible_Controller_Action
             $memberInfos = $profile->findData(array(
                 'email' => $authentication['email']
             ));
-//            $memberInfos = $profile->addTaxRate($memberInfos);
+            $memberInfos = $profile->addTaxRate($memberInfos);
+            $this->view->user = $authentication;
         }
 
         $return = $this->_getParam('return');
@@ -378,8 +238,7 @@ class Order_IndexController extends Cible_Controller_Action
                 }
                 $form = new FormOrderAddr($options);
 
-                if ($this->_request->isPost())
-                {
+                if ($this->_request->isPost()){
                     $data = $this->_request->getPost();
                     $currentCity  = 0;
                     $current_state  = $data['address']['A_StateId'] . '||';
@@ -394,37 +253,40 @@ class Order_IndexController extends Cible_Controller_Action
                     $formData = $this->_request->getPost();
                     $formData['selectedState'] = $current_state;
                     $formData['selectedCity']  = $currentCity;
-
+                    $session->customer = $formData;
+                    if (isset($formData['addressShipping'])){
+                        $duplicate = $formData['addressShipping']['duplicate'];
+                        if ($duplicate){
+                            $formData['addressShipping'] = $formData['address'];
+                        }
+                    }
+                    var_dump($form->isValid($formData));
+                    exit;
                     if($form->isValid($formData)){
 //                            if($formData['paymentMeans'] == 'cod')
 //                                $session->order['cod'] = $formData['paymentMeans'];
 //                            elseif(isset($session->order['cod']))
 //                                unset($session->order['cod']);
 
-                        $session->customer = $formData;
                         $session->customer['identification'] = $memberInfos;
                         $this->_redirect($stepValues[$stepAction]['next']);
-                    }
-                    else{
+                    }else{
                         $form->populate($formData);
                     }
-                }
-                    else
-                        if($session->customer)
-                        {
-                            $form->populate($session->customer);
-                            $errorValidation = $this->_getParam('errorValidation');
-                            if(isset($session->customer['message']) && !empty($errorValidation))
-                                $this->view->assign('message', $session->customer['message']);
-                        }
-                    else
-                    {
+                }else{
+                    if($session->customer){
+                        $form->populate($session->customer);
+                        $errorValidation = $this->_getParam('errorValidation');
+                        if(isset($session->customer['message']) && !empty($errorValidation))
+                            $this->view->assign('message', $session->customer['message']);
+                    }else{
                         $form->populate($memberInfos);
                     }
 
-                $this->view->assign('CODFees',$orderParams['CP_MontantFraisCOD']);
-                $this->view->assign('form', $form);
-                $this->view->assign('memberInfos', $memberInfos);
+                    $this->view->assign('CODFees',$orderParams['CP_MontantFraisCOD']);
+                    $this->view->assign('form', $form);
+                    $this->view->assign('memberInfos', $memberInfos);
+                }
                 break;
         }
 //        }

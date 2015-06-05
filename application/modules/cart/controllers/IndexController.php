@@ -292,7 +292,7 @@ class Cart_IndexController extends Cible_Controller_Action
             $orderParams = Cible_FunctionsGeneral::getParameters ();
             $params = array(
                 'nbPoint'     => 0,
-                'limitOrder'  => 0,
+                'limitOrder'  => 0, //$orderParams['CP_OrderMiniAmount']
                 'tpsFee'      => $orderParams['CP_ShippingFees'],
                 'limitTpsFee' => $orderParams['CP_ShippingFeesLimit'],
                 'CODFees'     => $orderParams['CP_MontantFraisCOD'],

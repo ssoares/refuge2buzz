@@ -38,14 +38,14 @@ class FormBecomeClient extends Cible_Form
         $language->removeDecorator('label');
 
         // Language
-//            $languages = new Zend_Form_Element_Select('language');
-//            $languages->setLabel( $this->getView()->getCibleText('form_label_language') )
-//                ->setAttrib('class', 'stdSelect')
-//                ->setAttrib('tabindex','9')
-//                ->setOrder(9);
-//            foreach( Cible_FunctionsGeneral::getAllLanguage() as $lang ){
-//                $languages->addMultiOption($lang['L_ID'], $lang['L_Title']);
-//            }
+        $languages = new Zend_Form_Element_Select('language');
+        $languages->setLabel( $this->getView()->getCibleText('form_label_language') )
+            ->setAttrib('class', 'stdSelect')
+            ->setAttrib('tabindex','9')
+            ->setOrder(9);
+        foreach( Cible_FunctionsGeneral::getAllLanguage() as $lang ){
+            $languages->addMultiOption($lang['L_ID'], $lang['L_Title']);
+        }
         // FirstName
         $firstname = new Zend_Form_Element_Text('firstName');
         $firstname->setLabel($this->getView()->getCibleText('form_label_fName'))
@@ -130,7 +130,7 @@ class FormBecomeClient extends Cible_Form
         }
 
         // Submit button
-        $submit = new Zend_Form_Element_Submit('submit');
+        $submit = new Zend_Form_Element_Submit('sendMyForm');
         $submitLabel = $this->getView()->getCibleText('form_account_button_submit');
         if ($this->_mode == 'edit')
             $submitLabel = $this->getView()->getCibleText('button_submit');
@@ -156,8 +156,55 @@ class FormBecomeClient extends Cible_Form
 
         $this->addSubForm($identificationSub, 'identification');
 
-        $this->addElement($submit);
+        /* billing address */
+         // Billing address
+        $addressFacturationSub = new Zend_Form_SubForm();
+        $addressFacturationSub->setName('address')
+            ->removeDecorator('DtDdWrapper');
+        $addressFacturationSub->setLegend($this->getView()->getCibleText('form_account_subform_addBilling_legend'));
+        $addressFacturationSub->setAttrib('class', 'col-lg-6');
+        $billingAddr = new Cible_View_Helper_FormAddress($addressFacturationSub);
+        $billingAddr->setProperty('addScriptState', false);
+        $fields = array(
+            'firstAddress',
+            'secondAddress',
+            'cityTxt',
+            'state',
+            'stateTxt',
+            'zipCode',
+            'country',
+            'firstTel',
+            'secondTel');
+        $billingAddr->enableFields($fields);
 
+        $billingAddr->formAddress();
+        $addrBill = new Zend_Form_Element_Hidden('addrBill');
+        $addrBill->removeDecorator('label');
+        $addressFacturationSub->addElement($addrBill);
+        $this->addSubForm($addressFacturationSub,'address');
+
+        /* delivery address */
+        $addrShip = new Zend_Form_Element_Hidden('addrShip');
+        $addrShip->removeDecorator('label');
+
+        $addressShippingSub = new Zend_Form_SubForm();
+        $addressShippingSub->setName('addressShipping')
+            ->removeDecorator('DtDdWrapper');;
+        $addressShippingSub->setLegend($this->getView()->getCibleText('form_account_subform_addShipping_legend'));
+        $addressShippingSub->setAttrib('class', 'col-lg-6');
+
+        $shipAddr = new Cible_View_Helper_FormAddress($addressShippingSub);
+        $shipAddr->duplicateAddress($addressShippingSub);
+        $shipAddr->setProperty('addScriptState', false);
+        $shipAddr->enableFields($fields);
+
+        $shipAddr->formAddress();
+
+        $addressShippingSub->addElement($addrShip);
+        $this->addSubForm($addressShippingSub,'addressShipping');
+        $this->getSubForm('addressShipping')->getElement('duplicate')->setAttrib('checked', null);
+
+        $this->addElement($submit);
 
         $submit->setDecorators(array(
             'ViewHelper',

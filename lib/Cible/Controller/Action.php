@@ -68,7 +68,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
     }
 
     public function getRobot() {
-        
+
     }
 
     /**
@@ -1025,12 +1025,11 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
         $this->view->headLink()->appendStylesheet($this->view->locateFile('profile.css'), 'all');
         // Test if the user is already connected.
         $account = Zend_Registry::get('user');
-//        $script = '<script type="text/javascript" src=' . $this->view->locateFile('jquery_autocomplete.js', 'jquery') . '></script>';
-//        $this->view->placeholder('footerScript')->set($script);
         // Set the default status to an account creation and not editing one
         $_edit = false;
         // Instantiate the user profiles
-        $profile = new MemberProfile();
+        $profile = new MemberProfilesObject();
+        $profile->setOGeneric();
 //        $newsletterProfile = new NewsletterProfile();
         $memberData = array();
         $accountValidate = true;
@@ -1039,47 +1038,24 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
         $current_state = $config->address->default->states;
         $addr = array();
         $currentCity = '';
-        $addPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'becomeclient', $this->_moduleID);
+        $addPage = Cible_FunctionsCategories::getPagePerCategoryView(1, 'become_client', $this->_moduleID, null, true);
         $editPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'modifyclient', $this->_moduleID);
         // Get users data if he is already logged
         if ($account) {
             if ($account['status'] == 2 || $this->_request->isPost()) {
                 $_edit = true;
-                $memberData = $profile->findMember(array('email' => $account['email']));
+                $memberData = $profile->findData(array('email' => $account['email']));
 //                $newsletterData = $newsletterProfile->findMember(array('email' => $account['email']));
-
-                $oAddress = new AddressObject();
                 if (!empty($memberData['address'])) {
-                    $addr = $oAddress->populate($memberData['address'], Zend_Registry::get('languageID'));
-                    $memberData['address'] = $addr;
-
-                    $current_state = $addr['A_StateId'] . self::SEPARATOR;
-                    $currentCity = $addr['A_CityId'] . self::SEPARATOR;
+                    $current_state = $memberData['address']['A_StateId'] . self::SEPARATOR;
+                    $currentCity = $memberData['address']['A_CityId'] . self::SEPARATOR;
                 }
-
-//                if ($onWeb && !empty($onWeb['R_AddressId']))
-//                {
-//                    $webAddr = $oAddress->populate($onWeb['R_AddressId'], $this->_defaultInterfaceLanguage);
-//
-//                    $webAddr['isDistributeur']       = $onWeb['R_Status'];
-//                    $memberData['addressDetaillant'] = $webAddr;
-//
-//                    $current_state .= $webAddr['A_StateId'] . '||';
-//                    $currentCity   .= $webAddr['A_CityId'] . '||';
-//                }
-//                if (empty($this->view->step))
                 Zend_Registry::set('modifTitle', $this->view->getClientText('account_modify_page_title'));
                 if (preg_match('/' . $this->view->selectedPage . '/', $addPage))
                     $this->_redirect($editPage);
 
 //                $this->view->headTitle($this->view->getClientText('account_modify_page_title'));
 //                $this->view->pageTitle = $this->view->getClientText('account_modify_page_title');
-            }
-        }
-        else {
-            if (preg_match('/' . $this->view->selectedPage . '/', $editPage)) {
-                $homePage = Cible_FunctionsPages::getHomePageDetails();
-                $this->_redirect($homePage['PI_PageIndex']);
             }
         }
 
@@ -1089,24 +1065,16 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
         $_edit ? $this->view->assign('mode', 'edit') : $this->view->assign('mode', 'add');
         // Instantiate the form for account management
         $form = new FormBecomeClient($options);
-
         //$_captcha = $form->getElement('captcha');
-
-        $return = $this->_getParam('return');
-        if ($return && isset($_COOKIE['returnUrl'])) {
-            $returnUrl = $_COOKIE['returnUrl'];
-            $this->view->assign('return', $returnUrl);
-        }
-
         $this->view->assign('selectedCity', $currentCity);
         $this->view->assign('selectedState', $current_state);
 
         // Test if the users has ticked the aggreement checkbox
         $agreementError = isset($_POST['termsAgreement']) && $_POST['termsAgreement'] != 1 ? true : false;
 
-        if ($_edit)
+        if ($_edit){
             $agreementError = false;
-
+        }
         $this->view->assign('agreementError', $agreementError);
         // Actions when form is submitted
         if ($this->_request->isPost() && array_key_exists('submit', $_POST)) {
@@ -1140,14 +1108,8 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 
             $oAddress = new AddressObject();
             // Get the addresses data to insert
-            $address = $formData['address'];
-
             if ($form->isValid($formData) && !$agreementError) {
                 $oNotification = new Cible_Notifications_Email();
-                //remove addresses
-                unset($formData['address']);
-                // merge all subform fields for the member profile table
-                $formData = $this->_mergeFormData($formData);
 
                 if (!empty($formData['password'])) {
                     $password = $formData['password'];
@@ -1175,12 +1137,8 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                     $formData['status'] = 0;
 
                     //Add addresses process and retrive id for memberProfiles
-                    $idAddr = $oAddress->insert($address, $formData['language']);
-                    $formData['address'] = $idAddr;
-
-                    $profile->addMember($formData);
-                    $memberData = $profile->findMember(array('email' => $formData['email']));
-                    $idMember = $memberData['member_id'];
+                    $idMember = $profile->addProfile($formData);
+                    $memberData = $profile->populate($idMember, 1);
                     $cookie['member_id'] = $idMember;
 
                     setcookie("authentication", json_encode($cookie), $duration, $path);
@@ -1342,13 +1300,12 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 //                        $notify->send();
 //                    }
                 }
-            } else
-                $form->populate($_POST);
-        }
-        else
-        if ($_edit && empty($this->view->step))
+            } else{
+                $form->populate($formData);
+            }
+        }elseif ($_edit && empty($this->view->step)){
             $form->populate($memberData);
-
+        }
         $this->view->assign('form', $form);
     }
 
@@ -1436,7 +1393,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
             $mobile = Zend_Registry::get('isMobile');
         else
             $mobile = false;
-        
+
         if ($mobile) {
             $tplView = self::IS_MOBILE . '-' . $this->_request->getActionName();
             $paths = $this->view->getScriptPaths();
