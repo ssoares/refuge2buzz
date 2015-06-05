@@ -110,7 +110,6 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
         $menuData = $oPages->getRelatedMenu($this->_selectedPageId);
 
         $parentId = 0;
-        $parentName = "";
         if(!$menuData){
 
             $parentId = $oPages->getParentRelatedID($this->_selectedPageId);
@@ -119,8 +118,10 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
             $this->_selectedPageId = $parentId;
             $parentId = $menuData['MID_ParentID'];
             $this->view->assign('selectedPage',$parentName);
+            //echo $parentName;
         }
-        $_menu    = new MenuObject($menuData['MID_MenuId']);
+        $_menu = new MenuObject();
+        $_menu->initMenu($menuData['MID_MenuId']);
 
         if ($menuData['MID_ParentID'] == 0){
             $parentId = $menuData['MID_ID'];
@@ -138,31 +139,24 @@ class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
         if (!empty($options['parentId'])){
             $parentId = $options['parentId'];
         }
-        $parentUseCatalog = false;
-        if(!empty ($parentId)){
-            $tree = $_menu->populate($parentId);
-            $parentData = $_menu->getMenuItemById($parentId);
-            $parentName = $oPages->getParentRelatedName($parentData['MII_PageID'], Zend_Registry::get('languageID'));
-            $parentUseCatalog = preg_match('/useCatalog/',$parentData['MID_Style']) ? true : false;
-        }
-        $useCatalg = preg_match('/useCatalog/', $menuData['MID_Style']);
-        if (($useCatalg || $parentUseCatalog) && $this->_buildOnCatalog)
+        if (preg_match('/useCatalog/', $menuData['MID_Style']) && $this->_buildOnCatalog)
         {
             $menuData['Placeholder'] = 2;
-            $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list', 14, null, true);
-            $menuData['Link'] = $parentUseCatalog ? $parentName : $catalogPage;
-            $oCatalog = new CatalogCollection();
-            $buildOnObj = $oCatalog->getBuildSubMenuOn();
-            $collections = new $buildOnObj();
-            $pathInfo  = $this->view->request->getPathInfo();
-            $oCatalog->setActions($pathInfo);
-            $options = array('nesting' => 2,
-                'currentPath' => $oCatalog->getActions());
-            $catalogMenu = $collections->buildCatalogMenu($menuData, $options);
+            $collections = new CatalogCategoriesObject();
+//                $menuCatalog = $this->getMenuItemByPageId( null, 'collections');
+            $catalogMenu = $collections->buildCatalogMenu($menuData, array('nesting' => 2));
 
-            $tree = array_merge($catalogMenu['child'], $tree);
+            $tree = $catalogMenu['child'];
+//               $first = $this->populate($menuCatalog['MID_ID']);
+//               $childCombined = array();
+
+
+//                   $childCombined = array_merge($catalogMenu['child'], $first);
+//                   $catalog['child'] = $childCombined;
         }
-
+        elseif(!empty ($parentId)){
+            $tree = $_menu->populate($parentId);
+        }
         $tree['MID_MenuID']   = $menuData['MID_MenuId'];
         $tree['MID_ParentId'] = $parentId;
 

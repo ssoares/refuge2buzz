@@ -60,7 +60,7 @@ class Cible_Paginator extends Zend_Paginator
             foreach ($options['filters'] as $key => $filter)
             {
                 $filter_val = $this->_request->getParam($key);
-                if (!empty($filter_val))
+                if (!empty($filter_val) || (!is_null($filter_val) && (int)$filter_val === 0))
                     if ($filter['associatedTo'] <> '')
                     {
                         if (!empty($filter['kindOfFilter']) && $filter['kindOfFilter'] == 'list')
@@ -128,21 +128,20 @@ class Cible_Paginator extends Zend_Paginator
                         && in_array($column, $options['excludedColums'])){
                         $doSearch = false;
                     }
-                    if ($doSearch == true)
-                    {
-                    array_push($searching_on, $this->_db->quoteInto("{$table}.{$column} LIKE ?", "%{$searchfor}%"));
+                    if ($doSearch == true){
                     foreach ($search_keywords as $keyword)
-                        array_push($searching_on, $this->_db->quoteInto("{$table}.{$column} LIKE ?", "%{$keyword}%"));
-                }
+                        array_push($searching_on, $this->_db->quoteInto("`{$table}`.{$column} LIKE ?", "%{$keyword}%"));
+                    }
             }
             }
 
             if (!empty($searching_on))
                 $select->where(implode(' OR ', $searching_on));
         }
-        $this->_view->assign('searchfor', $searchfor);
 
-        switch ($options['adapter'])
+        $this->_view->assign('searchfor', $searchfor);
+        $adap = isset($options['adapter']) ? $options['adapter'] : '';
+        switch ($adap)
         {
             case 'select':
                 $this->_adapter = new Zend_Paginator_Adapter_DbSelect($select);
@@ -153,9 +152,8 @@ class Cible_Paginator extends Zend_Paginator
                 foreach ($tmpData as $key => $tmp)
                 {
                     $index = key($tmp);
-                    foreach($options['adapterData'] as $optData){
-                        if ($tmp[$index] == $optData[$index])
-                            $data[$key] = $optData;
+                    if ($this->_view->isInArrays($tmp[$index], $options['adapterData'])){
+                        $data[$key] = $options['adapterData'][$key];
                     }
                 }
                 $this->_adapter = new Zend_Paginator_Adapter_Array($data);
@@ -167,7 +165,7 @@ class Cible_Paginator extends Zend_Paginator
                     $data = array_merge($tmpData, $options['adapterData']);
                 }else{
                     $data = $tmpData;
-        }
+                }
                 $this->_adapter = new Zend_Paginator_Adapter_Array($data);
                 break;
 

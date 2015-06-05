@@ -1,222 +1,178 @@
 <?php
 
-
-class FormBecomeClient extends Cible_Form
-{
+class FormBecomeClient extends Cible_Form_GenerateForm {
 
     protected $_mode = 'add';
+    private $_requiredValidator = null;
 
-    public function __construct($options = null)
-    {
+    public function __construct($options = null) {
+
         $this->_disabledDefaultActions = true;
-        parent::__construct($options);
-        $baseDir = $this->getView()->baseUrl();
+        $this->_disabledLangSwitcher = true;
+         $this->_requiredValidator = new Zend_Validate_NotEmpty();
+        $this->_requiredValidator->setMessage($this->getView()->getCibleText('validation_message_empty_field'), 'isEmpty');
 
-        if (!empty($options['mode']) && $options['mode'] == 'edit')
+        if (isset($options['object'])){
+            $this->_object = new $options['object'];
+            unset($options['object']);
+        }
+        $this->_mode = 'add';
+        if (!empty($options['mode']) && $options['mode'] == 'edit'){
             $this->_mode = 'edit';
-        else
-            $this->_mode = 'add';
-
-        $langId = Zend_Registry::get('languageID');
-        $this->setAttrib('id', 'accountManagement');
-
-        // Salutation
-        $salutation = new Zend_Form_Element_Select('salutation');
-        $salutation->setLabel($this->getView()->getCibleText('form_label_salutation'))
-            ->setAttrib('class', 'smallSelect')
-            ->setAttrib('tabindex', '1')
-        ;
-
-        $greetings = $this->getView()->getAllSalutation();
-        foreach ($greetings as $greeting)
-        {
-            $salutation->addMultiOption($greeting['S_ID'], html_entity_decode($greeting['ST_Value'], null, 'UTF-8'));
         }
+        unset($options['mode']);
+        /*  Identification sub form teams profile */
+        $this->getView()->FormAddressTeams($this, array(
+            'requiredValidator' => $this->_requiredValidator,
+            'mode' => $this->_mode));
 
-        // language hidden field
-        $language = new Zend_Form_Element_Hidden('language', array('value' => $langId));
-        $language->removeDecorator('label');
 
-        // Language
-        $languages = new Zend_Form_Element_Select('language');
-        $languages->setLabel( $this->getView()->getCibleText('form_label_language') )
-            ->setAttrib('class', 'stdSelect')
-            ->setAttrib('tabindex','9')
-            ->setOrder(9);
-        foreach( Cible_FunctionsGeneral::getAllLanguage() as $lang ){
-            $languages->addMultiOption($lang['L_ID'], $lang['L_Title']);
+        parent::__construct($options);
+        $attrs = $this->getAttribs();
+        foreach($options as $key => $value){
+            if (in_array($key, array_keys($attrs))){
+                $this->removeAttrib($key);
+            }
         }
-        // FirstName
-        $firstname = new Zend_Form_Element_Text('firstName');
-        $firstname->setLabel($this->getView()->getCibleText('form_label_fName'))
-            ->setRequired(true)
-            ->addFilter('StripTags')
-            ->addFilter('StringTrim')
-            ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('validation_message_empty_field'))))
-            ->setAttribs(array('class' => 'stdTextInput'))
-            ->setAttrib('tabindex', '2')
-        ;
-
-        // LastName
-        $lastname = new Zend_Form_Element_Text('lastName');
-        $lastname->setLabel($this->getView()->getCibleText('form_label_lName'))
-            ->setRequired(true)
-            ->addFilter('StripTags')
-            ->addFilter('StringTrim')
-            ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('validation_message_empty_field'))))
-            ->setAttribs(array('class' => 'stdTextInput'))
-            ->setAttrib('tabindex', '3')
-        ;
-
-        // email
-        $regexValidate = new Cible_Validate_Email();
-        $regexValidate->setMessage($this->getView()->getCibleText('validation_message_emailAddressInvalid'), 'regexNotMatch');
-
-        $emailNotFoundInDBValidator = new Zend_Validate_Db_NoRecordExists('GenericProfiles', 'GP_Email');
-        $emailNotFoundInDBValidator->setMessage($this->getView()->getClientText('validation_message_email_already_exists'), 'recordFound');
-
-        $email = new Zend_Form_Element_Text('email');
-        $email->setLabel($this->getView()->getCibleText('form_label_email'))
-            ->setRequired(true)
-            ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('validation_message_empty_field'))))
-            ->addFilter('StripTags')
-            ->addFilter('StringTrim')
-            ->addFilter('StringToLower')
-            ->addValidator($regexValidate)
-            ->setAttribs(array('maxlength' => 50, 'class' => 'stdTextInput'))
-            ->setAttrib('tabindex', '6');
-
-        if ($this->_mode == 'add')
-            $email->addValidator($emailNotFoundInDBValidator);
-        // email
-        // password
-        $password = new Zend_Form_Element_Password('password');
-        $password->setLabel($this->getView()->getCibleText('form_label_newPwd'));
-        $validatePassword = new Cible_Validate_Password();
-        $password->addFilter('StripTags')
-            ->addFilter('StringTrim')
-            ->setAttrib('class', 'stdTextInput')
-            ->setAttrib('tabindex', '7')
-            ->addValidator($validatePassword)
-            ->setRequired(true)
-//                ->setOrder(6)
-            ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('validation_message_empty_field'))));
-        // password
-        // password confirmation
-        $passwordConfirmation = new Zend_Form_Element_Password('passwordConfirmation');
-        $passwordConfirmation->setLabel($this->getView()->getCibleText('form_label_confirmPwd'));
-
-        $passwordConfirmation->addFilter('StripTags')
-            ->addFilter('StringTrim')
-            ->setRequired(true)
-//                ->setOrder(7)
-            ->setAttrib('class', 'stdTextInput')
-            ->setAttrib('tabindex', '8')
-            ->setDecorators(array(
-                'ViewHelper',
-                array(array('row' => 'HtmlTag'), array('tag' => 'dd')),
-                array('label', array('class' => 'test', 'tag' => 'dt', 'tagClass' => 'alignVertical')),
-            ));
-        ;
-
-        if (!empty($_POST['identification']['password']))
-        {
-            $passwordConfirmation->setRequired(true)
-                ->addValidator('NotEmpty', true, array('messages' => array('isEmpty' => $this->getView()->getCibleText('error_message_password_isEmpty'))));
-
-            $Identical = new Zend_Validate_Identical($_POST['identification']['password']);
-            $Identical->setMessages(array('notSame' => $this->getView()->getCibleText('error_message_password_notSame')));
-            $passwordConfirmation->addValidator($Identical);
+        $this->getDisplayGroup('columnRight')->setLegend(
+            Cible_Translation::getCibleText('fieldset_team'))
+            ->setAttrib('class', 'col-xs-12 col-md-5')
+            ->setDecorators(array('FormElements', 'Fieldset'));
+        $this->removeElement("TED_ProfileId");
+        $this->removeElement("TED_Delete");
+        $this->removeElement("TED_AskValidation");
+        $this->removeElement("TED_IsValid");
+        $this->getElement('TED_AddressId')->clearValidators()->setRequired(false);
+        $member = new Zend_Form_Element_Text('TM_Member');
+        $member->setLabel($this->getView()->getCibleText('form_label_team_members'))
+            ->setAttrib('class', 'member-row')
+            ->setBelongsTo('teamMembers')
+            ->setDecorators(array('ViewHelper',
+                'Errors',
+                array('HtmlTag', array('tag' => 'div', 'class' => 'memberRow')),
+                array('Label', array('class'=> '', 'tag'=>'div', 'placement' => 'prepend') ),
+                array(array('div' => 'HtmlTag'), array('tag' => 'div', 'class' => 'row')),
+                ));
+        $this->getDisplayGroup('columnRight')->addElement($member);
+        if ($this->_mode == 'add') {
+            $this->getView()->formAddCaptcha($this);
         }
-
+        $campaignId = new Zend_Form_Element_Hidden('CAT_CampaignId');
+        $campaignId->setDecorators(array('ViewHelper'));
+        $this->addElement($campaignId);
         // Submit button
-        $submit = new Zend_Form_Element_Submit('sendMyForm');
+        $submit = new Zend_Form_Element_Submit('submit');
         $submitLabel = $this->getView()->getCibleText('form_account_button_submit');
-        if ($this->_mode == 'edit')
+        if ($this->_mode == 'edit'){
             $submitLabel = $this->getView()->getCibleText('button_submit');
-
+//            $this->getElement('TED_Goal')->clearValidators()->setRequired(false);
+//            $this->removeElement('TED_Goal');
+        }
         $submit->setLabel($submitLabel)
-            ->setAttrib('class', 'stdButton subscribeButton1-' . Zend_Registry::get("languageSuffix"));
-
-
-
-        /*  Identification sub form */
-        $identificationSub = new Zend_Form_SubForm();
-        $identificationSub->setName('identification')
-            ->removeDecorator('DtDdWrapper');
-//        $identificationSub->setLegend($this->getView()->getCibleText('form_account_subform_identification_legend'));
-        $identificationSub->setAttrib('class', 'identificationClass subFormClass');
-        $identificationSub->addElement($language);
-        $identificationSub->addElement($salutation);
-        $identificationSub->addElement($firstname);
-        $identificationSub->addElement($lastname);
-        $identificationSub->addElement($email);
-        $identificationSub->addElement($password);
-        $identificationSub->addElement($passwordConfirmation);
-
-        $this->addSubForm($identificationSub, 'identification');
-
-        /* billing address */
-         // Billing address
-        $addressFacturationSub = new Zend_Form_SubForm();
-        $addressFacturationSub->setName('address')
-            ->removeDecorator('DtDdWrapper');
-        $addressFacturationSub->setLegend($this->getView()->getCibleText('form_account_subform_addBilling_legend'));
-        $addressFacturationSub->setAttrib('class', 'col-lg-6');
-        $billingAddr = new Cible_View_Helper_FormAddress($addressFacturationSub);
-        $billingAddr->setProperty('addScriptState', false);
-        $fields = array(
-            'firstAddress',
-            'secondAddress',
-            'cityTxt',
-            'state',
-            'stateTxt',
-            'zipCode',
-            'country',
-            'firstTel',
-            'secondTel');
-        $billingAddr->enableFields($fields);
-
-        $billingAddr->formAddress();
-        $addrBill = new Zend_Form_Element_Hidden('addrBill');
-        $addrBill->removeDecorator('label');
-        $addressFacturationSub->addElement($addrBill);
-        $this->addSubForm($addressFacturationSub,'address');
-
-        /* delivery address */
-        $addrShip = new Zend_Form_Element_Hidden('addrShip');
-        $addrShip->removeDecorator('label');
-
-        $addressShippingSub = new Zend_Form_SubForm();
-        $addressShippingSub->setName('addressShipping')
-            ->removeDecorator('DtDdWrapper');;
-        $addressShippingSub->setLegend($this->getView()->getCibleText('form_account_subform_addShipping_legend'));
-        $addressShippingSub->setAttrib('class', 'col-lg-6');
-
-        $shipAddr = new Cible_View_Helper_FormAddress($addressShippingSub);
-        $shipAddr->duplicateAddress($addressShippingSub);
-        $shipAddr->setProperty('addScriptState', false);
-        $shipAddr->enableFields($fields);
-
-        $shipAddr->formAddress();
-
-        $addressShippingSub->addElement($addrShip);
-        $this->addSubForm($addressShippingSub,'addressShipping');
-        $this->getSubForm('addressShipping')->getElement('duplicate')->setAttrib('checked', null);
-
+                ->setAttrib('class', 'button_submit');
         $this->addElement($submit);
+        $this->addDisplayGroup(array('captcha', 'refresh_captcha',
+            'CAT_CampaignId','submit'), 'columnBottom');
+        $this->getDisplayGroup('columnBottom')->setLegend(null)
+            ->setOrder(50)
+            ->setAttrib('class', 'col-xs-12 col-md-12')
+            ->removeDecorator('DtDdWrapper');
 
-        $submit->setDecorators(array(
-            'ViewHelper',
-            array(array('row' => 'HtmlTag'), array('tag' => 'dd', 'class' => 'account-submit')),
-        ));
+    }
 
+    public function populate(array $values)
+    {
+        if (!empty($values['teamMembers'])){
+            $this->getDisplayGroup('columnRight')->getElement('TM_Member')->setValue($values['teamMembers'][0]);
+            unset($values['teamMembers'][0]);
+            foreach($values['teamMembers'] as $key => $value)
+            {
+                $tmp = new Zend_Form_Element_Text('TM_Member' . $key,
+                    array('value' => $value, 'class' => 'member-row'));
+                $tmp->setDecorators(array('ViewHelper',
+                'Errors',
+                array('HtmlTag', array('tag' => 'div', 'class' => 'memberRow')),
+                array(array('div' => 'HtmlTag'), array('tag' => 'div', 'class' => 'row')),
+                ));
+                $this->getDisplayGroup('columnRight')->addElement($tmp);
+            }
+        }
+        return parent::populate($values);
     }
 
     public function isValid($data)
     {
+        if (!empty($data['GP_Password'])) {
+            $validatePassword = new Cible_Validate_Password();
+            $password = $this->getElement('GP_Password');
+            $passwordConfirmation = $this->getElement('passwordConfirmation');
+            $password->addValidator($validatePassword);
+            $Identical = new Zend_Validate_Identical($data['GP_Password']);
+            $Identical->setMessages(array('notSame' => $this->getView()->getCibleText('error_message_password_notSame')));
+            $passwordConfirmation->addValidator($validatePassword);
+            $passwordConfirmation->addValidator($Identical);
+        }
+        $emailMain = $this->getSubForm('identification')
+                ->getElement('GP_Email');
+            // Test if the email already exists and password is the same
+        $oProfile = new GenericProfilesObject();
+        $existsButDifferent = $oProfile->validateExistingAccount($data['identification']);
+        if ($existsButDifferent){
+            $same = new Zend_Validate_Identical();
+            $same->setToken($existsButDifferent)->setMessage(
+            Cible_Translation::getCibleText('donator_already_exists_nomatch_name'));
+            $decos = $emailMain->setValidators(array($same))
+                ->getDecorators();
+            $deco = $decos['Zend_Form_Decorator_Errors'];
+            $deco->setOption('escape', false);
+        }
+        if ($this->_mode == 'edit') {
+            $currentEmail = $emailMain->getValue();
+            if ($data['identification']['GP_Email'] == $currentEmail) {
+                $emailMain->clearValidators()->setRequired(false);
+            }
+
+            if (empty($data['identification']['GP_Password'])
+                && empty($data['identification']['passwordConfirmation'])) {
+                $this->getSubForm('identification')->getElement('GP_Password')
+                    ->clearValidators()->setRequired(false);
+                $this->getSubForm('identification')->getElement('passwordConfirmation')
+                    ->clearValidators()->setRequired(false);
+            }
+        }
+
         $isValid = parent::isValid($data);
 
         return $isValid;
     }
+
+    public function render(Zend_View_Interface $view = null)
+    {
+        $this->getElement('CAT_CampaignId')->setValue($this->getView()->cId);
+
+        $this->getElement('TEI_Name')
+            ->setAttrib('class', 'full-width')
+            ->setDecorators(array('ViewHelper', 'Errors',
+                array('Label', array('class'=> 'full-width') ),
+                array('row' => 'HtmlTag', array('tag' => 'div', 'class' => 'row'))));
+//        if ($this->_mode == 'add'){
+            $this->getElement('TED_Goal')
+                ->setDecorators(array('ViewHelper', 'Errors',
+                    array('Label', array('class'=> 'full-width') ),
+                    array('row' => 'HtmlTag', array('tag' => 'div', 'class' => 'row'))));
+//        }
+        $this->getElement('TED_Logo_preview')
+            ->setDecorators(array('ViewHelper', 'Errors',
+                array('Label', array('class'=> 'full-width') ),
+                array('row' => 'HtmlTag', array('tag' => 'div', 'class' => ''))));
+        $this->getElement('TEI_Description')
+            ->setDecorators(array('ViewHelper', 'Errors',
+                array('Label', array('class'=> 'full-width') ),
+                array('row' => 'HtmlTag', array('tag' => 'div', 'class' => 'row'))));
+
+        $this->setDecorators(array('FormElements', 'Form'));
+        $this->setAttrib('class', 'container form-teams');
+        return parent::render($view);
+    }
+
 }

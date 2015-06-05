@@ -23,36 +23,32 @@ class Cible_Form_Element_Editor extends Zend_Form_Element_Textarea {
     protected $_themeAdvancedBlockFormats = "p,h2,h3";
     protected $_themeAdvancedButtons1 = "bold,italic,underline,strikethrough,|,alignleft aligncenter alignright alignjustify,|,##PARAMS##fontsizeselect,|,forecolor,backcolor";
     protected $_iconList = array(
-        "arrow-left" => 'Flèche gauche',
-        "arrow-right" => 'Flèche droite',
-        "banner-previous" => 'Flèche gauche encerclée',
-        "banner-next" => 'Flèche droite encerclée',
-        "banners-bullet-full" => 'Bullet Plein',
-        "banners-bullet-openl" => 'Bullet Ouvert',
-        "cart" => 'Panier',
-        "dropdown-arrow" => 'Flèche bas',
-        "dropdown-arrow-inverted" => 'Flèche haut',
-        "video-play" => 'Vidéo play',
-        "add-user" => 'Ajouter utilisateur',
-        "email" => 'Courriel',
-        "windows" => 'Windows',
-        "hourglass" => 'Sablier',
-        "upload-cloud" => 'Nuage',
-        "cart" => 'Panier',
-        "graph" => 'Graphique',
-        "mobile" => 'Mobile',
-        "monitor" => 'Moniteur',
-        "laptop" => 'Portable',
-        "tablet" => 'Tablette',
-        "steam" => 'Steam',
-        "plus" => 'Plus',
-        "options" => 'Options',
-        "facebook" => 'Facebook',
-        "google" => 'Google',
-        "instragram" => 'Instagram',
-        "linkedin" => 'LinkedIn',
-        "twitter" => 'Twitter',
-        "youtube" => 'YouTube'
+        "icon-close" => 'Fermer',
+        "icon-dons" => 'Dons',
+        "icon-finance" => 'Finance',
+        "icon-import" => 'Importer',
+        "icon-key" => 'Clé',
+        "icon-lock" => 'Cadenat',
+        "icon-news" => 'Nouvelles',
+        "icon-stats" => 'Statistiques',
+        "icon-table" => 'Table',
+        "icon-team" => 'Équipe',
+        "icon-newsletter" => 'Infolettre',
+        "icon-arrow-left" => 'Flèche gauche',
+        "icon-arrow-right" => 'Flèche droite',
+        "icon-dropdown-arrow" => 'Flèche bas',
+        "icon-dropdown-arrow-inverted" => 'Flèche haut',
+        "icon-banner-previous" => 'Flèche bannière gauche',
+        "icon-banner-next" => 'Flèche bannière droite',
+        "icon-linkedin" => 'LinkedIn',
+        "icon-instagram" => 'Instagram',
+        "icon-google" => 'Google',
+        "icon-facebook" => 'Facebook',
+        "icon-twitter" => 'Twitter',
+        "icon-youtube" => 'YouTube',
+        "icon-video-play" => 'Jouer vidéo',
+        "icon-options" => 'Options',
+        "icon-plus" => 'Plus',
     );
 
     public function setProperties($options) {
@@ -83,7 +79,7 @@ class Cible_Form_Element_Editor extends Zend_Form_Element_Textarea {
             if ($iconInsertList != "")
                 $iconInsertList .= ',';
             $iconInsertList .= <<< EOS
-                    {text: '{$title}' , onclick: function() {ed.insertContent('&nbsp;<span class="icon icon-{$class}">&nbsp;</span>&nbsp;');} }
+                    {text: '{$title}' , onclick: function() {ed.insertContent('&nbsp;<span class="icon {$class}">&nbsp;</span>&nbsp;');} }
 EOS;
         }
         parent::__construct($spec, $options);
@@ -92,7 +88,16 @@ EOS;
         $imgContentFolder = '/data/images/content/';
         $fileContentFolder = '/data/files';
         $session = new Zend_Session_Namespace(SESSIONNAME);
-
+        $plugins = "'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                'searchreplace wordcount visualblocks visualchars code fullscreen',
+                'insertdatetime media nonbreaking save table contextmenu directionality',
+                'emoticons template paste textcolor moxiemanager charmap'";
+        $toolbar3 = "table,|,hr,nonbreaking,charmap,visualblocks,|,addTabsContainer,|,lorem,|,two-columns-one-one,two-columns-one-two,two-columns-two-one,two-columns-one-one-one,two-columns-one-five,|,icon-list,|,video-play,|,googlemap";
+        if (SESSIONNAME == 'application'){
+            $this->_showDropPara = false;
+            $plugins = '"paste searchreplace wordcount charmap contextmenu table"';
+            $toolbar3 = "table,|,hr,nonbreaking,charmap,visualblocks";
+        }
         $styleSelect = "";
         if ($this->_showDropPara)
             $styleSelect .= "formatselect,";
@@ -146,53 +151,43 @@ EOS;
                 },
                 selector : "#{$_id}",
                 theme : "{$this->_mode}",
-                plugins : [
-                    "advlist autolink lists link image charmap print preview hr anchor pagebreak",
-                    "searchreplace wordcount visualblocks visualchars code fullscreen",
-                    "insertdatetime media nonbreaking save table contextmenu directionality",
-                    "emoticons template paste textcolor moxiemanager charmap"
-                ],
-
+                plugins : [{$plugins}],
                 language : "{$_lang}",
                 moxiemanager_language : "{$_lang}",
                  // Theme options
                 menubar: false,
                 toolbar1 : "{$this->_themeAdvancedButtons1},subscript,superscript,|,",
                 toolbar2 : "undo,redo,|,cut,copy,paste,pastetext,|,searchreplace,|,bullist,numlist,outdent,indent,|,link,unlink,anchor,|,insertfile,image,media,|,removeformat,code,|,preview,fullscreen,print,",
-                toolbar3 : "table,|,hr,nonbreaking,charmap,visualblocks,|,addTabsContainer,|,lorem,|,two-columns-one-one,two-columns-one-two,two-columns-two-one,two-columns-one-one-one,two-columns-one-five,|,icon-list,|,video-play,|,googlemap",
+                toolbar3 : "$toolbar3",
                 toolbar_items_size:'small',
                 image_advtab: true,
                 block_formats: "Paragraphe=p;Titre 2=h2;Titre 3=h3;Titre 4=h4;Bloc de code=pre;Citation=blockquote",
                 // Style formats
                 style_formats : [
                         {title : 'Bannières', items: [
-                            {title : 'Texte gros', inline : 'span', classes : 'banner-text-large'},
-                            {title : 'Texte normal', inline : 'span', classes : 'banner-text-medium'},
-                            {title : 'Icône dans gros cercle blanc', selector : '.icon', classes : 'banner-white-circle'},
-                            {title : 'Icône jaune', selector: 'span', classes : 'banner-secondary-icon'}
-                        ]},
-                        {title : 'Background bleu acceuil', items: [
-                            {title : 'Texte', block : 'p', classes : 'blue-quote'},
-                            {title : 'Image centrée', selector : 'img', classes : 'blue-image'}
+                            {title : 'Titre italic large', selector : 'p', classes : 'title-big-italic'},
+                            {title : 'Titre italic normal', selector : 'p', classes : 'title-normal-italic'}
+ //                         {title : 'Texte gros', inline : 'span', classes : 'banner-text-large'},
+ //                         {title : 'Texte normal', inline : 'span', classes : 'banner-text-medium'}
+//                          {title : 'Icône dans gros cercle blanc', selector : '.icon', classes : 'banner-white-circle'},
+//                          {title : 'Icône jaune', selector: 'span', classes : 'banner-secondary-icon'}
                         ]},
                         {title : 'Contenu', items: [
-                            {title : 'Style identique au h2', inline : 'span', classes : 'content-h2-style'},
-                            {title : 'Style identique au h3', inline : 'span', classes : 'content-h3-style'},
-                            {title : 'Transformer un lien en bouton', selector : 'a', classes : 'link-button'},
-                            {title : 'Transformer un lien en bouton suivant', selector : 'a', classes : 'link-button link-plus'},    
-                            {title : 'Icône dans cercle gris', selector : '.icon', classes : 'grey-circle'},
-                            {title : 'Vidéo play', selector : 'a', classes : 'video-play'},
-                            {title : 'Colonne centrée Accueil', selector : '.column-content', classes : 'column-content-home'},
-                            {title : 'Image ronde', selector : 'img', classes : 'rounded-image'},
-                            {title : 'Ajouter de l\'espace en haut de l\'élément', selector : 'p,h1,h2,h3,h4,img,blockquote', classes : 'super-margin-top'},
-                            {title : 'Ajouter de l\'espace en bas de l\'élément', selector : 'p,h1,h2,h3,h4,img,blockquote', classes : 'super-margin-bottom'}
-                        ]},
+                            {title : 'Lien style bouton bleu', selector : 'a', classes : 'btn-banner'}
 
 
+ //                         {title : 'Style identique au h1', inline : 'span', classes : 'content-h1-style'},
+ //                         {title : 'Titre footer', selector : 'h2,h3', classes : 'title-footer'},
+ //                         {title : 'Transformer un lien en bouton', selector : 'a', classes : 'link-button'},
+ //                         {title : 'Gras bleu', inline : 'strong', classes : 'strong-primary'},
+ //                         {title : 'Icône dans cercle gris', selector : '.icon', classes : 'icon-circle icon-circle-grey'},
+ //                         {title : 'Image centrée', selector : 'img', classes : 'img-vertical-align'},
+ //                         {title : 'Ajouter de l\'espace en haut de l\'élément', selector : 'p,h1,h2,h3,h4,img,blockquote', classes : 'super-margin-top'}
+                        ]}
                         //{title : 'Padding'},
                         //{title : 'Padding 5 haut et bas', block : 'p', classes : 'paddingTopBottom'},
-           ],     
-                        
+           ],
+
 
                 formats : {
 //                        alignleft : {selector : 'p,h1,h2,h3,h4,h5,h6,td,th,div,ul,ol,li,table,img', classes : 'left'},
@@ -233,7 +228,7 @@ EOS;
                             type: 'menubutton',
                             text: 'Icons',
                             icon: false,
-                            menu: [                               
+                            menu: [
                                 {$iconInsertList}
                             ]
                         });
@@ -286,32 +281,32 @@ EOS;
                             ed.selection.setContent('Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam ali');
                         }
                     });
-                       
+
                     ed.addButton('googlemap', {
                         title : 'Google Maps',
                         image : '{$iconGMaps}',
                         onclick : function() {
                             ed.windowManager.open( {
                                 title: 'Insérer une carte Google',
-                                body: [                                    
+                                body: [
                                         {
                                                 type: 'textbox',
                                                 name: 'latitudeBox',
                                                 label: 'Latitude',
                                                 value: ''
-                                        },                                       
+                                        },
                                         {
                                                 type: 'textbox',
                                                 name: 'longitudeBox',
                                                 label: 'Longitude',
                                                 value: ''
-                                        },                                       
+                                        },
                                         {
                                                 type: 'textbox',
                                                 name: 'zoomBox',
                                                 label: 'Zoom',
                                                 value: ''
-                                        },                                       
+                                        },
                                         {
                                                 type: 'listbox',
                                                 name: 'colorList',
@@ -323,13 +318,13 @@ EOS;
                                         }
                                 ],
                                 onsubmit: function( e ) {
-                                    var color = e.data.colorList || 'plain';                        
+                                    var color = e.data.colorList || 'plain';
                                     ed.insertContent('<div class="google-map" data-latitude="'+e.data.latitudeBox+'" data-longitude="'+e.data.longitudeBox+'" data-zoom="'+e.data.zoomBox+'" data-color="'+color+'"></div>&nbsp;');
                                 }
                             });
                         }
                     });
-                        
+
                 },
 
                 // Example content CSS (should be your site CSS)

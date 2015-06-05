@@ -7,9 +7,10 @@ class Cible_View_Helper_BuildCatalogMenu extends Zend_View_Helper_Abstract
     {
         $menuCatalogId = 0;
         $defaultCat = '';
+        $oMenu = new MenuObject();
         if (isset ($options['menu']))
         {
-            $oMenu = new MenuObject($options['menu']);
+            $oMenu->initMenu($options['menu']);
             $menuCatalog = $oMenu->getMenuItemByPageId( null, 'catalog');
 //            if ($this->view->currentPageID)
 //            {
@@ -95,7 +96,7 @@ class Cible_View_Helper_BuildCatalogMenu extends Zend_View_Helper_Abstract
 
         }
 
-        $oMenu = new MenuObject($options['menu']);
+        $oMenu->initMenu($options['menu']);
         $first = $oMenu->populate($menuCatalog['MID_ID']);
         $childCombined = array();
 

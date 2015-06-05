@@ -29,9 +29,12 @@ class Cible_Validate_Email extends Zend_Validate_Regex
      */
     public function __construct($regexp = "")
     {
-        if (!empty ($regexp))
+        if (!empty ($regexp)){
             $this->_pattern = $regexp;
-
+        }
+        $this->_messageTemplates = array(
+            self::NOT_MATCH => Cible_Translation::getCibleText('validation_message_emailAddressInvalid')
+        );
         parent::__construct($this->_pattern);
 
     }

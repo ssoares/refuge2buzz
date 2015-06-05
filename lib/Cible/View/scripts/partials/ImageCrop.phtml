@@ -34,14 +34,18 @@ if($this->showActionButton==true){?>
     ?>
 <form id="imageCropForm" name="imageCropForm" action="<?php echo $this->submitPage; ?>" method="post">
     <div class="size_crop_div">
-    <label id="h1" name="h1" >Largeur du tracé = 0 | Hauteur du tracé = 0</label>
-    <label id="realhw" name="realhw">Largeur voulu = <?php echo $this->sizeXWanted; ?> | Hauteur voulu = <?php echo $this->sizeYWanted; ?> </label>
+<!--        <label id="h1" name="h1">
+            <span class="half-left"><?php echo $this->getCibleText('crop_selection_width'); ?> = 0</span>
+            <span class="half-right"><?php echo $this->getCibleText('crop_selection_height'); ?> = 0</span>
+        </label>-->
+        <label id="realhw" name="realhw">
+            <span class="half-left"><?php echo $this->getCibleText('crop_maximum_width') . ' = ' . $this->sizeXWanted; ?></span>
+            <span class="half-right"><?php echo $this->getCibleText('crop_maximum_height') . ' = ' . $this->sizeYWanted; ?></span>
+        </label>
     </div>
     <div class="modify_size_crop_div">
-        Width: <input class="width_input" type="text" value="0">px
-        </input><br />
-        Height: <input class="height_input" type="text" value="0">px
-        </input>
+        <label for="widthinput"><span class="spancell"><?php echo $this->getCibleText('crop_selection_width'); ?> :</span><input id="widthinput" class="width_input" type="text" value="0" /> px</label>
+        <label for="heightInput"><span class="spancell"><?php echo $this->getCibleText('crop_selection_height'); ?> :</span><input id="heightInput" class="height_input" type="text" value="0"> px</label>
     </div>
     <div class="clear_both_line_top" style="height:10px;border-bottom: 1px solid #000000;margin-bottom:10px;">
 
@@ -99,18 +103,18 @@ $(document).ready(function() {
         if (!selection.width || !selection.height)
             return;
 
-        /*var scaleX = <?php echo $this->maxHShow; ?>;
-        scaleX = (scaleX / selection.height)/2;
-
-        var scaleY = <?php echo $this->maxWShow; ?>;
-        scaleY = (scaleY / selection.width)/2;
-
-        $('#preview img').css({
-            width: Math.round(scaleX * <?php echo $this->maxWShow; ?>),
-            height: Math.round(scaleY * <?php echo $this->maxHShow; ?>),
-            marginLeft: -Math.round(scaleX * selection.x1),
-            marginTop: -Math.round(scaleY * selection.y1)
-        });*/
+//        var scaleX = <?php echo $this->maxHShow; ?>;
+//        scaleX = (scaleX / selection.height)/2;
+//
+//        var scaleY = <?php echo $this->maxWShow; ?>;
+//        scaleY = (scaleY / selection.width)/2;
+//
+//        $('#preview img').css({
+//            width: Math.round(scaleX * <?php echo $this->maxWShow; ?>),
+//            height: Math.round(scaleY * <?php echo $this->maxHShow; ?>),
+//            marginLeft: -Math.round(scaleX * selection.x1),
+//            marginTop: -Math.round(scaleY * selection.y1)
+//        });
 
         $('.imgareaselect-selection').parent().css('z-index','100000');
         $('#x1').val(selection.x1);
@@ -125,9 +129,10 @@ $(document).ready(function() {
         var heightPrev = Math.round((selection.y2 * <?php echo $this->realHShow ?>)-(selection.y1 * <?php echo $this->realHShow ?>));
         $("div.modify_size_crop_div input.width_input").val(widthPrev);
         $("div.modify_size_crop_div input.height_input").val(heightPrev);
-        var widthV = "Largeur du tracé = " + widthPrev;
-        var heightV = "Hauteur du tracé = " + heightPrev;
-        $('#h1').text(widthV + " | " + heightV);
+//        var widthV = "<?php echo $this->getCibleText('crop_selection_width'); ?> = " + widthPrev;
+//        var heightV = "<?php echo $this->getCibleText('crop_selection_height'); ?> = " + heightPrev;
+//        $('#h1 .half-left').text(widthV);
+//        $('#h1 .half-right').text(heightV);
     }
 
     $(function () {

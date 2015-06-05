@@ -71,7 +71,6 @@
             //$content .= "<img id='".$this->getId()."_preview' src='' border=0 />";
             //$content .= "<input id='temporaire' type='hidden' value='' />";
 
-            //var_dump($this->galleryID);
             if($this->galleryID <> "")
                 $pathTmp = "../../../../../data/images/gallery/".$this->galleryID."/tmp";
             else
@@ -96,9 +95,6 @@
                 $decorator->setElement($this);
                 $content = $decorator->render($content);
             }
-            //echo($mcImageManagerConfig['filesystem.rootpath']);
-           // var_dump($content);
             return $content;
         }
     }
-?>

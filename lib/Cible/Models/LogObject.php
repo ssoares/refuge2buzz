@@ -115,10 +115,10 @@ class LogObject extends DataObject implements Cible_Log_Interface
         {
             $select = $this->_db->select()
                 ->from($this->_oDataTableName, 'count(*)')
-                ->where('L_ModuleID = ?', $data['L_ModuleID'])
+                ->where('L_ModuleID = ?', empty($data['L_ModuleID']) ? $this->_moduleId : $data['L_ModuleID'])
                 ->where('L_UserID = ?', $data['L_UserID'])
                 ->where('L_Action = ?', $data['L_Action'])
-                ->where('L_Data = ?', $data['L_Data'])        ;
+                ->where('L_Data = ?', $data['L_Data']);
 
             $result = $this->_db->fetchOne($select);
         }

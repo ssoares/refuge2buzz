@@ -32,6 +32,7 @@ class ReferencesObject extends DataObject
     protected $_usedClass = 'ReferencesUsedData';
     protected $_foreignKey = 'ILK_RefId';
     protected $_orderBySeq = true;
+    protected $_orderBy = array('R_Seq ASC');
     protected $_constraint      = '';
     protected $_searchColumns = array();
 
@@ -40,24 +41,15 @@ class ReferencesObject extends DataObject
      * @var Array
      */
     protected $_orderBySeqList = array(
-        'ageRange',
-        'typePublication',
-        'mcListeMedicaments',
-        'mcListeMoments',
-        'mcEnVue',
-        'role'
+        'modePay',
+        'donationStatus',
+        'typeDonation'
     );
     protected $_chkboxList = array(
         'album',
+        'teams',
     );
     protected $_query;
-
-    public function setQuery(Zend_Db_Select $query)
-    {
-        $this->_query = $query;
-
-        return $this;
-    }
 
     public function setOrderBySeqList($orderBySeqList)
     {
@@ -103,7 +95,7 @@ class ReferencesObject extends DataObject
 
         $this->setOrderBySeq($type);
         if ($this->_orderBySeq)
-            $select->order('R_Seq ASC');
+            $select->order($this->_orderBy);
         $select->order('RI_Value ASC');
 
         $result = $this->_db->fetchAll($select);

@@ -16,8 +16,11 @@ class Cible_Form_GenerateForm extends Cible_Form_Multilingual
     protected $_options = array();
     protected $_addDesc = false;
     protected $_addShortCutPartial;
+    protected $_addManageDataPartial;
     protected $_desc = "";
     protected $_addDefault = true;
+    protected $_forceNoScript = false;
+    protected $_decoratorTag = 'dd';
 
     public function __construct($options = null)
     {
@@ -32,13 +35,13 @@ class Cible_Form_GenerateForm extends Cible_Form_Multilingual
             $this->_isXmlHttpRequest = Zend_Registry::get('isXmlHttpRequest');
 
         $object = $this->_object;
-
         $metaData = $object->getColsData();
 
-        foreach ($metaData as $key => $meta)
+        foreach ($metaData as $key => $meta){
             $this->setFormFields($meta, $key);
-
+        }
         $indexTable = $object->getIndexTableName();
+
         if (!empty($indexTable))
         {
             $this->_hasLang = true;
@@ -71,8 +74,12 @@ class Cible_Form_GenerateForm extends Cible_Form_Multilingual
 EOS;
         $this->getView()->headScript()->appendScript($script);
 
-        if ($this->_addShortCutPartial)
+        if ($this->_addShortCutPartial){
             echo $this->getView()->partial("partials/jsManageValuesList.phtml");
+        }
+        if ($this->_addManageDataPartial){
+            echo $this->getView()->partial("partials/jsManageData.phtml");
+        }
     }
 
     public function setFormFields($meta, $key)
@@ -241,7 +248,7 @@ EOS;
                             $classForNumericFormat .= ' integer';
                             break;
                     }
-                    $this->_decoParams['class'] .= 'smallTextInput';
+//                    $this->_decoParams['class'] .= 'smallTextInput';
                     $element = $this->_setBasicDecorator($element);
                     $element->setAttrib('maxlength', $meta['LENGTH']);
                     break;
@@ -268,6 +275,8 @@ EOS;
 
             if (isset($params['shortCut']) && SESSIONNAME != 'application')
                 $this->_addShortcut($params, $meta);
+            if (isset($params['manageData']) && SESSIONNAME != 'application')
+                $this->_addManageData($params, $meta);
 
     }
 
@@ -291,6 +300,7 @@ EOS;
     {
         $isUnique = '';
         $validators = array();
+        $addHidden = false;
 
         if (!isset($params['elem']))
             $params['elem'] = '';
@@ -310,7 +320,7 @@ EOS;
         {
             case 'hidden':
                 $element = new Zend_Form_Element_Hidden($meta['COLUMN_NAME']);
-                $element->setDecorators(array('ViewHelper'));
+                $element->setDecorators(array('ViewHelper'))->removeDecorator('DtDdWrapper');
                 break;
             case 'image':
                 $imageSrc = $this->_options['imageSrc'];
@@ -326,16 +336,16 @@ EOS;
 
                 // hidden specify if new image for the news
                 $newImage = new Zend_Form_Element_Hidden('isNewImage', array('value' => $isNewImage));
-                $newImage->removeDecorator('Label');
+                $newImage->setDecorators(array('ViewHelper'));
 
                 $this->addElement($newImage);
 
                 $imageTmp = new Zend_Form_Element_Hidden($imgField . '_tmp');
-                $imageTmp->removeDecorator('Label');
+                $imageTmp->setDecorators(array('ViewHelper'));
                 $this->addElement($imageTmp);
 
                 $imageOrg = new Zend_Form_Element_Hidden($imgField . '_original');
-                $imageOrg->removeDecorator('Label');
+                $imageOrg->setDecorators(array('ViewHelper'));
                 $this->addElement($imageOrg);
 
                 $imageView = new Zend_Form_Element_Image(
@@ -344,8 +354,12 @@ EOS;
                 );
                 $this->_decoParams['class'] = 'imgPreview';
                 $this->_setBasicDecorator($imageView);
-                $imageView->setImage($this->getView()->BaseUrl() . "/icons/image_non_ disponible.jpg");
-                if (!empty($imageSrc) && file_exists($_SERVER['DOCUMENT_ROOT'] . $imageSrc)){
+                $baseUrl = $this->getView()->BaseUrl();
+                if (SESSIONNAME == 'application'){
+                    $baseUrl .= '/extranet';
+                }
+                $imageView->setImage($baseUrl . "/icons/image_non_ disponible.jpg");
+                if (!empty($imageSrc) && file_exists(Zend_Registry::get('fullDocumentRoot') . $imageSrc)){
                     $imageView->setImage($imageSrc);
                 }
                 if (!isset($params['imgLabel'])){
@@ -363,15 +377,12 @@ EOS;
                     array_push($this->_grpElements[$this->_groupName], $imgField . '_original');
                     array_push($this->_grpElements[$this->_groupName], $imgField . '_preview');
                 }
-
                 $element = new Cible_Form_Element_ImagePicker(
-                        $imgField,
-                        array(
-                            'onchange' => "document.getElementById('imageView').src = document.getElementById('" . $imgField . "').value",
-                            'associatedElement' => $imgField . '_preview',
-                            'pathTmp' => $pathTmp,
-                            'contentID' => $dataId
-                    ));
+                    $imgField,
+                    array(
+                        'onchange' => "document.getElementById('imageView').src = document.getElementById('" . $imgField . "').value",
+                        'associatedElement' => $imgField . '_preview',
+                        'pathTmp' => $pathTmp, 'contentID' => $dataId));
                 $this->_decoParams['class'] = 'imgButtons';
                 $element->removeDecorator('Label');
 
@@ -385,7 +396,7 @@ EOS;
                 $dataId = $this->_options['dataId'];
                 if(isset($params['storage']) && $params['storage'] == 'module')
                 {
-                    $tmpPath = $_SERVER['DOCUMENT_ROOT'] . Zend_Registry::get('web_root');
+                    $tmpPath = Zend_Registry::get('fullDocumentRoot');
                     $tmpPath .= $this->_view->currentSite . '/data/files/';
                     $tmpPath .= $this->_view->current_module;
                     if (!preg_match("/{$this->_view->current_module}/", $this->_filesFolder))
@@ -457,6 +468,17 @@ EOS;
                 $this->_script .= "$('#{$meta['COLUMN_NAME']}_name').val(value.pop());\r\n}";
                 $this->_setBasicDecorator($element);
                 break;
+            case 'radio':
+                $this->_addDefault = false;
+                $this->_defineSrc($params, $meta);
+
+                $element = new Zend_Form_Element_Radio($meta['COLUMN_NAME']);
+                $element->setLabel($this->getView()->getCibleText('form_label_' . $meta['COLUMN_NAME']));
+                $element->setSeparator('')
+                    ->addMultiOptions($this->_srcData);
+                $this->_decoParams['class'] .= 'radio radioInline';
+                $element = $this->_setBasicDecorator($element);
+                break;
             case 'multiCheckbox':
                 if (empty($params['src']))
                     throw new Exception('Trying to build an element but no data source given');
@@ -494,6 +516,23 @@ EOS;
                 $element = new Zend_Form_Element_Password($meta['COLUMN_NAME']);
                 $element->setLabel($this->getView()->getCibleText('form_label_' . $meta['COLUMN_NAME']));
                 $element = $this->_setBasicDecorator($element);
+                break;
+            case 'autoComplete':
+                $source = $this->getView()->BaseUrl() . '/'
+                    . $this->_object->getName() . '/index/ajax/actionAjax/';
+                $element = new Zend_Form_Element_Text($meta['COLUMN_NAME']);
+//                $element = new ZendX_JQuery_Form_Element_AutoComplete($meta['COLUMN_NAME']);
+                $element->setLabel($this->getView()->getCibleText('form_label_' . $meta['COLUMN_NAME']));
+//                $fn = new Zend_Json_Expr('function(event,ui) { $("#'.$meta['COLUMN_NAME'] . 'Index'.'").val(ui.item.id) }');
+//                $options = array(
+//                    'data'=> array(),
+//                    'source'=> $source . $params['src'],
+//                    "select" => $fn
+//                    );
+//                $element->setJQueryParams($options);
+                $this->_forceNoScript = true;
+                $element = $this->_setBasicDecorator($element);
+                $addHidden = true;
                 break;
             case 'email':
                 $element = new Zend_Form_Element_Text($meta['COLUMN_NAME']);
@@ -537,7 +576,12 @@ EOS;
             $element->setDescription($this->_desc);
         if (!empty($this->_groupName))
             array_push($this->_grpElements[$this->_groupName], $meta['COLUMN_NAME']);
-
+        if ($addHidden){
+            $params['elem'] = 'hidden';
+            $params['class'] = '';
+            $meta['COLUMN_NAME'] = $meta['COLUMN_NAME'] . 'Index';
+            $this->setElementInput($meta, $params);
+        }
         if ($this->_hasLang)
         {
             $label = $element->getDecorator('Label');
@@ -590,7 +634,7 @@ EOS;
         }
         if (empty($params['elem']))
             $element->setAttrib('class', 'mediumEditor');
-        else
+        elseif (isset($params['class']))
             $element->setAttrib('class', $params['class']);
         $element = $this->_setBasicDecorator($element);
         $label = $this->getView()->getCibleText('form_label_' . $meta['COLUMN_NAME']);
@@ -695,8 +739,10 @@ EOS;
                         'altField' => '#' . $this->_elemNameId . 'Dt',
                         'altFormat' => 'yy-mm-dd',
                         'dateFormat' => 'dd-mm-yy',
-                        'defaultDate' => "$('" . $this->_elemNameId . "').val())",
-                        'YearOrdering' => 'desc'
+                        'defaultDate' => "$('#" . $this->_elemNameId . "').val())",
+                        'YearOrdering' => 'desc',
+                        'showOtherMonths' => true,
+                        'selectOtherMonths' => true
                     ));
 
                 $validateOptions = array(
@@ -712,7 +758,15 @@ EOS;
 
         if ($this->_addDesc)
             $element->setDescription($this->_desc);
-
+        if (!empty($params['yearRange'])){
+            $options['jquery.params']['yearRange'] = str_replace('>', ':', $params['yearRange']);
+        }
+        if (isset($params['minDate'])){
+            $options['jquery.params']['minDate'] = $params['minDate'];
+        }
+//        if (!empty($params['noWE'])){
+//            $options['jquery.params']['beforeShowDay'] = '$.datepicker.noWeekends';
+//        }
         $date = new $picker($this->_elemNameId, $options);
         $date->setLabel($this->getView()->getCibleText('form_label_' . $this->_elemNameId));
 
@@ -838,12 +892,11 @@ EOS;
         );
 
         if ($this->_addDesc)
-            array_push($opt, array('description', array('tag' => 'span', 'class' => 'unit')));
+            array_push($opt, array('description', array('tag' => 'span', 'class' => 'description')));
 
         array_push($opt, array(
             array('row' => 'HtmlTag'),
             array(
-                'tag' => 'dd',
                 'class' => $class)
         ));
 
@@ -855,7 +908,7 @@ EOS;
                 array(
                     array('row' => 'HtmlTag'),
                     array(
-                        'tag' => 'dd',
+                        'tag' => $this->_decoratorTag,
                         'class' => $class)
                 ),
             );
@@ -868,7 +921,7 @@ EOS;
                 array(
                     array('row' => 'HtmlTag'),
                     array(
-                        'tag' => 'dd',
+                        'tag' => $this->_decoratorTag,
                         'class' => $class)
                 ),
             );
@@ -895,15 +948,16 @@ EOS;
         {
             $oRef = new ReferencesObject();
             $listExists = $oRef->listExists($srcName);
-            if ($listExists)
+            if ($listExists){
                 $this->_srcData = $oRef->getListValues($srcName, null, $this->_addDefault);
-            else
+            }else{
                 $this->_srcData = $this->_object->$srcMethod($this->_addDefault);
-
+            }
             $oRef->setUtilization($srcName, $meta);
         }
-        else
+        else{
             $this->$srcMethod($meta);
+        }
     }
 
     private function _addShortcut(array $params, array $meta)
@@ -926,8 +980,10 @@ EOS;
         );
         if (isset($params['seq']))
             $shortcut->setOrder($params['seq'] + 1);
-        $this->getView()->headScript()->appendFile($this->getView()->locateFile('manageRefValues.js'));
-        $this->_addShortCutPartial = true;
+        if (!$this->_forceNoScript){
+            $this->getView()->headScript()->appendFile($this->getView()->locateFile('manageRefValues.js'));
+            $this->_addShortCutPartial = true;
+        }
 //        if (!empty($this->_script))
 //            if (!$this->_isXmlHttpRequest)
 //        $this->getView()->jQuery()->addOnLoad($this->getView()->partial('partials/jsManageValuesList.phtml'));
@@ -961,6 +1017,37 @@ EOS;
         }
 
         $this->_groupName = $params['group'];
+    }
+
+    private function _addManageData(array $params, array $meta)
+    {
+        $field = $meta['COLUMN_NAME'] . '_' . $params['manageData'];
+        $fieldId = $meta['COLUMN_NAME'] . '-' . $params['manageData'];
+        $shortcut = new Cible_Form_Element_Html($field, array('value' => '&nbsp;'));
+        $shortcut->setDecorators(
+            array(
+                'ViewHelper',
+                array('label', array('placement' => 'prepend')),
+                array(
+                    array('row' => 'HtmlTag'),
+                    array(
+                        'tag' => $this->_decoratorTag,
+                        'class' => 'manageData shortcutC',
+                        'id' => $fieldId)
+                ),
+            )
+        );
+        if (isset($params['seq']))
+            $shortcut->setOrder($params['seq'] + 1);
+        if (!$this->_forceNoScript){
+            $this->getView()->headScript()->appendFile($this->getView()->locateFile('manageData.js'));
+            $this->_addManageDataPartial = true;
+        }
+
+        if (!empty($this->_groupName))
+            array_push($this->_grpElements[$this->_groupName], $field);
+
+        $this->addElement($shortcut);
     }
 
 }

@@ -13,6 +13,7 @@
 class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
 {
     const NAME = 'multidb';
+    const CFG_EXT = '.ini';
     /**
      * String to define if we are int the front office
      */
@@ -78,19 +79,32 @@ class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
         return $session;
     }
 
-    protected function _initConfig()
-    {
-        $aen = str_replace(array("-dev","-staging"), array("",""),APPLICATION_ENV);
-        $imgCfg = new Zend_Config_Ini($this->_applicationPath . "config.ini", array($aen ,'Images'), true);
-        $cfg = new Zend_Config_Ini($this->_appPath . "config.ini", 'general', true);
-        $config = new Zend_Config($this->getOptions(), true);
-        $config->merge($imgCfg);
-        $config->merge($cfg);
-        $config->readOnly();
-
-        Zend_Registry::set('config', $config);
+    protected function _initConfig() {
+        // Load the config files with parameters form the front-office and back-office.
+        $config = $this->_setConfig();
 
         return $config;
+    }
+
+    protected function _initLoadEntitiesConfig()
+    {
+        if (isset($this->session->currentSite)
+            && $this->session->currentSite != $this->_options['cfgKey']){
+            $this->config = $this->_setConfig($this->session->currentSite);
+        }
+        $list = array_values( preg_grep( '/^((?!master.ini|config.ini).)*$/', glob($this->_applicationPath . "config/*.ini") ) );
+        $type = $this->_options['type'];
+        foreach ($list as $value)
+        {
+            $tmpCfg = new Zend_Config_Ini($value);
+            $file = pathinfo($value);
+            $multisite[] = array('name' => $file['filename'],
+                'label' => $tmpCfg->general->label,
+                'active' => $tmpCfg->$type->active,
+                'firstRun' => $tmpCfg->$type->firstRun,
+                );
+        }
+        $this->config->multisite = $multisite;
     }
 
     /**
@@ -114,11 +128,14 @@ class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
                 if ((bool) $data->active)
                 {
                     $name =  $data->name;
-                    $dbName = $this->config->resources->multidb->$name->dbname;
-                    $currentDbName = $dbAdapter->fetchOne("select DATABASE();");
-                    if ($dbName === $currentDbName)
-                        $this->session->currentSite = $data->name;
-
+                    if ($this->config->resources->multidb->$name){
+                        $dbName = $this->config->resources->multidb->$name->dbname;
+                        $currentDbName = $dbAdapter->fetchOne("select DATABASE();");
+                        if ($dbName === $currentDbName){
+                            $this->session->currentSite = $data->name;
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -146,10 +163,10 @@ class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
             );
 
         // Directory where to put the cache files
-        if (!is_dir(APPLICATION_PATH . '/tmp/' . $this->session->currentSite))
-            mkdir (APPLICATION_PATH . '/tmp/' . $this->session->currentSite);
+        if (!is_dir(APPLICATION_PATH . '/localtmp/' . $this->session->currentSite))
+            mkdir (APPLICATION_PATH . '/localtmp/' . $this->session->currentSite);
         $backendOptions = array(
-            'cache_dir' => APPLICATION_PATH . '/tmp/' . $this->session->currentSite
+            'cache_dir' => APPLICATION_PATH . '/localtmp/' . $this->session->currentSite
         );
         $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
 
@@ -178,17 +195,17 @@ class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
         $tmpPath = "";
 
         $isSandbox = preg_match('/sandboxes/', $this->config->domainName);
-
-        if (($isSandbox)&&(!preg_match('/www/', $www_root)))
+        if (($isSandbox || ISCRONJOB)&&(!preg_match('/web\//', $www_root)))
         {
             $tmpPath = $this->config->document_root . "/";
             $www_root .= $tmpPath;
         }
+
         $protocol = 'http://';
         if(isset($_SERVER['HTTPS']))
             $protocol = 'https://';
-
-        $absolute_web_root = $protocol . $this->config->domainName . $tmpPath;
+        Zend_Registry::set('protocol', $protocol);
+        $absolute_web_root = $protocol . $this->config->domainName;
         if (preg_match(self::FO_NAME, FRONTEND))
         {
 //            $this->_currentSite = $this->view->siteList(array('getValues' => true, 'frontOffice'=> true));
@@ -215,12 +232,14 @@ class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
         Zend_Registry::set('lucene_index', $lucenePath);
         Zend_Registry::set('lucene_pdf', $lucenePathPdf);
         Zend_Registry::set('document_root', $www_root);
+        Zend_Registry::set('serverDocumentRoot', APPLICATION_PATH);
+        Zend_Registry::set('fullDocumentRoot', APPLICATION_PATH .'/'.$tmpPath);
+        Zend_Registry::set('logPath', APPLICATION_PATH . '/logfiles');
         Zend_Registry::set('web_root', $www_root);
         Zend_Registry::set('www_root', $www_root);
         Zend_Registry::set('absolute_web_root', $absolute_web_root);
         $lang = $this->config->defaultInterfaceLanguage;
         Zend_Registry::set('siteName', $this->config->site->title->$lang);
-
     }
 
     /**
@@ -253,6 +272,7 @@ class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
         array_push($modules, array('M_MVCModuleTitle' => 'video'));
 
         if (preg_match(self::BO_NAME, FRONTEND))
+        {
             foreach ($this->config->multisite as $params)
             {
                 if ((bool)$params->firstRun)
@@ -265,6 +285,45 @@ class Bootstrap_Cron extends Zend_Application_Bootstrap_Bootstrap
                 }
 
             }
+        }
+    }
 
+    private function _setConfig($entity = "")
+    {
+        try
+        {
+            define('ISDEV', (bool)$this->_options['isdev']);
+            if (empty($entity)){
+                $configFile = 'config/' . $this->_options['cfgKey'] . self::CFG_EXT;
+            }else{
+                $configFile = 'config/' . $entity . self::CFG_EXT;
+            }
+
+            $cfg = new Zend_Config_Ini($this->_applicationPath . $configFile, $this->_options['type'], true);
+            $cfgGeneral = new Zend_Config_Ini($this->_applicationPath . $configFile, 'general', true);
+            $cfgImages = new Zend_Config_Ini($this->_applicationPath . $configFile, 'images', true);
+
+        } catch (Exception $ex) {
+            echo $ex->getMessage();
+            exit;
+        }
+
+        $defaultCfg = new Zend_Config_Ini($this->_appPath . "config/config.ini", 'general', true);
+        $defaultImgCfg = new Zend_Config_Ini($this->_applicationPath . "config/config.ini", 'images', true);
+        $config = new Zend_Config($this->getOptions(), true);
+        $config->merge($defaultCfg);
+        $config->merge($defaultImgCfg);
+        if (!empty($cfgGeneral)){
+            $config->merge($cfgGeneral);
+        }
+        if (!empty($cfgImages)){
+            $config->merge($cfgImages);
+        }
+        $config->merge($cfg);
+
+        Zend_Registry::set('config', $config);
+        $this->setOptions($config->toArray());
+
+        return $config;
     }
 }

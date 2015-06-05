@@ -7,7 +7,7 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
     {
         $selectedItemMenuID = 0;
         $menuTitle = isset($options['menuTitle']) ? $options['menuTitle'] : '';
-        $showHome = isset($options['showHome']) ? $options['showHome'] : true;
+        $showHome = isset($options['showMenu']) ? $options['showMenu'] : true;
         if (isset($options['separator'])) {
             $options['separator'] = $this->view->image($options['separator']);
         } else {
@@ -29,7 +29,7 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
                     $selectedItemMenuID = $menu[0]['MID_ID'];
                 }
             }
-        }
+        }       
 
         if (isset($options['showHomeImg']))
             $options['homeIcon'] = $this->view->image($options['showHomeImg']);
@@ -40,6 +40,7 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
         if (Zend_Registry::isRegistered('module')){
             $module = Zend_Registry::get('module');
         }
+        
         $addPageTitle = false;
         if (class_exists('CatalogCollection', 0) && $module == CatalogCollection::MODULE_NAME){
             $breadcrumb = $this->view->breadcrumbCatalog(1, $showHome, null, $options);
@@ -49,32 +50,31 @@ class Cible_View_Helper_Breadcrumbmenu extends Zend_View_Helper_Abstract
         }
 
         $linkHome = '';
-        if($showHome){
-            $homeDetails = Cible_FunctionsPages::getHomePageDetails();
-            if (isset($options['showHomeImg'])) {
-                $linkHome = "<a href='{$this->view->baseUrl()}/{$homeDetails['PI_PageIndex']}' class='first'>" . $options['homeIcon'] . "</a>";
-            } else if (isset($options['showHomeClass'])) {
-                $linkHome = "<a href='{$this->view->baseUrl()}/{$homeDetails['PI_PageIndex']}' class='first {$options['showHomeClass']}'>" . $homeDetails['PI_PageTitle'] . "</a>";
-            } else {
-                $linkHome = "<a href='{$this->view->baseUrl()}/{$homeDetails['PI_PageIndex']}' class=''>" . $homeDetails['PI_PageTitle'] . "</a>";
+            if($showHome){
+                $homeDetails = Cible_FunctionsPages::getHomePageDetails();
+                if (isset($options['showHomeImg'])) {
+                    $linkHome = "<a href='{$this->view->baseUrl()}/{$homeDetails['PI_PageIndex']}' class='first'>" . $options['homeIcon'] . "</a> " . $options['separator'] . " ";
+                } else if (isset($options['showHomeClass'])) {
+                    $linkHome = "<a href='{$this->view->baseUrl()}/{$homeDetails['PI_PageIndex']}' class='first {$options['showHomeClass']}'>" . $homeDetails['PI_PageTitle'] . "</a> " . $options['separator'] . " ";
+                } else {
+                    $linkHome = "<a href='{$this->view->baseUrl()}/{$homeDetails['PI_PageIndex']}' class=''>" . $homeDetails['PI_PageTitle'] . "</a> " . $options['separator'] . " ";
+                    array_push($breadcrumb, $linkHome);
+                }
             }
-            array_push($breadcrumb, $linkHome);
-        }
 
-        $breadcrumb = array_reverse($breadcrumb);
+            $breadcrumb = array_reverse($breadcrumb);
 
-        // add the > after the breadcrumb when only on item is found
-        $return = '';
-        if( count($breadcrumb) == 1 && !empty($breadcrumb[0]) ){
-            $return = $breadcrumb[0];
-            $return .= $addPageTitle ? " {$options['separator']} " : '';
-        }else{
-            $return = implode( " {$options['separator']} ", $breadcrumb);
-        }
-        if ($addPageTitle)
-            $return .= $this->view->pageTitle()->toString(null, null, true);
+            // add the > after the breadcrumb when only on item is found
+            $return = '';
+            if( count($breadcrumb) == 1 && !empty($breadcrumb[0]) )
+                $return = $breadcrumb[0];
+            else
+                $return = implode( " {$options['separator']} ", $breadcrumb);
 
-        return $return;
+            if ($addPageTitle)
+                $return .= $this->view->pageTitle()->toString(null, null, true);
+            
+        return $linkHome . $return;
     }
 
 }

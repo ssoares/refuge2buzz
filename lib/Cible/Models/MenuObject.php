@@ -9,7 +9,7 @@ class MenuObject {
     protected $_menusArray = array();
     protected $_buildOnCatalog = false;
     protected $_isSiteMap = false;
-
+    protected $oPages = null;
     public function setIsSiteMap($val) {
         $this->_isSiteMap = $val;
     }
@@ -20,10 +20,19 @@ class MenuObject {
     public function getTitle() {
         return $this->_title;
     }
+    public function getPagesObject()
+    {
+        return $this->oPages;
+    }
 
-    public function __construct($menu) {
+    public function __construct() {
+     $this->oPages = new PagesObject();
         $this->_db = Zend_Registry::get('db');
+//        Cible_FunctionsGeneral::log(get_class(), debug_backtrace());
+    }
 
+    public function initMenu($menu)
+    {
         if (is_numeric($menu))
             $this->loadMenuDetailsByID($menu);
         else if (is_string($menu)) {
@@ -35,6 +44,7 @@ class MenuObject {
             if ($this->_id == null)
                 Throw new Exception("Could load the requested menu $menu neither by ID nor by name");
         }
+        return $this;
     }
 
     private function loadMenuDetailsByName($menu) {
@@ -96,12 +106,10 @@ class MenuObject {
         }
 
         $menuItems = $menuItemObject->fetchAll($select)->toArray();
-
         foreach ($menuItems as $item) {
             $menu_item = array();
             if ($item['MII_PageID'] > 0 && !$extranet) {
-                $oPage = new PagesObject();
-                $page = $oPage->populate($item['MII_PageID'], $langId);
+                $page = $this->oPages->populate($item['MII_PageID'], $langId);
                 if ((isset($page['PI_Status'])) && ($page['PI_Status'] > 0))
                     $menu_item = array(
                         'ID' => $item['MID_ID'],

@@ -12,11 +12,10 @@ abstract class Cible_FunctionsModules
                 'MCAP_PermissionTitle',
             ))->joinInner('Modules', 'Modules_ControllersActionsPermissions.MCAP_ModuleID = Modules.M_ID', array('M_MVCModuleTitle'))
             ->where('MCAP_Position > 0')
-            ->order(array('Modules.M_Seq ASC','Modules.M_ID ASC'))
-            ->order('Modules_ControllersActionsPermissions.MCAP_Position ASC');
+            ->order(array('Modules.M_Seq ASC', 'Modules.M_ID ASC'
+                , 'Modules_ControllersActionsPermissions.MCAP_Position ASC'));
 
         $module_list = $modules->fetchAll($select);
-
         $tmp = array();
         foreach ($module_list as $mod)
         {

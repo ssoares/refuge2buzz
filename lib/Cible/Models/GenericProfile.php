@@ -240,7 +240,7 @@ class GenericProfile
         $where = "MP_GenericProfileMemberID = $memberID";
         $this->_db->delete('MemberProfiles', $where);
 
-        $where = "NP_GenericProfileMemberID = $memberID";
+        $where = "NP_ProfileId = $memberID";
         $this->_db->delete('NewsletterProfiles', $where);
     }
 

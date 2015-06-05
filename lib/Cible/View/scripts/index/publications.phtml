@@ -45,9 +45,7 @@ $(document).ready(function(){
 </script>
 <?php $this->placeholder('footerScript')->captureend(); ?>
 
-<div id="loading" style="position: absolute; z-index: 100000; display: none; height: 50px; width: 300px; border: solid 5px #666; background-color: #fff; color: #999; line-height: 57px; text-align: center">
-    <img style="margin-top: -4px;vertical-align: middle;" src="<?php echo $this->baseUrl() ?>/themes/default/images/loading.gif" align="absbottom" /> Veuillez patienter ...
-</div>
+<?php echo $this->partial('partials/loading.phtml'); ?>
 <?php else: ?>
     <div class="publicationsList">
         <?php if ($this->total > 0 || $this->display): ?>
@@ -86,10 +84,10 @@ $(document).ready(function(){
                                <?php endforeach;?>
                            <?php  endif;?>
                        </div>
-                   <?php endif; 
-                   
-                   
-                   
+                   <?php endif;
+
+
+
                    ?>
                        <div class="icons">
                             <?php if(!empty($value['PUI_UrlPubMed'])): ?>

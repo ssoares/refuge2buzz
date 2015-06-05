@@ -10,7 +10,7 @@ class Cible_View_Helper_ZonesTemplate extends Zend_View_Helper_Abstract
                 </ul>
             </div>';
 
-    const ROW = '<li id="module-##MODULE##" class="ui-state-default" module="##MODULE##" pageid="##PAGEID##" blockid="##BLOCKID##" zoneid="##ZONEID##">##ACTION##</li>';
+    const ROW = '<li id="module-##MODULE##" class="" module="##MODULE##" pageid="##PAGEID##" blockid="##BLOCKID##" zoneid="##ZONEID##">##ACTION##</li>';
     protected $_zoneId = 1;
     protected $_rows;
     protected $_controller;

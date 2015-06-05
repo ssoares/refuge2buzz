@@ -22,7 +22,7 @@
       public function getMemberDetails($memberID){
           $select = $this->_db->select();
           $select->from( $this->_genericTable, $this->_genericFields )
-                ->join( $this->_table, 'GP_MemberID = NP_GenericProfileMemberID', $this->_fields)
+                ->join( $this->_table, 'GP_MemberID = NP_ProfileId', $this->_fields)
                 ->where('GP_MemberID = ?', $memberID);
 
           return $this->_db->fetchRow( $select );
@@ -32,7 +32,7 @@
 
           $select = $this->_db->select();
           $select->from( $this->_genericTable, $this->_genericFields )
-                  ->join( $this->_table, 'GP_MemberID = NP_GenericProfileMemberID', $this->_fields);
+                  ->join( $this->_table, 'GP_MemberID = NP_ProfileId', $this->_fields);
 
           foreach($filters as $key=>$value) {
               if( isset( $this->_genericFields[$key] ) || isset( $this->_fields[$key] ) )
@@ -46,7 +46,7 @@
 
           $select = $this->_db->select();
           $select->from( $this->_genericTable, $this->_genericFields )
-                 ->join( $this->_table, 'GP_MemberID = NP_GenericProfileMemberID', $this->_fields);
+                 ->join( $this->_table, 'GP_MemberID = NP_ProfileId', $this->_fields);
 
           foreach($filters as $key=>$value){
             if( isset( $this->_genericFields[$key] ) || isset( $this->_fields[$key] ) )
@@ -64,7 +64,7 @@
       public function getSelectStatement(){
           $select = $this->_db->select();
           $select->from( $this->_genericTable, $this->_genericFields )
-                 ->join( $this->_table, 'GP_MemberID = NP_GenericProfileMemberID', $this->_fields);
+                 ->join( $this->_table, 'GP_MemberID = NP_ProfileId', $this->_fields);
 
           return $select;
       }
@@ -82,7 +82,7 @@
               }
           }
 
-          $columns['NP_GenericProfileMemberID'] = $id;
+          $columns['NP_ProfileId'] = $id;
 
           return $this->_db->insert($this->_table, $columns);
       }
@@ -104,11 +104,11 @@
           if( !$this->findMembers(array(
             'member_id' => $memberId
           ))){
-              $columns['NP_GenericProfileMemberID'] = $memberId;
+              $columns['NP_ProfileId'] = $memberId;
               $this->_db->insert( $this->_table, $columns );
 
           } else {
-              $where = $this->_db->quoteInto('NP_GenericProfileMemberID = ?', $memberId);
+              $where = $this->_db->quoteInto('NP_ProfileId = ?', $memberId);
               $this->_db->update( $this->_table, $columns, $where );
           }
       }
@@ -116,7 +116,7 @@
       protected function delete($memberID){
           //parent::delete($memberID);
 
-          $where = "NP_GenericProfileMemberID = $memberID";
+          $where = "NP_ProfileId = $memberID";
           $this->_db->delete($this->_table, $where);
       }
   }

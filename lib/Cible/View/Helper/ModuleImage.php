@@ -26,11 +26,13 @@
                 $_source = Zend_Registry::get('rootImgPath');
                 if (!preg_match('/'.$module.'/', Zend_Registry::get('rootImgPath')))
                 {
-                    $_source = rtrim(Zend_Registry::get('rootImgPath'),'/') . '/'.$module . '/';
-//                    $tmp = (explode('/', Zend_Registry::get('rootImgPath')));
-//                    $tmp[4] = $module;
-//                    $tmp[] = '';
-//                    $_source = implode('/', $tmp);
+                    if ('menu' != $module){
+                        $tmp = (explode('/', Zend_Registry::get('rootImgPath')));
+                        $tmp[4] = $module;
+                        $_source = implode('/', $tmp);
+                    }else{
+                        $_source = rtrim(Zend_Registry::get('rootImgPath'),'/') . '/'.$module . '/';
+                    }
                 }
                 $_source .= "{$id}/$_image";
 
@@ -93,11 +95,13 @@
                         $_prettyPhoto_image_source = Zend_Registry::get('rootImgPath');
                         if (!preg_match('/'.$module.'/', Zend_Registry::get('rootImgPath')))
                         {
-                            $_prettyPhoto_image_source = rtrim(Zend_Registry::get('rootImgPath'),'/') . '/'.$module . '/';
-//                            $tmp = array_unique(explode('/', Zend_Registry::get('rootImgPath')));
-//                            $tmp[] = $module;
-//                            $tmp[] = '';
-//                            $_prettyPhoto_image_source = implode('/', $tmp);
+                            if ('menu' != $module){
+                                $tmp = (explode('/', Zend_Registry::get('rootImgPath')));
+                                $tmp[4] = $module;
+                                $_source = implode('/', $tmp);
+                            }else{
+                                $_source = rtrim(Zend_Registry::get('rootImgPath'),'/') . '/'.$module . '/';
+                            }
                         }
                         $_prettyPhoto_image_source .= "{$id}/$_prettyPhoto_image";
 

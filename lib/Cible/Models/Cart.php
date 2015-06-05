@@ -22,7 +22,7 @@ class Cart
         else
         {
             $this->_id = $this->generateId();
-            $path = Zend_Registry::get('web_root');
+            $path = Zend_Registry::get('web_root') . '/';
             setcookie('cart', $this->_id, time() + (60 * 60 * 24 * 365), $path);
             $this->createCart();
         }
@@ -86,7 +86,7 @@ class Cart
                 'CI_Total'    => $price
             ));
             // Test if we meet a condition to add discounted product.
-//            $this->manageItemPromo($id, $itemId);
+            $this->manageItemPromo($id, $itemId);
         }
 
         $this->updateCartLastModified();
@@ -190,14 +190,14 @@ class Cart
                     'ID'         => 'CI_ID',
                     'ItemId'     => 'CI_ItemID',
                     'PromoId'    => 'CI_PromoId',
-//                    'Disable'    => 'CI_Disable',
+                    'Disable'    => 'CI_Disable',
                     'Total'      => 'CI_Total',
                     'Quantity'   => 'CI_Quantity'))
             ->where('CartItems.CI_CartID = ?', $this->_id)
             ->where('CartItems.CI_CartItemsID = ?', $id);
 
-//        if($filter)
-//            $select->where('CartItems.CI_Disable = ?', 0);
+        if($filter)
+            $select->where('CartItems.CI_Disable = ?', 0);
 
         if ($itemId != null)
         {
@@ -292,7 +292,7 @@ class Cart
                     'ID'         => 'CI_ID',
                     'ItemId'     => 'CI_ItemID',
                     'PromoId'    => 'CI_PromoId',
-//                    'Disable'    => 'CI_Disable',
+                    'Disable'    => 'CI_Disable',
                     'Quantity'   => 'CI_Quantity',
                     'Total'      => 'CI_Total'))
                 ->joinLeft('Cart', 'Cart.C_ID = CartItems.CI_CartID', array())
@@ -322,7 +322,7 @@ class Cart
                     'ItemId'     => $item['ItemId'],
                     'Quantity'   => $item['Quantity'],
                     'PromoId'    => $item['PromoId'],
-//                    'Disable'    => $item['Disable'],
+                    'Disable'    => $item['Disable'],
                     'Total'      => $item['Total']);
             }
         }
@@ -348,28 +348,28 @@ class Cart
                     . '-' . $data['ItemId']
                     . '-' . $data['CartItemId'];
 
-//        if (!$data['Disable'])
-//        {
+        if (!$data['Disable'])
+        {
             $oItem    = new ItemsObject();
             $itemData = $oItem->getAll(null, true, $item);
             $oItem->setId($item);
             $unit  = $oItem->getPrice($data['Quantity'], true);
 
-            $taxProv = isset($itemData[0]['I_TaxProv'])?$itemData[0]['I_TaxProv']:1;
-            $taxFed  = isset($itemData[0]['I_TaxFed'])?$itemData[0]['I_TaxFed']:1;
+            $taxProv = $itemData[0]['I_TaxProv'];
+            $taxFed  = $itemData[0]['I_TaxFed'];
 
             if (!is_null($unit))
                 $unitPrice = sprintf ('%.2f', $unit);
 
-            $html .= '<div id="price' . $suffixIds .'" class="col-lg-4">' . chr(13);
+            $html .= '<div id="price' . $suffixIds .'" class="quantity">' . chr(13);
             if($data['PromoId'])
             {
-                $html .= '    <p data-number-id="quantity' . $suffixIds .'" class="quantity qtyField">';
+                $html .= '    <p id="quantity' . $suffixIds .'" class="quantity qtyField">';
                 $html .= $data['Quantity'] . '</p>' . chr(13);
             }
             else
             {
-                $html .= '    <input data-number-id="quantity' . $suffixIds .'" class="quantity qtyField" ';
+                $html .= '    <input id="quantity' . $suffixIds .'" class="quantity qtyField" ';
                 $html .= ' value="' . $data['Quantity'] . '" type="text" />' . chr(13);
             }
             $html .= '    <input id="taxProv' . $suffixIds .'" class="taxProv" ';
@@ -377,13 +377,13 @@ class Cart
             $html .= '    <input id="taxFed' . $suffixIds .'" class="taxFed" ';
             $html .= ' value="' . $taxFed . '" type="hidden" />' . chr(13);
             $html .= '</div>' . chr(13);
-            $html .= '<div id="unitPrice' . $suffixIds .'" class="sumLine  col-lg-4">' . chr(13);
+            $html .= '<div id="unitPrice' . $suffixIds .'" class="sumLine">' . chr(13);
             $html .= ' <span class="unitPrice">'  . $unitPrice . '</span> $' . chr(13);
             $html .= '</div>' . chr(13);
-            $html .= '<div id="sumLine' . $suffixIds .'" class="sumLine col-lg-4 text-right">' . chr(13);
+            $html .= '<div id="sumLine' . $suffixIds .'" class="sumLine right">' . chr(13);
             $html .= '    <span>' . sprintf('%.2f', $data['Total']) . '</span> $' . chr(13);
             $html .= '</div>' . chr(13);
-//        }
+        }
         return $html;
     }
 
@@ -406,8 +406,8 @@ class Cart
                     . '-' . $data['ItemId']
                     . '-' . $data['CartItemId'];
 
-//        if (!$data['Disable'])
-//        {
+        if (!$data['Disable'])
+        {
             $oItem    = new ItemsObject();
             $itemData = $oItem->getAll(null, true, $item);
             $oItem->setId($item);
@@ -440,7 +440,7 @@ class Cart
             $html .= '<div id="sumLine' . $suffixIds .'" class="sumLine right">' . chr(13);
             $html .= '    <span>' . sprintf('%.2f', $data['Total']) . '</span> $';
             $html .= '</div>';
-//        }
+        }
 
         return $html;
     }
@@ -502,7 +502,7 @@ class Cart
         }
 
         // Test if we meet a condition to set discounted product.
-//        $this->manageItemPromo($item['CI_CartItemsID'], $item['CI_ItemID']);
+        $this->manageItemPromo($item['CI_CartItemsID'], $item['CI_ItemID']);
         $this->updateCartLastModified();
     }
 
@@ -527,24 +527,24 @@ class Cart
         }
         else
         {
-//            $oItemPromo = new ItemsPromoObject();
-//            $dataPromo  = $oItemPromo->getAll();
+            $oItemPromo = new ItemsPromoObject();
+            $dataPromo  = $oItemPromo->getAll();
 
-//            if(count($dataPromo) && $dataPromo[0]['IP_NbItem'] > 0)
-//                $this->_db->delete('CartItems', $where);
-//            else
-//            {
+            if(count($dataPromo) && $dataPromo[0]['IP_NbItem'] > 0)
+                $this->_db->delete('CartItems', $where);
+            else
+            {
                 $where[] = $this->_db->quoteInto('CI_CartItemsID = ?', $item['CI_CartItemsID']);
                 $this->_db->delete('CartItems', $where);
                 //  Récupérer le total du cart
                 $data = $this->getTotalItem();
-//                foreach($dataPromo as $promo)
-//                if($data['Subtotal'] < $promo['IP_ConditionAmount'])
-//                {
-//                    $where = $this->_db->quoteInto('CI_PromoId = ?', $promo['IP_ID']);
-//                    $this->_db->delete('CartItems', $where);
-//                }
-//            }
+                foreach($dataPromo as $promo)
+                if($data['Subtotal'] < $promo['IP_ConditionAmount'])
+                {
+                    $where = $this->_db->quoteInto('CI_PromoId = ?', $promo['IP_ID']);
+                    $this->_db->delete('CartItems', $where);
+                }
+            }
         }
 
         if (empty($item['CI_CartItemsID']))
@@ -592,7 +592,7 @@ class Cart
         $select->where('CI_PromoId = ?', $promoId);
 
         $result = $this->_db->fetchOne($select);
-        return !empty($result);
+        return!empty($result);
     }
 
     private function createIfNotCreated()

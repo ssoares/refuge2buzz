@@ -133,7 +133,7 @@ class ModCatViewPageObject extends DataObject
         $data['MCVP_ViewID'] = $this->_getViewId($data['Param999'], $data['MCVP_ModuleID']);
         if (in_array($data['MCVP_ModuleID'], $this->_moduleCategory) && !empty($data['Param1']))
             $data['MCVP_CategoryID'] = $data['Param1'];
-        elseif ($data['MCVP_CategoryID'] == 0)
+        elseif (isset($data['MCVP_CategoryID']) && $data['MCVP_CategoryID'] == 0)
         {
             $tmp = $data;
             unset($tmp['MCVP_PageID']);

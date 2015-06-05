@@ -2,7 +2,6 @@
     $_viewscript = $this->viewscript ? $this->viewscript : 'partials/generic.paginator.phtml';
     $fc = Zend_Controller_Front::getInstance();
     $request = $this->view->request;
-
     $params = $request->getParams();
     $defaults = array_slice($params, 0, 3);
     $defaults['page'] = isset($params['page']) ? $params['page'] : null;
@@ -25,7 +24,7 @@
                                 'action'    => $this->to_excel_action,
                                 'actionKey' => $this->actionKey)
                             ) ?>"
-                  id="export_to_excel"><?php echo $this->getCibleText('export_to_excel') ?>
+                  id="export_to_excel" class="export_to_excel"><?php echo $this->getCibleText('export_to_excel') ?>
                 </a>
             </div>
 
@@ -62,7 +61,7 @@
                 <div class="search_total_count">
                     <p class="search_result_items_found"><?php echo str_replace( '%ITEM_COUNT%',  $this->paginator->getTotalItemCount(), $this->getCibleText('search_result_items_found') ) ?></p>
                     <p><?php echo $this->view->link($resetSearchUrl,
-                        $this->getCibleText('search_list_all_items'),
+                        $this->getCibleText('search_list_all_items') . ' > ',
                         array('class' => 'search_list_all_items')); ?>
                     </p>
                 </div>
@@ -153,7 +152,7 @@
             if (!empty ($langSuffix)){
                 $langId = Cible_FunctionsGeneral::getLanguageID ($langSuffix);
             }
-            if (in_array($current_module, array('news', 'events', 'gallery', 'catalog'))){
+            if (in_array($this->view->current_module, array('news', 'events', 'gallery', 'catalog'))){
                 echo $this->partial('partials/languages.widget.phtml',
                     array(
                         'class'         => 'listLeft',
@@ -172,7 +171,9 @@
             '10' =>'10',
             '25' => '25',
             '50' => '50',
-            '100000' => $this->getCibleText('button_all')
+            '100' => 100,
+            '1000' => 1000,
+//            '100000' => $this->getCibleText('button_all')
         );
         echo $this->formSelect('perPageSelector', $request->getParam('perPage'), array('class' => 'select_items_per_page', 'onchange' => "window.location.href='{$perPageLink}/perPage/' + this.value;"), $perPageChoices) ?>
         &nbsp;&nbsp;<?php echo $this->getCibleText("form_list_items_per_page_end") ?>
@@ -249,14 +250,15 @@
                                                     echo $obj->setId($item[$field])->$methode();
                                                 break;
                                                 case 'yesNo':
-                                                    echo $this->getCibleText('label_online_' . $item[$field]);
+                                                    if (!$disabled){
+                                                        $val = empty($item[$field])?0:$item[$field];
+                                                    echo $this->getCibleText('label_online_' . $val);
+                                                    }
                                                 break;
 
                                                 default:;
                                             }
-                                        }
-                                        else
-                                        {
+                                        }else{
                                             echo $item[$field];
                                         }
                                         ?>
@@ -267,7 +269,7 @@
                                     <td class="without_right_border">
                                         <div>
                                             <?php if( $this->action_links && !$disabled): ?>
-                                                <a class="show-actions-dialog" href="javascript:void(0);"><img src="<?php echo $this->baseUrl() ?>/icons/list_actions_icon.png" border="0" /></a>
+                                                <a class="show-actions-dialog" href="javascript:void(0);"><img src="<?php echo $this->baseUrl() ?>/icons/icon-action-24x24.png" border="0" /></a>
                                                 <div class="actions-dialog"><div class="hd"><div class="c"></div></div><div class="bd"><div class="c"><div class="s"><div class="actions">
 
                                                     <ul style="list-style: none; margin: 0px; padding: 0px;">

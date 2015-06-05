@@ -21,8 +21,7 @@
  * @license   Empty
  * @version   $Id: Form.php 1686 2014-09-10 13:02:41Z ldrapeau $
  */
-class Cible_Form extends Zend_Form
-{
+class Cible_Form extends Zend_Form {
 
     protected $_db;
     protected $_params;
@@ -45,8 +44,7 @@ class Cible_Form extends Zend_Form
      * @param mixed $options
      * @return void
      */
-    public function __construct($options = null)
-    {
+    public function __construct($options = null) {
         parent::__construct($options);
         //$token   = new Zend_Form_Element_Hash('token',array('salt' => srand()));
         //$this->addElement($token);
@@ -55,15 +53,16 @@ class Cible_Form extends Zend_Form
         $this->_view = $this->getView();
         $this->_config = Zend_Registry::get('config');
 
-        $this->_view->headLink()->offsetSetStylesheet(99999, $this->_view->locateFile('form.css'), 'all');
-        $this->_view->headLink()->appendStylesheet($this->_view->locateFile('form.css'));
+//        $this->_view->headLink()->offsetSetStylesheet(99999, $this->_view->locateFile('form.css'), 'all');
+//        $this->_view->headLink()->appendStylesheet($this->_view->locateFile('form.css'));
         $this->_imagesFolder .= 'data/images/' . $this->_view->current_module;
         $this->_filesFolder .= 'data/files';
-        if (!empty($this->_object) && $this->_object->getAddSubFolder())
-        {
+
+        if (!empty($this->_object) && $this->_object->getAddSubFolder()) {
             $this->_imagesFolder .= '/' . $this->_object->getName();
             $this->_filesFolder .= '/' . $this->_view->current_module . '/' . $this->_object->getName();
         }
+
         if (isset($options['disabledDefaultActions']) && $options['disabledDefaultActions'] == true)
             $this->_disabledDefaultActions = true;
         if (isset($options['disabledSaveAction']) && $options['disabledSaveAction'] == true)
@@ -77,59 +76,63 @@ class Cible_Form extends Zend_Form
 
         $this->_params = $_request->getParams();
 
-        if ($this->_disabledDefaultActions == false)
-        {
+        $buttons = array();
+        if ($this->_disabledDefaultActions == false) {
+
             $cancel_url = isset($options['cancelUrl']) ? $options['cancelUrl'] : '';
             // submit button  (save)
             $submitSave = new Zend_Form_Element_Submit('submit');
             $submitSave->setLabel($this->getView()->getCibleText('button_save'))
-                ->setName('submitSave')
-                ->setAttrib('id', 'submitSave')
-                ->setAttrib('class','stdButton')
-                ->setDecorators(array(
-                    'ViewHelper',
-                    array(array('data'=>'HtmlTag'),array('tag'=>'li')),
-                    array(array('row'=>'HtmlTag'),array('tag'=>'ul', 'openOnly'=>true, 'class' => 'actions-buttons'))
-                ))
-                ->setOrder(1);
-
-            $this->addElement($submitSave);
-
+                    ->setName('submitSave')
+                    ->setAttrib('id', 'submitSave')
+                    ->setAttrib('class', 'stdButton')
+                    ->setDecorators(array(
+                        'ViewHelper',
+                        array(array('data' => 'HtmlTag'), array('tag' => 'li')),
+                        array(array('row' => 'HtmlTag'), array('tag' => 'ul', 'openOnly' => true, 'class' => 'actions-buttons'))
+                    ))
+                    ->setOrder(1);
+            $rowOptions = array('tag' => 'ul');
+            if (!$this->_disabledSaveAction){
+                $this->addElement($submitSave);
+                $buttons[] = $submitSave->getName();
+                $rowOptions = array('tag' => 'ul', 'closeOnly' => true);
+            }
             // submit and close button: save and go to the return url
             $submitSaveClose = new Zend_Form_Element_Submit('submitClose');
             $submitSaveClose->setLabel($this->getView()->getCibleText('button_save_close'))
-                ->setName('submitSaveClose')
-                ->setAttrib('id', 'submitSaveClose')
-                ->setAttrib('class','stdButton')
-                ->setDecorators(
-                    array(
-                        'ViewHelper',
-                        array(array('data' => 'HtmlTag'), array('tag' => 'li')),
-                ))
-                ->setOrder(2);
+                    ->setName('submitSaveClose')
+                    ->setAttrib('id', 'submitSaveClose')
+                    ->setAttrib('class', 'stdButton')
+                    ->setDecorators(
+                            array(
+                                'ViewHelper',
+                                array(array('data' => 'HtmlTag'), array('tag' => 'li')),
+                    ))
+                    ->setOrder(2);
 
-            if ($this->_addSubmitSaveClose)
+            if ($this->_addSubmitSaveClose){
                 $this->addElement($submitSaveClose);
-
+                $buttons[] = $submitSaveClose->getName();
+            }
             // cancel button (don't save and return to the main page)
 
             $cancel_params = empty($cancel_url) ? array() : array('onclick' => "document.location.href='$cancel_url'");
             $cancel = new Zend_Form_Element_Button('cancel', $cancel_params);
-            $cancel->setLabel($this->getView()->getCibleText('button_cancel'))
-                ->setAttrib('class', 'stdButton')
-                ->setDecorators(array(
-                    'ViewHelper',
-                    array(array('data' => 'HtmlTag'), array('tag' => 'li')),
-                    array(array('row' => 'HtmlTag'), array('tag' => 'ul', 'closeOnly' => true))
-                ))
-                ->setOrder(10);
+            $cancel->setLabel($this->getView()->getCibleText('button_preview_close'))
+                    ->setAttrib('class', 'stdButton')
+                    ->setDecorators(array(
+                        'ViewHelper',
+                        array(array('data' => 'HtmlTag'), array('tag' => 'li')),
+                        array(array('row' => 'HtmlTag'), $rowOptions)
+                    ))
+                    ->setOrder(10);
 
             $this->addElement($cancel);
+            $buttons[] = $cancel->getName();
 
             // create an action display group with element name previously added to the form
-            $this->addDisplayGroup(
-                array('submitSave', 'submitSaveClose', 'cancel'), 'actions'
-            );
+            $this->addDisplayGroup($buttons, 'actions');
 
             $actions = $this->getDisplayGroup('actions');
             $this->setDisplayGroupDecorators(array(
@@ -139,9 +142,8 @@ class Cible_Form extends Zend_Form
                 array(array('outerHtmlTag' => 'HtmlTag'), array('tag' => 'dd'))
             ));
         }
-        if (!$this->_disabledFieldsStatus)
-        {
-            $script = "\n\r".'<script type="text/javascript">$(document).ready(function(){if(jQuery().fieldStatus) {$(document).fieldStatus();};});</script>';
+        if (!$this->_disabledFieldsStatus) {
+            $script = "\n\r" . '<script type="text/javascript">$(document).ready(function(){if(jQuery().fieldStatus) {$(document).fieldStatus();};});</script>';
             $this->getView()->placeholder('footerScript')->append($script);
         }
         if (!empty($this->_object))
@@ -154,58 +156,24 @@ class Cible_Form extends Zend_Form
      * @param  Zend_View_Interface $view
      * @return string
      */
-    public function render(Zend_View_Interface $view = null)
-    {
+    public function render(Zend_View_Interface $view = null) {
         $firstElementID = null;
 
-        foreach ($this->getElements() as $_element)
-        {
-            if ($firstElementID == null
-                && ($_element->getType() == 'Zend_Form_Element_Text'
-                    || $_element->getType() == 'Cible_Form_Element_Editor'
-                    || $_element->getType() == 'Zend_Form_Element_TextArea' )){
+        foreach ($this->getElements() as $_element) {
+            if ($firstElementID == null && ($_element->getType() == 'Zend_Form_Element_Text' || $_element->getType() == 'Cible_Form_Element_Editor' || $_element->getType() == 'Zend_Form_Element_TextArea' ))
                 $firstElementID = $_element->getID();
-            }
 
-            if ($_element->getType() == 'Cible_Form_Element_Editor'){
+            if ($_element->getType() == 'Cible_Form_Element_Editor') {
                 $this->getView()->headScript()->appendFile($this->getView()->baseUrl() . '/js/tinymce/tinymce.min.js');
                 break;
             }
 
-            $isOk = preg_match('/field_required/', $_element->getLabel());
-            $label = $_element->getLabel();
-            if ($_element->isRequired() && $this->_addRequiredAsterisks
-                && !$isOk && !empty($label)) {
+            if ($_element->isRequired() && $this->_addRequiredAsterisks) {
                 $_element->setLabel("{$_element->getLabel()} <span class='field_required'>*</span>");
             }
-            if ($_element->isRequired()){
-                $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
-            }
         }
 
-        foreach($this->getSubForms() as $key => $subform)
-        {
-            foreach($subform as $key => $_element)
-            {
-                if (!$_element instanceof Zend_Form_DisplayGroup){
-                    if ($_element->getType() == 'Cible_Form_Element_Editor') {
-                        $this->getView()->headScript()->appendFile($this->getView()->baseUrl() . '/js/tinymce/tinymce.min.js');
-                        break;
-                    }
-                    $isOk = preg_match('/field_required/', $_element->getLabel());
-                    $label = $_element->getLabel();
-                    if ($_element->isRequired() && $this->_addRequiredAsterisks
-                        && !$isOk && !EMPTY($label)) {
-                        $_element->setLabel("{$_element->getLabel()} <span class='field_required'>*</span>");
-                    }
-                    if ($_element->isRequired()){
-                        $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
-                    }
-                }
-            }
-        }
-
-        if($firstElementID != null){
+        if ($firstElementID != null) {
             $this->getView()->jQuery()->enable();
             $script = <<< EOS
 
@@ -218,19 +186,15 @@ EOS;
         return parent::render($view);
     }
 
-    public function getFirstElement()
-    {
-        foreach ($this->getElements() as $element)
-        {
+    public function getFirstElement() {
+        foreach ($this->getElements() as $element) {
             return $element;
         }
         return null;
     }
 
-    public function addActionButton($element)
-    {
-        if ($element->getType() != 'Cible_Form_Element_LanguageSelector')
-        {
+    public function addActionButton($element) {
+        if ($element->getType() != 'Cible_Form_Element_LanguageSelector') {
             $element->setDecorators(array(
                 'ViewHelper',
                 array(array('data' => 'HtmlTag'), array('tag' => 'li')),
@@ -240,8 +204,7 @@ EOS;
         $actions->addElement($element);
     }
 
-    public function disableElementValidation($elements)
-    {
+    public function disableElementValidation($elements) {
         $elems = array();
 
         if (!is_array($elements))
@@ -249,16 +212,36 @@ EOS;
         else
             $elems = $elements;
 
-        foreach ($elems as $el)
-        {
+        foreach ($elems as $el) {
             $this->getElement($el)->clearValidators()
-                ->setRequired(false);
+                    ->setRequired(false);
+        }
+    }
+
+    protected function _addSubFormAsteriks($subForms) {
+        foreach ($subForms->getElements() as $_element) {
+            if ($_element->getType() == 'Cible_Form_Element_Editor') {
+                $this->getView()->headScript()->appendFile($this->getView()->baseUrl() . '/js/tinymce/tinymce.min.js');
+                break;
+            }
+
+            if ($_element->isRequired() && $this->_addRequiredAsterisks) {
+                $_element->setLabel("{$_element->getLabel()} <span class='field_required'>*</span>");
+            }
+        }
+
+        $tmpForm = $subForms->getSubForms();
+        if (is_array($tmpForm))
+            $tmpForm = current($tmpForm);
+
+        if (count($tmpForm) && $tmpForm instanceof Zend_Form_SubForm) {
+            $this->_addSubFormAsteriks($tmpForm);
         }
     }
 
     public function formatDivDecorators($options = null) {
 
-        $displayLabels = isset($options['label']) ? $options['label'] : true;
+        $label = isset($options['label']) ? $options['label'] : true;
         $classDiv = isset($options['classDiv']) ? $options['classDiv'] : "form-div";
         $classLabel = isset($options['classLabel']) ? $options['classLabel'] : "form-label";
 
@@ -269,18 +252,22 @@ EOS;
                 $formsToFormat[] = array('object' => $form, 'type' => 'Fieldset');
             }
         }
-        foreach ($formsToFormat as $form)
-        {
-            foreach ($form['object']->getElements() as $key => $element)
-            {
+        foreach ($formsToFormat as $form) {
+            foreach ($form['object']->getElements() as $key => $element) {
                 $currentClass = " " . $element->getAttrib('class');
-                $label = !$displayLabels ? $displayLabels : $element->getDecorator('Label');
                 if ($label) {
+                    $placement = '';
+                    if ($element->getDecorator('row')){
+                        $currentClass .= ' ' . $element->getDecorator('row')->getOption('class');
+                    }
+                    if ($element->getDecorator('Label')){
+                        $placement = $element->getDecorator('Label')->getOption('placement');
+                    }
                     $element->setDecorators(array(
                         'ViewHelper',
                         'Errors',
                         array('Description', array('tag' => 'p', 'class' => 'description')),
-                        array('Label', array('class' => $classLabel)),
+                        array('Label', array('class' => $classLabel, 'placement' => $placement)),
                         array('HtmlTag', array('class' => $classDiv . $currentClass)),
                     ));
                 } else {
@@ -291,7 +278,7 @@ EOS;
                         array('HtmlTag', array('class' => $classDiv . $currentClass)),
                     ));
                 }
-                if ($key == 'captcha'){
+                if ($key == 'captcha') {
                     $element->removeDecorator("viewhelper");
                 }
             }
@@ -299,34 +286,52 @@ EOS;
                 'FormElements',
                 $form['type']
             ));
-         }
+        }
     }
 
-    protected function _addSubFormAsteriks($subForms)
+    public function setRowDecorator($elements, $name, $options = null )
     {
-        foreach ($subForms->getElements() as $_element) {
-            if ($_element->getType() == 'Cible_Form_Element_Editor') {
-                $this->getView()->headScript()->appendFile($this->getView()->baseUrl() . '/js/tinymce/tinymce.min.js');
-                break;
-            }
-            $isOk = preg_match('/field_required/', $_element->getLabel());
-            $label = $_element->getLabel();
-            if ($_element->isRequired() && $this->_addRequiredAsterisks
-                && !$isOk && !empty($label)){
-                $_element->setLabel("{$label} <span class='field_required'>*</span>");
-            }
-            if ($_element->isRequired()){
-                $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
-            }
+        $class = "row";
+        $legend = null;
+        if(isset($options['legend'])){
+            $legend = $options['legend'];
         }
+        if(isset($options['class'])){
+            $class = $options['class'];
+        }
+        $fieldset = 'Fieldset';
+        if(isset($options['fieldset_class'])){
+            $fielsetclass = $options['fieldset_class'];
+            $fieldset = array('Fieldset', array('class' => $fielsetclass));
+        }
+        $this->addDisplayGroup(
+            $elements, $name,
+            array(
+                'legend' => $legend,
+                'decorators' => array('FormElements', $fieldset,
+                    array('HtmlTag',array('tag'=>'div', 'class' => $class))
+                    )
+            )
+        );
 
-        $tmpForm = $subForms->getSubForms();
-        if (is_array($tmpForm)){
-            $tmpForm = current($tmpForm);
-        }
-        if (count($tmpForm) && $tmpForm instanceof Zend_Form_SubForm){
-            $this->_addSubFormAsteriks($tmpForm);
-        }
     }
 
+//    public function autoGenerate()
+//    {
+//        $metaData = array();
+//        $object = $this->_object;
+//
+//        $metaData = $object->getColsData();
+//
+//        foreach ($metaData as $key => $meta)
+//            $this->setFormFields($meta, $key);
+//
+//        $indexTable = $object->getIndexTableName();
+//        if (!empty ($indexTable))
+//        {
+//            $metaIndex = $object->getColsIndex();
+//            foreach ($metaIndex as $key => $meta)
+//                $this->setFormFields($meta, $key);
+//        }
+//    }
 }

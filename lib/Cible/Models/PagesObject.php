@@ -23,15 +23,48 @@
  */
 class PagesObject extends DataObject
 {
-
     protected $_dataClass   = 'Pages';
 //    protected $_dataId      = '';
-//    protected $_dataColumns = array();
+    protected $_dataColumns = array(
+        'P_ID' => 'P_ID',
+        'P_Position' => 'P_Position',
+        'P_ParentID' => 'P_ParentID',
+        'P_Home' => 'P_Home',
+        'P_HomeMobile' => 'P_HomeMobile',
+        'P_LayoutID' => 'P_LayoutID',
+        'P_ThemeID' => 'P_ThemeID',
+        'P_ViewID' => 'P_ViewID',
+        'P_ShowSiteMap' => 'P_ShowSiteMap',
+        'P_ShowMenu' => 'P_ShowMenu',
+        'P_ShowTitle' => 'P_ShowTitle',
+        'P_BannerGroupID' => 'P_BannerGroupID',
+        'P_SiteType' => 'P_SiteType',
+        'P_Indexation' => 'P_Indexation',
+        'P_FromSite' => 'P_FromSite',
+        'P_DuplicateId' => 'P_DuplicateId',
+        );
 
     protected $_indexClass      = 'PagesIndex';
 //    protected $_indexId         = '';
     protected $_indexLanguageId = 'PI_LanguageID';
-//    protected $_indexColumns    = array();
+    protected $_indexColumns    = array(
+        'PI_PageID' => 'PI_PageID',
+        'PI_LanguageID' => 'PI_LanguageID',
+        'PI_PageIndex' => 'PI_PageIndex',
+        'PI_PageIndexOtherLink' => 'PI_PageIndexOtherLink',
+        'PI_PageTitle' => 'PI_PageTitle',
+        'PI_TitleImageSrc' => 'PI_TitleImageSrc',
+        'PI_TitleImageAlt' => 'PI_TitleImageAlt',
+        'PI_MetaDescription' => 'PI_MetaDescription',
+        'PI_MetaKeywords' => 'PI_MetaKeywords',
+        'PI_MetaTitle' => 'PI_MetaTitle',
+        'PI_MetaOther' => 'PI_MetaOther',
+        'PI_Status' => 'PI_Status',
+        'PI_Secure' => 'PI_Secure',
+        'PI_AltPremiereImage' => 'PI_AltPremiereImage',
+        'PI_ImageBackground' => 'PI_ImageBackground',
+        'PI_CanonicalLink' => 'PI_CanonicalLink',
+        );
     protected $_constraint      = 'PI_PageIndex';
     protected $_foreignKey      = '';
 

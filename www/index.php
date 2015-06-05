@@ -1,11 +1,6 @@
 <?php
 
-// ensure that the errors appear
-//error_reporting(E_ALL ^ E_NOTICE | E_STRICT);
 header('X-UA-Compatible: IE=edge');
-error_reporting(E_ALL | E_STRICT);
-ini_set('display_errors', true);
-ini_set('xdebug.max_nesting_level', 200);
 ini_set('magic_quotes_gpc', 'off');
 
 // define the timezone
@@ -18,28 +13,19 @@ $lib_path = "{$rootDir}/lib";
 
 // loading configuration
 $host = explode('.', $_SERVER['HTTP_HOST']);
-$envVar = $host[0];
-if (in_array('sandboxes', $host) || in_array('localhost', $host))
-{
+if (in_array('sandboxes', $host) || in_array('localhost', $host)){
     $devUri = explode('/', trim($_SERVER['REQUEST_URI'], '/'));
-    $envVar = $devUri[1] . '-dev';
-    define('ISDEV', true);
-}
-elseif (in_array('dev', $host))
-    $envVar = str_replace(array('-fr', '-portail2013', '-cp'), array('', '', ''), $host[0]) . '-dev';
-elseif (in_array('staging', $host))
-{
-    $envVar = str_replace(array('csss-iugs'), array('c3s'), $host[0]) . '-staging';
-    define('ISDEV', true);
-}
-else
-{
-    $envVar = str_replace(array('v2'), array('refugebuzz'), $host[0]);
-    define('ISDEV', false);
+    $envVar = $devUri[1];
+}else{
+    if(strstr($host[0], 'www')){
+        unset($host[0]);
+    }
+    $envVar = implode('.', $host);
 }
 
 define('APPLICATION_ENV', $envVar);
 define('APPLICATION_PATH', $rootDir);
+define('ISCRONJOB', false);
 /**
  * Path to the GUI for the font office
  */
@@ -53,6 +39,7 @@ set_include_path('.'
     . PATH_SEPARATOR . "{$lib_path}"
     . PATH_SEPARATOR . "{$lib_path}/Cible/Models"
     . PATH_SEPARATOR . "{$lib_path}/QCal"
+    . PATH_SEPARATOR . "{$lib_path}/TcPdf"
     . PATH_SEPARATOR . $lib_path . '/Wurfl/'
     . PATH_SEPARATOR . $rootDir . "/cache/wurfl/"
     . PATH_SEPARATOR . get_include_path());
@@ -63,19 +50,17 @@ Zend_Loader::registerAutoload();
 require_once 'Zend/Application.php';
 
 $application = new Zend_Application(
-        APPLICATION_ENV,
-        array(
-            'bootstrap' => array(
-                'class' => 'Bootstrap_Multidb',
-                'path' => $lib_path . '/Cible/Bootstrap/Multidb.php',
-            ),
-            'config' => $application_path . '/config.ini',
+    APPLICATION_ENV,
+    array(
+        'bootstrap' => array(
+            'class' => 'Bootstrap_Multidb',
+            'path' => $lib_path . '/Cible/Bootstrap/Multidb.php',
         ),
-        array(
-            'pluginPaths' => array(
-                'Cible_Plugin_Cron' => $lib_path . '/Cible/Plugins/Resource'
-            )
+        'config' => $application_path . '/config/master.ini',
+        'pluginPaths' => array(
+            'Cible_Plugin_Cron' => $lib_path . '/Cible/Plugins/Resource'
         )
+    )
 );
 $application->bootstrap()->run();
 

@@ -30,9 +30,8 @@ abstract class Cible_FunctionsPages extends DataObject
 
     public static function getMenuDetails($menuId, $langId = null, $menuTitle){
         $langId = is_null($langId) ? Zend_Registry::get('currentEditLanguage') : $langId;
-
-        $menu = new MenuObject($menuTitle);
-
+        $menu = apc_exists('oMenu') ?apc_fetch('oMenu') : new MenuObject();
+        $menu->initMenu($menuTitle);
         $menuItem = $menu->getMenuItemById($menuId);
 
         return $menuItem;
@@ -86,6 +85,11 @@ abstract class Cible_FunctionsPages extends DataObject
 
           $baseUrl = Zend_Registry::get('baseUrl');
           return "$baseUrl/$page";
+    }
+
+    public static function getPageLinkByIDExtranet($pageId, $lang = null){
+        $page = self::getPageNameByID($pageId, $lang);
+        return "$page";
     }
 
     public static function getActionNameByLang($actionName, $lang = null){
@@ -346,22 +350,39 @@ abstract class Cible_FunctionsPages extends DataObject
             $lang = Zend_Registry::get('currentEditLanguage');
 
         $pages_list = Cible_FunctionsPages::getAllPagesDetailsArray(0, $lang, $type);
-
         $_pages = array();
+        $vRender = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
+        $view = $vRender->view;
         foreach($pages_list as $page){
-            $pageTitle = $page['PI_PageTitle'];
-            if ($page['P_Home'] == 1 || $page['P_HomeMobile'])
-                $pageTitle = Cible_Translation::getCibleText('label_homepage');
-            $tmp = array(
-                'ID' => $page['P_ID'],
-                'Title' => $pageTitle,
-                'onClick' => "{$baseUrl}/page/index/index/ID/{$page['P_ID']}/site/{$type}"
-            );
+            $authData = $view->user;
+            $authID     = $authData['EU_ID'];
+            $hasAccess = true;
+            $hasAccessToStructure = false;
+            $hasCurrentPageAccess = Cible_FunctionsAdministrators::checkAdministratorPageAccess($authID,$page['P_ID'],"data", $view->isAdministrator());
+            if ($hasCurrentPageAccess){
+                $hasAccessToStructure = Cible_FunctionsAdministrators::checkAdministratorPageAccess($authID,$page['P_ID'],"structure", $view->isAdministrator());
+            }
+            if (!$hasCurrentPageAccess){
+                $isPageAdmin = $view->aclIsAllowed('page', 'edit');
+                $hasAccessToStructure = $isPageAdmin?true:false;
+            }
+            $hasAccess = !$hasCurrentPageAccess && !$isPageAdmin? false : true;
+            if ($hasAccess){
+                $pageTitle = $page['PI_PageTitle'];
+                if ($page['P_Home'] == 1 || $page['P_HomeMobile']){
+                    $pageTitle = Cible_Translation::getCibleText('label_homepage');
+                }
+                $tmp = array(
+                    'ID' => $page['P_ID'],
+                    'Title' => $pageTitle,
+                    'onClick' => "{$baseUrl}/page/index/index/ID/{$page['P_ID']}/site/{$type}"
+                );
 
-            if( !empty($page['child']) )
-                $tmp['child'] = self::fillULLIChildren($baseUrl, $page['child']);
-
-            array_push($_pages, $tmp);
+                if( !empty($page['child']) ){
+                    $tmp['child'] = self::fillULLIChildren($baseUrl, $page['child']);
+                }
+                array_push($_pages, $tmp);
+            }
         }
         return $_pages;
     }
@@ -697,40 +718,34 @@ abstract class Cible_FunctionsPages extends DataObject
      * If there is none then find its parents image.
      *
      * @param array $page data for the current page
+     * @param bool  $sub
      * @param string $type The folder to select image [background|header]
      * @param string $default The name of the default image to set if filled.
      * @return string
      */
-    public static function getPageImage($page, $type = 'header', $default = '', $sub = false)
+    public static function getPageImage($page, $sub = false, $type = 'header', $default = 'default.jpg')
     {
         $path = '';
         $params = array();
         $defaultImg = 'default/' . $default;
-        $typeArray = array(
-            'background' => 'PI_ImageBackground',
-            'header' => 'PI_TitleImageSrc'
-        );
+        $typeArray = array('background' => 'PI_ImageBackground',
+            'header' => 'PI_TitleImageSrc');
         $fieldImage = $typeArray[$type];
 
-        if (!empty($page[$fieldImage]))
-            $params = array('/page', $type, $page[$fieldImage]) ;
-        elseif (!empty($page['P_ParentID']))
-        {
-            $parentId = $page['P_ParentID'];
-            $page = self::getPageDetails($parentId);
-            if (!empty($page[$fieldImage]))
-                $params = array('/page', $type, $page[$fieldImage]) ;
-            else
-                $params = self::getPageImage($page, $type, $default, true);
+        if (!empty($page[$fieldImage])){
+            $params = array('page', $type, $page[$fieldImage]) ;
+        }elseif (!empty($page['P_ParentID'])){
+            $page = self::getPageDetails($page['P_ParentID']);
+            $params = self::getPageImage($page, $sub, $type, $default);
         }
-        if(empty ($params) && !empty($default))
-            $params = array('/page', $type, $defaultImg);
-
-        if (!empty($params) && !$sub)
+        if(empty ($params) && !empty($default)){
+            $params = array('page', $type, $defaultImg);
+        }
+        if (!empty($params) && is_array($params)){
             $path = implode('/',$params);
-        elseif($sub)
+        }else{
             $path = $params;
-
+        }
         return $path;
 
     }

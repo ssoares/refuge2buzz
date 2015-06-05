@@ -5,7 +5,7 @@
 
         public function sortableTree($tree, $options = array()){
 
-            $this->_li_template = "<li id='%OBJECT_ID%' class='%LI_CLASS%'><img class='handle' src='" . $this->view->baseUrl() . "/icons/file.png' />";
+            $this->_li_template = "<li id='%OBJECT_ID%' class='%LI_CLASS%'><img class='handle' src='" . $this->view->baseUrl() . "/icons/icon-drag-22x22.png' />";
 
             $menu = parent::tree($tree, $options);
 

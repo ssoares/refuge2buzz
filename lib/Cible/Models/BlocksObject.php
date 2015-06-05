@@ -25,8 +25,25 @@ class BlocksObject extends DataObject
 {
 
     protected $_dataClass   = 'Blocks';
-
+    protected $_dataColumns = array(
+        'B_ID' => 'B_ID',
+        'B_PageID' => 'B_PageID',
+        'B_ModuleID' => 'B_ModuleID',
+        'B_ZoneID' => 'B_ZoneID',
+        'B_Position' => 'B_Position',
+        'B_ShowHeader' => 'B_ShowHeader',
+        'B_Draft' => 'B_Draft',
+        'B_Online' => 'B_Online',
+        'B_Secured' => 'B_Secured',
+        'B_FromSite' => 'B_FromSite',
+        'B_DuplicateId' => 'B_DuplicateId',
+        'B_LastModified' => 'B_LastModified',
+    );
     protected $_indexClass      = 'BlocksIndex';
+    protected $_indexColumns = array('BI_BlockID' => 'BI_BlockID',
+        'BI_LanguageID' => 'BI_LanguageID',
+        'BI_BlockTitle' => 'BI_BlockTitle',
+    );
     protected $_indexLanguageId = 'BI_LanguageID';
     protected $_constraint      = '';
     protected $_foreignKey      = 'B_PageID';
@@ -92,7 +109,7 @@ class BlocksObject extends DataObject
 
         return $list;
     }
-    
+
     public function getViewByModuleID($moduleID)
     {
         $detailsPageView = '';
@@ -107,7 +124,7 @@ class BlocksObject extends DataObject
                 }
             }
         }
-        
+
         return $detailsPageView;
     }
 

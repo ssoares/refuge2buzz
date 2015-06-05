@@ -39,6 +39,10 @@ abstract class Cible_FunctionsGeneral
      */
     const DATE_LONG_NO_DAY = 'DLND';
     /**
+     * Date format like : décembre 2010
+     */
+    const DATE_DAY_MONTH = 'DDM';
+    /**
      * Date format : day/month/year (Separator can be changed)
      */
     const DATE_NUM = 'DN';
@@ -62,8 +66,34 @@ abstract class Cible_FunctionsGeneral
      */
     const DATE_MONTH_YEAR = 'DMY';
 
+    public static function log($message, $trace = array(), $priority = Zend_Log::DEBUG)
+    {
+        if (Zend_Registry::isRegistered('LOG')){
+            $oLog = Zend_Registry::get('LOG');
+            $cfg = Zend_Registry::get('config');
+            $traceLength = isset($cfg->log->traceLength) ? $cfg->log->traceLength : 0;
+            for($i = 0; $i < $traceLength; $i++)
+            {
+                    $row = $trace[$i];
+                    if (!empty($row)){
+                        if ($i == 0){
+                        $message .= ' : log from ';
+                        $message .= !empty($row['function'])? $row['function'] : '';
+                        }
+                    $message .= PHP_EOL;
+                    $message .= "              ";
+                    $message .= !empty($row['line'])?'Called on line ' . $row['line'] : '' ;
+                    $message .= !empty($trace[$i+1]['function'])?' in ' . $trace[$i+1]['function'] . ' ' : '';
+                    if (!empty($row['file'])){
+                        $message .= 'from ' . str_replace(Zend_Registry::get('serverDocumentRoot'), '', $row['file']);
+                    }
+                }
+            }
+            $oLog->log($message, $priority);
+        }
+    }
 
-    public static function getAllLanguage($onlyActive = true)
+        public static function getAllLanguage($onlyActive = true)
     {
         $Languages = Zend_Registry::get("db");
         $Select = $Languages->select()
@@ -785,17 +815,17 @@ abstract class Cible_FunctionsGeneral
         if (isset($_COOKIE['authentication']))
         {
             $authentication = json_decode($_COOKIE['authentication'], true);
-            $path = Zend_Registry::get('web_root') . '/';
+            $path = Zend_Registry::get('web_root');
 
-            $memberProfile = new MemberProfile();
-            $foundUser = $memberProfile->findMember(array(
-                        'email' => $authentication['email'],
-                        'hash' => $authentication['hash'],
-                        'status' => $authentication['status']
+            $profile = new GenericProfilesObject();
+            $foundUser = $profile->findData(array(
+                        'GP_Email' => $authentication['email'],
+                        'GP_Hash' => $authentication['hash'],
+                        'GP_Status' => $authentication['status'],
+                        'GP_Deleted' => 0
                     ));
 
-            if (!$foundUser)
-            {
+            if (empty($foundUser)){
                 $authentication = null;
                 setcookie('authentication', '', -1, $path);
             }
@@ -813,24 +843,25 @@ abstract class Cible_FunctionsGeneral
      */
     public static function authenticate($email, $password)
     {
-        $db = Zend_Registry::get("db");
-        $password = md5($password);
-        $profile = new MemberProfile();
-
-        $foundUser = $profile->authenticateMember(array('email' => $email, 'password' => $password));
-
-        if (isset($foundUser['member_id']))
+        $pwd = md5($password);
+        $profile = new GenericProfilesObject();
+        $filters = array('GP_Email' => $email, 'GP_Password' => $pwd,
+            'GP_Deleted' => 0);
+        $tmp = $profile->findData($filters);
+        $foundUser = isset($tmp[0]) ? $tmp[0] : array();
+        if (isset($foundUser['GP_MemberID'])){
             return array(
                 'success' => 'true',
-                'member_id' => $foundUser['member_id'],
-                'email' => $foundUser['email'],
-                'lastName' => $foundUser['lastName'],
-                'firstName' => $foundUser['firstName'],
-                'status' => $foundUser['status']
+                'member_id' => $foundUser['GP_MemberID'],
+                'email' => $foundUser['GP_Email'],
+                'lastName' => $foundUser['GP_LastName'],
+                'firstName' => $foundUser['GP_FirstName'],
+                'status' => $foundUser['GP_Status']
 
             );
-        else
+        }else{
             return array('success' => 'false');
+        }
     }
 
     /**
@@ -844,15 +875,11 @@ abstract class Cible_FunctionsGeneral
      */
     public static function isAuthenticated($memberId, $email, $accountType)
     {
+        $profile = new GenericProfilesObject();
+        $foundUser = $profile->findData(array('GP_MemberID' => $memberId,
+            'GP_Email' => $email));
 
-        $db = Zend_Registry::get("db");
-
-        $profile = new MemberProfile();
-        $foundUser = $profile->findMembers(array('member_id' => $memberId, 'email' => $email));
-
-        print_r($foundUser);
-
-        return $foundUser;
+        return $foundUser[0];
     }
 
     /**
@@ -1005,13 +1032,10 @@ abstract class Cible_FunctionsGeneral
         elseif (!is_null($countryCode))
             $select->where('Countries.C_Identifier = ?', $countryCode);
 
-        if (is_numeric($stateCode) && !is_null($stateCode))
-        {
+        if (is_numeric($stateCode) && !is_null($stateCode)){
             $select->where('States.S_ID = ?', $stateCode);
-        return $db->fetchOne($select);
-    }
-        elseif (!is_null($stateCode))
-        {
+            return $db->fetchOne($select);
+        }elseif (!is_null($stateCode)){
             $select->where('States.S_Identifier = ?', $stateCode);
             return $db->fetchOne($select);
         }
@@ -1274,12 +1298,20 @@ abstract class Cible_FunctionsGeneral
                 'format' => "%s %s",
                 'values' => array('monthName', 'year')
             ),
+            self::DATE_DAY_MONTH => array(
+                'format' => "%s %s",
+                'values' => array('dayDate', 'monthName')
+            ),
             self::DATE_NUM => array(
-                'format' => "%d{$separator}%d{$separator}%d",
-                'values' => array('dayDate','month', 'year')
+                'fr' => array(
+                    'format' => "%02d{$separator}%02d{$separator}%d",
+                    'values' => array('dayDate', 'month', 'year')),
+                'en' => array(
+                    'format' => "%02d{$separator}%02d{$separator}%d",
+                    'values'=> array('month', 'dayDate', 'year')),
             ),
             self::DATE_SQL => array(
-                'format' => "%d-%d-%d",
+                'format' => "%d-%02d-%02d",
                 'values' => array('year', 'month', 'dayDate')
             ),
             self::DATE_NUM_USA => array(
@@ -1287,7 +1319,7 @@ abstract class Cible_FunctionsGeneral
                 'values' => array('month', 'dayDate', 'year')
             ),
             self::DATE_NUM_SHORT_YEAR => array(
-                'format' => "%d{$separator}%d{$separator}%d",
+                'format' => "%02d{$separator}%02d{$separator}%d",
                 'values' => array('dayDate','month', 'yearShort')
             ),
             self::DATE_MONTH_YEAR => array(
@@ -1322,6 +1354,7 @@ abstract class Cible_FunctionsGeneral
                 case self::DATE_FULL :
                 case self::DATE_SHORT :
                 case self::DATE_LONG :
+                case self::DATE_NUM :
                     if ($format == self::DATE_SHORT)
                         $monthName = $date->get(Zend_Date::MONTH_NAME_SHORT);
                     if(strpos($dayDate,'0')==0)
@@ -1393,7 +1426,7 @@ abstract class Cible_FunctionsGeneral
 
     public static function getParameters($param = '')
     {
-        $oParameters = new OrderParametersObject();
+        $oParameters = new ParametersObject();
         $parameters  = $oParameters->getAll();
 
         if(!empty($param))
@@ -1623,7 +1656,6 @@ abstract class Cible_FunctionsGeneral
     public static function getPageNumberWithoutParamOrder($stringUrl){
         $stringUrlRev = strrev($stringUrl);
         $arrayRev = explode("/", $stringUrlRev);
-        //var_dump($arrayRev);
         if((count($arrayRev)>=2)&&($arrayRev[1]=="egap")){
             return $arrayRev[0];
         }
@@ -1688,7 +1720,6 @@ abstract class Cible_FunctionsGeneral
          $separator = "";
          $separatorBool = false;
          $separatorLast = false;
-         //var_dump($arrayOption);
          if(isset($arrayOption['addSeparator'])){
              $separator = $arrayOption['addSeparator'];
              if($separator!=""){
@@ -1971,5 +2002,52 @@ abstract class Cible_FunctionsGeneral
               "ç" => "Ç",
         ));
     }
+
+
+    public static function calculateThemrometersData($accomplishPercent, $small=false){
+        $returnData = array();
+        $accompliHide = 10;
+        $accompli = $accomplishPercent;
+
+
+          if($accomplishPercent>=100){
+              $accompli = 105;
+          }
+          else{
+                if($small==false){
+
+                    switch ($accomplishPercent){
+                       case 0:
+                            $accompliHide = 0;
+                            break;
+                      case $accomplishPercent > 0 && $accomplishPercent<=10:
+                            $accompliHide = 0;
+                            break;
+                    }
+                }
+                else{
+
+                    $accompli = $accomplishPercent + 12;
+                    switch ($accomplishPercent){
+                        case 0:
+                            $accompli = 0;
+                            $accompliHide = 0;
+                            break;
+                        case $accomplishPercent > 0 && $accomplishPercent<=12:
+                            $accompliHide = 0;
+                            break;
+
+                    }
+                }
+          }
+
+          $returnData["accompli"] = $accompli;
+          $returnData["accompliHide"] = $accompliHide;
+          return $returnData;
+    }
+
+
+
+
 
 }

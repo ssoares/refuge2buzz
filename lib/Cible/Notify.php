@@ -14,8 +14,12 @@ class Cible_Notify
     {
         foreach ($attachment as $key => $file)
         {
-            $filePath = $_SERVER['DOCUMENT_ROOT'] . '/' . $file;
-
+            if (strstr($file, Zend_Registry::get('fullDocumentRoot'))){
+                $filePath = $file;
+            }else{
+                $filePath = Zend_Registry::get('fullDocumentRoot') . $file;
+            }
+            
             if (file_exists($filePath))
             {
                 $fileName = basename($filePath);
@@ -126,8 +130,9 @@ class Cible_Notify
         if (!empty($this->_attachment))
         {
             $mail->setType(Zend_Mime::MULTIPART_RELATED);
-            foreach ($this->_attachment as $file)
+            foreach ($this->_attachment as $file){
                 $mail->addAttachment($file);
+            }
         }
         if ($this->_isHtml)
             $mail->setBodyHtml($this->_message);

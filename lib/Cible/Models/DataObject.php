@@ -54,21 +54,76 @@ class DataObject
     protected $_position = "";
     protected $_query;
     protected $_columns = array();
-    protected $_colsData;
-    protected $_colsIndex;
+    protected $_colsData = array();
+    protected $_colsIndex = array();
     protected $_enum;
     protected $_addSubFolder    = false;
     protected $_protocol = "http://";
+    protected $_forceExact = false;
+    protected $_joinCondition = '';
+    protected $_incrementalJoin = 0;
+    protected $_colsFilter = array();
+    protected $_colCount = array();
+    protected $_noDataCol = false;
+    protected $_noIndexCol = false;
+
+    public function setNoColumns($noDataCol = false, $noIndexCol = false){
+        $this->_noDataCol = $noDataCol;
+        $this->_noIndexCol = $noIndexCol;
+        return $this;
+    }
+
+    public function setIncrementalJoin($incrementalJoin)
+    {
+        $this->_incrementalJoin = $incrementalJoin;
+        return $this;
+    }
+
+    public function setColumns($columns)
+    {
+        $this->_columns = $columns;
+        return $this;
+    }
+
+    public function getJoinCondition(){
+        return $this->_joinCondition;
+    }
+
+    public function setJoinCondition($joinCondition = '')
+    {
+        if (!empty($this->_joinCondition) && !strpos($this->_joinCondition, ' AND ')){
+            list($left, $right) = explode(' = ', $this->_joinCondition);
+            if (empty($right) || $right != $this->_foreignKey){
+                $this->_joinCondition = $this->_dataId . ' = ' . $this->_foreignKey;
+            }
+        }else{
+            $this->_joinCondition = $this->_dataId . ' = ' . $this->_foreignKey;
+        }
+        if (!empty($joinCondition)){
+            $this->_joinCondition .= ' ' . $joinCondition;
+        }
+        return $this;
+    }
+
+    public function setForceExact($forceExact)
+    {
+        $this->_forceExact = $forceExact;
+        return $this;
+    }
 
     /**
      * Set a query instance to join with data table.
      *
-     * @param Zend_Db_Select $_query A query object
+     * @param Zend_Db_Select $query A query object
      * @return \DataObject
      */
-    public function setQuery(Zend_Db_Select $_query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
-        $this->_query = $_query;
+        if (is_null($query)){
+            $this->_query = $this->getAll(null, false);
+        }else{
+            $this->_query = $query;
+        }
 
         return $this;
     }
@@ -115,6 +170,20 @@ class DataObject
     {
         $this->_foreignKey = $value;
 
+        return $this;
+    }
+
+    public function getSearchColumns(){
+        return $this->_searchColumns;
+    }
+
+    public function setSearchColumns($searchColumns)
+    {
+        if (is_array($searchColumns)){
+            $this->_searchColumns = array_merge($this->_searchColumns, $searchColumns);
+        }else{
+            array_push($this->_searchColumns, $searchColumns);
+        }
         return $this;
     }
 
@@ -210,6 +279,9 @@ class DataObject
      */
     public function getColsData()
     {
+        if (empty($this->_colsData) && $this->_oData){
+            $this->_colsData = $this->_oData->info(Zend_Db_Table_Abstract::METADATA);
+        }
         return $this->_colsData;
     }
     /**
@@ -219,6 +291,9 @@ class DataObject
      */
     public function getColsIndex()
     {
+        if (empty($this->_colsIndex) && $this->_oData){
+            $this->_colsIndex = $this->_oData->info(Zend_Db_Table_Abstract::METADATA);
+        }
         return $this->_colsIndex;
     }
     /**
@@ -292,31 +367,29 @@ class DataObject
         {
             $this->_oData = new $this->_dataClass();
             $this->_oDataTableName = $this->_oData->info('name');
+            if (empty($this->_dataColumns)){
+                $this->_colsData = $this->_oData->info(Zend_Db_Table_Abstract::METADATA);
+            }
+            $dataId   = $this->_oData->info(Zend_Db_Table_Abstract::PRIMARY);
+            $this->_dataId  = current($dataId);
         }
         if (!empty($this->_indexClass))
         {
             $this->_oIndex = new $this->_indexClass();
             $this->_oIndexTableName = $this->_oIndex->info('name');
-        }
-
-        $this->_schema = $dbConfig['dbname'];
-
-        $this->_colsData = $this->_oData->info(Zend_Db_Table_Abstract::METADATA);
-        $dataId   = $this->_oData->info(Zend_Db_Table_Abstract::PRIMARY);
-        $this->_dataId  = current($dataId);
-
-        if($this->_oIndex)
-        {
-            $this->_colsIndex = $this->_oIndex->info(Zend_Db_Table_Abstract::METADATA);
+            if (empty($this->_indexColumns)){
+                $this->_colsIndex = $this->_oIndex->info(Zend_Db_Table_Abstract::METADATA);
+            }
             $indexId   = $this->_oIndex->info(Zend_Db_Table_Abstract::PRIMARY);
 
             $this->_indexId = current($indexId);
         }
-        if(count($this->_dataColumns) == 0)
+        if(count($this->_dataColumns) == 0){
             $this->_dataColumns = array_combine(
-                            array_keys($this->_colsData),
-                            array_keys($this->_colsData));
-
+                array_keys($this->_colsData),
+                array_keys($this->_colsData)
+            );
+        }
         if(count($this->_indexColumns) == 0 && $this->_oIndex)
             $this->_indexColumns = array_combine(
                             array_keys($this->_colsIndex),
@@ -362,6 +435,17 @@ class DataObject
                             ->where("{$this->_indexLanguageId} = ?", $langId);
 
             $_row = $this->_db->fetchRow($select);
+            /*
+              $_object = new $this->_dataClass();
+              $select = $_object->select()
+              ->from($this->_dataClass)
+              ->setIntegrityCheck(false)
+              ->join($this->_indexClass, "{$this->_dataClass}.{$this->_dataId} = {$this->_indexClass}.{$this->_indexId}")
+              ->where("{$this->_dataId} = ?", $id)
+              ->where("{$this->_indexLanguageId} = ?", $langId);
+
+              $_row = $_object->fetchRow($select);
+             */
         }
 
         $tmp = array();
@@ -448,7 +532,6 @@ class DataObject
         else
             $_insertedId = $data[$this->_dataId];
 
-
         if (!empty($this->_indexClass))
         {
             unset($this->_indexColumns[$this->_indexId]);
@@ -474,7 +557,7 @@ class DataObject
             $_row->save();
         }
 
-        return $_insertedId;
+        return (int)$_insertedId;
     }
 
     public function save($id, $data, $langId)
@@ -633,13 +716,13 @@ class DataObject
         $typeData = array();
         $dataTableName = $this->_oDataTableName;
 
-        $select = $this->_oData->select()
+        $this->_query = $this->_oData->select()
                         ->from($dataTableName)
                         ->setIntegrityCheck(false);
 
         if (!is_null($langId) && array_key_exists($this->_indexLanguageId, $this->_colsData))
         {
-            $select->where("{$this->_indexLanguageId} = ?", $langId);
+            $this->_query->where("{$this->_indexLanguageId} = ?", $langId);
         }
         if (!empty($this->_indexClass))
         {
@@ -650,7 +733,7 @@ class DataObject
             else
                 $columns = $this->_indexColumns;
 
-            $select->joinLeft(
+            $this->_query->joinLeft(
                     array($indexTableName => $indexTableName),
                     "{$dataTableName}.{$this->_dataId} = {$indexTableName}.{$this->_indexId}",
                     $columns);
@@ -658,7 +741,7 @@ class DataObject
 
             if (!is_null($langId))
             {
-                $select->where("{$this->_indexLanguageId} = ?", $langId);
+                $this->_query->where("{$this->_indexLanguageId} = ?", $langId);
             }
             else
             {
@@ -668,11 +751,11 @@ class DataObject
                     $i = 2;
                     foreach ($this->_indexColumns as $cols)
                     {
-                        $select->joinLeft(
+                        $this->_query->joinLeft(
                                 array('T' . $i => $indexTableName),
                                 "(T{$i}.{$this->_indexId} = {$indexTableName}.{$this->_indexId} AND T{$i}.{$this->_indexLanguageId} != {$indexTableName}.{$this->_indexLanguageId})",
                                 $cols);
-                        $select->group("{$indexTableName}." . $this->_indexId);
+                        $this->_query->group("{$indexTableName}." . $this->_indexId);
                         $i++;
                     }
                 }
@@ -680,16 +763,17 @@ class DataObject
         }
 
         if (!empty($this->_orderBy))
-            $select->order($this->_orderBy);
+            $this->_query->order($this->_orderBy);
 
         if (!is_null($id))
-            $select->where("{$this->_dataId} = ?", $id);
+            $this->_query->where("{$this->_dataId} = ?", $id);
 
         if ($array){
-            $typeData = $this->_oData->fetchAll($select)->toArray();
+            $typeData = $this->_oData->fetchAll($this->_query)->toArray();
         }else{
-            $typeData = $select;
+            $typeData = $this->_query;
         }
+
         return $typeData;
     }
 
@@ -869,7 +953,7 @@ class DataObject
             $select->where($this->_indexLanguageId . " = ?", $langId);
         }
 
-        $exist = $this->_db->fetchOne($select);
+        $exist = (bool)$this->_db->fetchOne($select);
 
         return $exist;
     }
@@ -966,10 +1050,13 @@ class DataObject
      *
      * @return void
      */
-    public function setIndexSelectColumns()
+    public function setIndexSelectColumns($indexSelectColumns = '')
     {
-        if (!empty($this->_indexSelectColumns))
+        if (!empty($indexSelectColumns)){
+            $this->_indexColumns = $indexSelectColumns;
+        }elseif (!empty($this->_indexSelectColumns)){
             $this->_indexColumns = $this->_indexSelectColumns;
+        }
     }
 
     public function keywordExist(array $keywords, Zend_Db_Select $query = null, $langId = null)
@@ -1156,28 +1243,47 @@ class DataObject
     {
         $results = null;
         if (empty($this->_columns)){
-            $this->_columns = $this->_dataColumns;
+//            $this->_columns = $this->_dataColumns;
+        }
+        $incI = '';
+        $tableData = $this->_oDataTableName;
+        $tableIndex = $this->_oIndexTableName;
+        $joinIndex = "{$this->_dataId} = {$this->_indexId}";
+        if ($this->_incrementalJoin > 0){
+            $incD = 'T' . $this->_incrementalJoin;
+            $incI = 'TI' . ($this->_incrementalJoin);
+            $joinIndex = "$incD.{$this->_dataId} = $incI.{$this->_indexId}";
+            $this->_joinCondition = $incD . '.' . $this->_dataId .'='.  $this->_foreignKey;
+            $tableData = array($incD => $this->_oDataTableName);
+            $tableIndex = array($incI => $this->_oIndexTableName);
+        }elseif (empty($this->_joinCondition)){
+            $this->_joinCondition = $this->_dataId .'='.  $this->_foreignKey;
         }
         if (!empty($this->_query))
         {
-            $this->_query->joinLeft($this->_oDataTableName, $this->_foreignKey ."=". $this->_dataId , $this->_columns);
+            if ($this->_noDataCol){
+                $this->_columns = array();
+            }
+            $this->_query->joinLeft($tableData,
+                $this->_joinCondition ,
+                $this->_columns);
             if (!empty($this->_indexClass))
             {
-                $indexTableName = $this->_oIndexTableName;
-
                 if (isset($this->_indexColumns[0]))
                     $columns = $this->_indexColumns[0];
                 else
                     $columns = $this->_indexColumns;
-
+                if ($this->_noIndexCol){
+                    $columns = array();
+                }
                 $this->_query->joinLeft(
-                        $indexTableName,
-                        "{$this->_dataId} = {$this->_indexId}",
-                        $columns);
-
+                    $tableIndex,
+                    $joinIndex,
+                    $columns);
 
                 if (!is_null($langId)){
-                    $this->_query->where("{$this->_indexLanguageId} = ?", $langId);
+                    $cond = $incI != '' ? "$incI.{$this->_indexLanguageId}":$this->_indexLanguageId;
+                    $this->_query->where($cond . ' = ?', $langId);
                 }
             }
             if (!empty($this->_orderBy)){
@@ -1198,40 +1304,55 @@ class DataObject
      * Filters are simple orWhere, we'll have to work on that
      *
      * @param array $filters List of values to build filters.
+     * @param bool $useQry Set if it builds a query or use the given one.
      */
     public function findData($filters = array(), $useQry = false)
     {
         if (!$useQry){
-            $select = $this->_db->select();
-            $select->from($this->_oDataTableName, $this->_dataColumns);
-            $select->joinLeft($this->_oIndexTableName,
+            $this->_query = $this->_db->select();
+            $this->_query->from($this->_oDataTableName, $this->_dataColumns);
+            if (!empty($this->_oIndexTableName)){
+            $this->_query->joinLeft($this->_oIndexTableName,
                 $this->_dataId . '= ' . $this->_indexId,
                 $this->_indexColumns);
+            }
             foreach ($filters as $key => $value)
             {
                 if (isset($this->_dataColumns[$key]))
                 {
-                    if (is_string($value ))
-                        $select->where("{$this->_dataColumns[$key]} like '%{$value}%'");
-                    elseif (is_integer($value))
-                        $select->where($this->_dataColumns[$key] . ' = ?',$value);
+                    if (is_string($value )){
+                        if ($this->_forceExact){
+                            $this->_query->where("{$this->_dataColumns[$key]} = ?", $value);
+                        }else{
+                            $this->_query->where("{$this->_dataColumns[$key]} like '%{$value}%'");
+                        }
+                    }elseif (is_null($value)){
+                        $this->_query->where($this->_dataColumns[$key] . ' is null');
+                    }elseif (is_integer($value)){
+                        $this->_query->where($this->_dataColumns[$key] . ' = ?',$value);
+                    }
                 }
                 if (isset($this->_indexColumns[$key]))
                 {
-                    if (is_string($value ))
-                        $select->where("{$this->_indexColumns[$key]} like '%{$value}%'");
-                    elseif (is_integer($value))
-                        $select->where($this->_indexColumns[$key] . ' = ?',$value);
+                    if (is_string($value )){
+                        if ($this->_forceExact){
+                            $this->_query->where("{$this->_indexColumns[$key]} = ?", $value);
+                        }else{
+                            $this->_query->where("{$this->_indexColumns[$key]} like '%{$value}%'");
+                        }
+                    }elseif (is_null($value)){
+                        $this->_query->where($this->_indexColumns[$key] . ' is null');
+                    }elseif (is_integer($value)){
+                        $this->_query->where($this->_indexColumns[$key] . ' = ?',$value);
+                    }
                 }
             }
 
             if ($this->_orderBy)
-                $select->order($this->_orderBy);
-        }else{
-            $select = $this->_query;
+                $this->_query->order($this->_orderBy);
         }
 
-        return $this->_db->fetchAll($select);
+        return $this->_db->fetchAll($this->_query);
     }
     /**
      * Fetch dat ti populate dropdown list or chehcbox
@@ -1260,11 +1381,14 @@ class DataObject
     public function completeQuery($langId = null, $array = true)
     {
         $select = '';
-
+        if (empty($this->_joinCondition)){
+            $this->setJoinCondition();
+        }
         if (!empty($this->_query))
         {
             $select = $this->_query;
-            $select->joinLeft($this->_oDataTableName, $this->_dataId . ' = ' . $this->_foreignKey);
+
+            $select->joinLeft($this->_oDataTableName, $this->_joinCondition);
             if (!empty($this->_oIndexTableName))
             {
                 $select->joinLeft($this->_oIndexTableName, $this->_dataId . ' = ' . $this->_indexId);
@@ -1308,39 +1432,43 @@ class DataObject
             }
             foreach ($data as $key => $value)
             {
-                if(!empty($value))
+                $tmpVal = explode(' ', $value);
+                if (count($tmpVal) > 1){
+                    $value = $tmpVal;
+                }
+
+                if (array_key_exists($key, $this->_searchColumns))
                 {
-                    $tmpVal = explode(' ', $value);
-                    if (count($tmpVal) > 1)
-                        $value = $tmpVal;
-                    if (array_key_exists($key, $this->_searchColumns))
+                    if (is_array($this->_searchColumns[$key]))
                     {
-                        if (is_array($this->_searchColumns[$key]))
-                        {
-                            foreach ($this->_searchColumns[$key] as $column){
-                                if (is_string($value))
-                                    $where[] = $this->_db->quoteInto("{$column} like '%{$value}%'");
-                                elseif (is_integer($value))
-                                    $where[] = $this->_db->quoteInto($column . ' = ?',$value);
-                                elseif(is_array($value))
-                                {
-                                    foreach($value as $val)
-                                    {
-                                        if (is_string($val))
-                                            $where[] = "{$column} like '%{$val}%'";
-                                        elseif (is_integer($val))
-                                            $where[] = $this->_db->quoteInto($column . ' = ?',$val);
+                        foreach ($this->_searchColumns[$key] as $column){
+                            if (is_string($value)){
+                                $where[] = $this->_forceExact ?
+                                    $this->_db->quoteInto("{$column} = ?", $value)
+                                    : $this->_db->quoteInto("{$column} like '%{$value}%'", $value);
+                            }elseif (is_integer($value)){
+                                $where[] = $this->_db->quoteInto($column . ' = ?',$value);
+                            }elseif (is_null($value)){
+                                $where[] = $this->_db->quoteInto($column . ' is null');
+                            }elseif(is_array($value)){
+                                foreach($value as $val){
+                                    if (is_string($val)){
+                                        $where[] = $this->_forceExact ?
+                                            "{$column} = '{$val}'"
+                                            : "{$column} like '%{$val}%'";
+                                    }elseif (is_integer($val)){
+                                        $where[] = $this->_db->quoteInto($column . ' = ?',$val);
                                     }
                                 }
-                             }
-                            $clause = implode(' OR ', $where);
-                            $this->_query->where($clause);
-                        }
-                        else
-                            $this->_addWhere($this->_searchColumns[$key], $value);
+                            }
+                         }
+                        $clause = implode(' OR ', $where);
+                        $this->_query->where($clause);
                     }
-               }
-           }
+                    else
+                        $this->_addWhere($this->_searchColumns[$key], $value);
+                }
+            }
         }
 
         return $this->_query;
@@ -1349,24 +1477,34 @@ class DataObject
     private function _addWhere($column, $value, $orClause = false)
     {
         $tmpWhere = '';
-        if (is_string($value))
-        {
-            if (!$orClause)
-                $this->_query->where($this->_db->quoteInto("{$column} like ?", '%' .$value . '%'));
-            else
-                $tmpWhere = $this->_db->quoteInto("{$column} like ?", '%' .$value . '%');
-        }
-        elseif (is_integer($value))
-        {
-            if (!$orClause)
-                $this->_query->where($column . ' = ?',$value);
-            else
+        if (is_string($value)){
+            if (!$orClause){
+                if ($this->_forceExact){
+                    $this->_query->where("{$column} = ?", $value);
+                }else{
+                    $this->_query->where($this->_db->quoteInto("{$column} like ?", '%' .$value . '%'));
+                }
+            }else{
+                $tmpWhere = $this->_forceExact ?
+                    $this->_db->quoteInto("{$column} = ?", $value)
+                    : $this->_db->quoteInto("{$column} like ?", '%' .$value . '%');
+            }
+        }elseif (is_integer($value)){
+            if (!$orClause){
+                $this->_query->where($column . ' = ?', $value);
+            }else{
                 $tmpWhere = $this->_db->quoteInto($column . ' = ?',$value);
-        }
-        elseif(is_array($value))
-        {
-            foreach($value as $val)
+            }
+        }elseif (is_null($value)){
+            if (!$orClause){
+                $this->_query->where($column . ' is null');
+            }else{
+                $tmpWhere = $this->_db->quoteInto($column . ' is ?', 'null');
+            }
+        }elseif(is_array($value)){
+            foreach($value as $val){
                 $where[] = $this->_addWhere($column, $val, true);
+            }
             $clause = implode(' OR ', $where);
             $this->_query->where($clause);
         }
@@ -1414,7 +1552,160 @@ class DataObject
                 $list[$values[$this->_dataId]] = $values[$this->_titleField];
             }
         }
+        return $list;
+    }
+
+    protected function weekOfMonth($date)
+    {
+        $date_parts = explode('-', $date);
+        $date_parts[2] = '01';
+        $first_of_month = implode('-', $date_parts);
+        $day_of_first = date('N', strtotime($first_of_month));
+        $day_of_month = date('j', strtotime($date));
+        return (int)floor(($day_of_first + $day_of_month - 1) / 7) + 1;
+    }
+
+    public function getColByFilter($field = '')
+    {
+        if (!empty($field)){
+            $data = $this->_colsFilter[$field];
+        }else{
+            $data = $this->_colsFilter;
+        }
+
+        return $data;
+    }
+
+    public function getRefValuesField($langId)
+    {
+        $list = array();
+        if (!empty($this->_refValuesCols))
+        {
+            $oRef = new ReferencesObject();
+            $qry = $oRef->getAll($langId, false);
+            $qry->where('R_TypeRef in (?)', array_keys($this->_refValuesCols));
+            $values = $this->_db->fetchAll($qry);
+
+            foreach($values as $refs)
+            {
+                if (array_key_exists($refs['R_TypeRef'], $this->_refValuesCols)){
+                    $col = $this->_refValuesCols[$refs['R_TypeRef']];
+                    $list[$col][$refs['R_ID']] = $refs['RI_Value'];
+                }
+            }
+        }
 
         return $list;
+    }
+
+    public function countData()
+    {
+        $colCount = empty($this->_colCount) ? $this->_dataId : $this->_colCount;
+        $cols = $this->_query->getPart('columns');
+        $this->_query->reset('columns')->columns('count('. $colCount .')');
+        $cols2 = $this->_query->getPart('columns');
+        $c = array_merge($cols2, $cols);
+        $this->_query->reset('columns');
+        foreach($c as $values){
+            if (!is_null($values[2])){
+                $this->_query->columns(array($values[2] => $values[1]), $values[0]);
+            }else{
+                $this->_query->columns(array($values[1]), $values[0]);
+            }
+        }
+        $count = (int)$this->_db->fetchOne($this->_query);
+        $this->_query->reset('columns');
+        foreach($cols as $values){
+            if (!is_null($values[2])){
+                $this->_query->columns(array($values[2] => $values[1]), $values[0]);
+            }else{
+                $this->_query->columns(array($values[1]), $values[0]);
+            }
+        }
+        return $count;
+    }
+
+    public function getDefaultRequest()
+    {
+        $fn = $this->_requestOptions['RET_Action'];
+        $this->$fn();
+        $prev = '';
+        $langId = Cible_Controller_Action::getDefaultEditLanguage();
+        foreach ($this->_columns as $obj => $occur)
+        {
+            if ($prev != $obj){
+                $oData = new $obj();
+            }
+            $oData->setOrderBy(null);
+            $oData->setNoColumns(false, true);
+            foreach($occur as $key => $cols)
+            {
+//                $oData->setIncrementalJoin(++$i);
+                if (!empty($cols['primary'])){
+                    $oData->setDataId($cols['primary']);
+                }
+                if (!empty($cols['key'])){
+                    $oData->setForeignKey($cols['key']);
+                }
+                if (!empty($cols['data'])){
+                    $oData->setColumns($cols['data']);
+                }
+                if (!empty($cols['index'])){
+                    $oData->setIndexSelectColumns($cols['index']);
+                }
+                $this->_query = $oData->setQuery($this->_query)
+                    ->joinFetchData(false, $langId);
+            }
+            $prev= $obj;
+        }
+        return $this->_query;
+    }
+
+    /**
+    * Fetch the valUrl of a news for the language switcher.
+    *
+    * @param int $id
+    *
+    * @return string $valUrl
+    */
+    public function getValUrl($id, $lang = 1){
+        $select = $this->_db->select();
+        $select->from($this->_oIndexTableName, $this->_valUrlField)
+                ->where( $this->_indexId . " = ?", $id)
+                ->where($this->_indexLanguageId . " = ?", $lang);
+
+        $valUrl = $this->_db->fetchOne($select);
+        return $valUrl;
+    }
+
+    protected function _setAddressData($data, $langId, $id = null)
+    {
+        $addrId = $shipId = 0;
+        if (isset($data[$this->_addrDataField])){
+            $oAdress = new AddressObject();
+            $firstAddr = $data[$this->_addrDataField];
+            if (!empty($data[$this->_addrShipDataField])){
+                $secAddr = $data[$this->_addrShipDataField];
+            }
+            $addrId = $oAdress->save($id, $firstAddr, $langId);
+            if (isset($secAddr['duplicate']) && $secAddr['duplicate'] == 1){
+                $firstAddr['A_Duplicate'] = $addrId;
+                $shipId = $oAdress->save($secAddr[$this->_addrShipField], $firstAddr, $langId);
+            }elseif (!empty($data[$this->_addrShipDataField])){
+                $secAddr['A_Duplicate'] = 0;
+                $shipId = $oAdress->save($secAddr[$this->_addrShipField], $secAddr, $langId);
+            }
+            $data[$this->_addrField] = $addrId;
+            if ($shipId > 0){
+                $data[$this->_addrShipField] = $shipId;
+            }
+        }
+
+        return $data;
+    }
+
+    public function joinForRequest($array = false, $langId = null)
+    {
+        return $this->joinFetchData($array, $langId);
     }
 }

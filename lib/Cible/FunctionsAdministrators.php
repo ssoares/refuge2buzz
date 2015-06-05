@@ -20,25 +20,27 @@
             return $group;
         }
 
-        public static function getAdministratorData($administratorID, $db = null)
+        public static function getAdministratorData($administratorID, $db = null, $adminGrp = null)
         {
             if (!is_null($db)){
                 $users = new ExtranetUsers(array('db' => $db));
             }else{
                 $users = new ExtranetUsers();
             }
-
+            if ($adminGrp == 1){
+                $users->setIncludeAll(true);
+            }
             $data = $users->setId($administratorID)->populate();
 
             return $data;
         }
 
-        public static function checkAdministratorPageAccess($adminID, $pageID, $permission)
+        public static function checkAdministratorPageAccess($adminID, $pageID, $permission, $adminGrp)
         {
             $hasAccess = false;
             $administrator = new ExtranetUsersGroups();
             $row = $administrator->setAdminId($adminID)->getFirstLevelsAdmin('count');
-            if ($row == 0)
+            if ($row == 0 || $adminGrp == 2)
             {
                 $permissionPage = new ExtranetUsersGroups();
                 $hasAccess = $permissionPage->setAdminId($adminID)
@@ -51,7 +53,7 @@
 
             return $hasAccess;
         }
-        
+
         public static function CheckGroupPagesPermissions($groupID, $pageID, $permission)
         {
             $hasAccess = false;
@@ -67,11 +69,15 @@
 
         }
 
-        public static function getAllUserGroups($userID)
+        public static function getAllUserGroups($userID, Zend_Db_Adapter_Pdo_Mysql $db = null)
         {
-            $userGroupAssociationData = new ExtranetUsersGroups();
-            $data = $userGroupAssociationData->setAdminId($userID)
-                ->getGroups();
+            if (!is_null($db)){
+                $usrGrpAssocData = new ExtranetUsersGroups(array('db' => $db));
+            }else{
+                $usrGrpAssocData = new ExtranetUsersGroups();
+            }
+
+            $data = $usrGrpAssocData->setAdminId($userID)->getGroups();
 
             return $data;
         }

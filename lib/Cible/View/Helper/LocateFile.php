@@ -35,10 +35,12 @@ class Cible_View_Helper_LocateFile extends Zend_View_Helper_Abstract {
      * @return string $filePath The path where the file is stored
      */
     public function locateFile($file, $path = null, $force = '', $theme = null) {
-        if (Zend_Registry::isRegistered('currentTheme'))
+        if (Zend_Registry::isRegistered('currentTheme')){
             $this->_theme = Zend_Registry::get('currentTheme');
-        if (!is_null($theme))
+        }
+        if (!is_null($theme)){
             $this->_theme = $theme;
+        }
 
         $themePath = $this->view->setThemePath($this->_theme);
 
@@ -62,7 +64,7 @@ class Cible_View_Helper_LocateFile extends Zend_View_Helper_Abstract {
                 break;
         }
 
-        $imgType = array('jpg', 'gif', 'png', 'svg');
+        $imgType = array('jpg', 'gif', 'png', 'svg', 'ico');
 
         if ($file != null) {
             $type = substr($file, strrpos($file, '.') + 1);
@@ -76,8 +78,15 @@ class Cible_View_Helper_LocateFile extends Zend_View_Helper_Abstract {
             switch ($type) {
                 case 'img':
                     if (!$isBackOffice) {
-                        $imgPath = (empty($path)) ? $themePath . "/common/" :
-                                $themePath . $path . '/';
+                        $imgPath = $themePath . "/common/" ;
+                        if (!empty($path)){
+                            $imgPath = $themePath . $path . '/';
+                            $tmp = Zend_Registry::get('fullDocumentRoot')
+                            . $imgPath . $file;
+                            if (!is_file($tmp)){
+                                $imgPath = $themePath . "/common/" ;
+                            }
+                        }
                         $filePath .= $imgPath . $file;
                     } else {
                         $imgPath = (empty($path)) ? $themePath . "/" :
@@ -94,10 +103,10 @@ class Cible_View_Helper_LocateFile extends Zend_View_Helper_Abstract {
                     $themePath .= $type . '/';
                     $cssPath = (empty($path)) ? $themePath :
                             $themePath . $path . '/';
-                    
+
                     $filePathTmp = $filePath;
                     $filePath .= $cssPath . $file;
-                    
+
                     if ($isMobile) {
                         $filePathTmp .= $cssPath . 'mobile-' . $file;
                         if (file_exists($_SERVER['DOCUMENT_ROOT'] . $filePathTmp)) {
@@ -116,9 +125,10 @@ class Cible_View_Helper_LocateFile extends Zend_View_Helper_Abstract {
                     break;
             }
         }
-
-        if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $filePath) && $this->_theme !== 'default')
+        $docRoot = rtrim(Zend_Registry::get('fullDocumentRoot'),'/');
+        if (!file_exists($docRoot . $filePath) && $this->_theme !== 'default'){
             $filePath = $this->locateFile($file, $path, $force, 'default');
+        }
 
         return $filePath;
     }

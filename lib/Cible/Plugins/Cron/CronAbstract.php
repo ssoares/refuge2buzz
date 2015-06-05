@@ -40,7 +40,7 @@ abstract class Cible_Plugins_Cron_CronAbstract implements Cible_Plugins_Cron_Cro
     protected function _getLockFile()
     {
         $fileName = 'cron.' . get_class($this) . '.lock';
-        $lockFile = realpath(APPLICATION_PATH . '/tmp/') . '/' . $fileName;
+        $lockFile = realpath(APPLICATION_PATH . '/localtmp/') . '/' . $fileName;
         return $lockFile;
     }
 }

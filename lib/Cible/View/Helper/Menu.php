@@ -150,13 +150,10 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
         if (isset($options['isSiteMap']))
             $this->_isSiteMap = $options['isSiteMap'];
 
-        $oPages = new PagesObject();
-        $pageData = $oPages->pageIdByController($this->_selectedPage);
-        $this->_selectedPageId = $pageData['P_ID'];
-
+        $_menu = new MenuObject();
         if (!is_array($menu))
         {
-            $_menu = new MenuObject($menu);
+            $_menu->initMenu($menu);
             $parentId = isset($options['parentId']) ? $options['parentId'] : 0;
             $tree = $_menu->populate($parentId);
         }
@@ -166,7 +163,7 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
         }
         else
         {
-            $_menu = new MenuObject($menu['MID_MenuID']);
+            $_menu->initMenu($menu['MID_MenuID']);
             unset($menu['MID_MenuID'], $menu['MID_ParentId']);
 
             $tree = $menu;
@@ -189,9 +186,12 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                 $this->_selectedPage = $currentUrl;
             }
         }
-        if (is_object($_menu) && $_menu->getId())
+        if (is_object($_menu) && $_menu->getId()){
+            $oPages = $_menu->getPagesObject();
+            $pageData = $oPages->pageIdByController($this->_selectedPage);
+            $this->_selectedPageId = $pageData['P_ID'];
             $menuItem = $_menu->getMenuItemByPageId($this->_selectedPageId);
-
+        }
         if ($menuItem)
         {
             $this->_getParentsMenuId($menuItem, $_menu);
@@ -245,8 +245,8 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
             if(isset($object)){
 
                 $MID_FontIcon = "";
-                if(isset($object['MID_FontIcon'])){
-                    $MID_FontIcon = $object['MID_FontIcon'];
+                if(!empty($object['MID_FontIcon'])){
+                    $MID_FontIcon = 'icon-' . $object['MID_FontIcon'];
                 }
 
                 $tmp = '';
@@ -265,25 +265,23 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                 {
                     $link = 'javascript:void(0)';
                     array_push($liclass, 'placeholder');
-                }
-                else
-                {
-                    if (substr($link, 0, 4) == 'http'
-                        || substr($link, 0, 11) == 'javascript:')
-                    {
-                        $link = "{$link}";
+                }else{
+                    if (preg_match('/^http/', $link)){
                         $external = true;
-                    }
-                    else
+                    }else{
                         $link = "{$this->view->baseUrl()}/{$link}";
+                    }
                 }
 
                 if(isset($object['MID_Show'])){
                     if($object['MID_Show']==0){
-                          array_push($liclass, 'hidden');
+                          array_push($liclass, 'doNotShow');
                     }
                 }
-
+                $target = '';
+                if ($external){
+                    $target = 'target="_blank"';
+                }
                 //if ($external)
                 //    $menuContent = "<a href='{$link}' class='level-{$level}' target='_blank'>{$object['Title']}</a>\r\n";
                 if (isset ($object['loadImage']) && (bool)$object['loadImage'] && $this->_startLevel == 1 && !$this->_isSiteMap)
@@ -307,21 +305,15 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                     $menuContent  = "<p class='imgMenuCont'>";
                     if (!empty($object['menuImage']))
                     {
-                        if ($external)
-                            $menuContent .= "<a href='{$link}' class='level-{$level}' target='_blank'>";
-                        else
-                            $menuContent .= "<a href='{$link}' class='level-{$level}'>";
-
+                        $menuContent .= "<a href='{$link}' class='level-{$level}' {$target}'>";
                         $objTitle = strip_tags(htmlentities($object['Title']));
                         $menuContent .= "<img src='{$source}' alt='{$objTitle}' />";
                         $menuContent .= "</a>\r\n";
                     }
                     else
                     {
-                        if ($external)
-                            $menuContent .= "<a href='{$link}' class='level-{$level} icon-{$MID_FontIcon}' target='_blank'>";
-                        else
-                        $menuContent .= "<a href='{$link}' class='level-{$level} icon-{$MID_FontIcon}'>";
+                            $menuContent .= "<a href='{$link}' class='level-{$level} {$MID_FontIcon}' {$target}>";
+
                         $menuContent .= $this->view->clientImage('pix.gif', array('alt' => $object['Title'], 'style' =>'height:91px;'));
                         $menuContent .= "</a>\r\n";
 
@@ -338,9 +330,8 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                         $menuContent .= "</a>\r\n";
                         $menuContent .= "</p>";
                     }
-                }
-                else{
-                    $menuContent = "<a href='{$link}' class='level-{$level} icon-{$MID_FontIcon}'>{$object['Title']}</a>\r\n";
+                }else{
+                    $menuContent = "<a href='{$link}' class='level-{$level} {$MID_FontIcon}' {$target}>{$object['Title']}</a>\r\n";
                 }
 
 
@@ -386,7 +377,7 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
 
                     if ($this->setRowStyle)
                         $rowClass = "row{$this->row}";
-                    if (($level < $this->_maxLevel  || $this->_maxLevel == 0) && !empty($object['child'])){
+                    if ($level < $this->_maxLevel  || $this->_maxLevel == 0){
                         $tmp .= "<ul class='level-{$level} {$rowClass} ".$this->_dropdownMenuClass."'>\r\n";
                         $tmp .= $this->generateList($object['child'], $addFirstLastClasses, $level + 1);
                         $tmp .= $this->html;
@@ -405,9 +396,7 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
                 if (count($this->_parentsMenuId))
                     $tmpArray = $this->_parentsMenuId;
 
-                if ($url == $this->_selectedPage
-                    || in_array($object['ID'], $tmpArray)
-                    || (isset($object['Style']) && strstr($object['Style'], 'active')))
+                if ($url == $this->_selectedPage || in_array($object['ID'], $tmpArray))
                 {
 //                    $this->_getParentsMenuId($object);
                     array_push($liclass, 'active');
@@ -513,7 +502,8 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
             $page = $page->toArray();
 
             $menu = Cible_FunctionsPages::getMenuByPageId($page['P_ParentID']);
-            $oMenu = new MenuObject($menu[0]['MID_MenuID']);
+            $oMenu = new MenuObject();
+            $oMenu->initMenu($menu[0]['MID_MenuID']);
 
             $menuId = $menu[0]['MID_ID'];
         }
@@ -547,21 +537,10 @@ class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
         $oCatalog = new CatalogCollection();
         $buildOnObj = $oCatalog->getBuildSubMenuOn();
         $collections = new $buildOnObj();
-        $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list', 14, null, true);
-        $object['Link'] = $catalogPage;
-        if (empty($object['Link']) && $object['PageID'] > 0){
-            $object['Link'] = Cible_FunctionsPages::getPageNameByID($object['PageID'], Zend_Registry::get('languageID'));
-        }
-        $pathInfo  = '';//$this->view->request->getPathInfo();
-        $oCatalog->setActions($pathInfo);
-        $options = array('nesting' => 1,
-            'currentPath' => $oCatalog->getActions());
-        $catalogMenu = $collections->buildCatalogMenu($object, $options);
-        if(isset($object['child'])){
-            $tree = array_merge($catalogMenu['child'], $object['child']);
-        }else{
-            $tree = $catalogMenu['child'];
-        }
+        $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'listtextures', 14, null, true);
+        $object['link'] = $catalogPage;
+        $catalogMenu = $collections->buildCatalogMenu($object, array('nesting' => 1));
+        $tree = array_merge($catalogMenu['child'], $object['child']);
 
         return $tree;
     }

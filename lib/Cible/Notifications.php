@@ -171,7 +171,7 @@ class Cible_Notifications extends Cible_Notify
         $this->_title = $this->_view->getClientText($notification['NM_Title'], $this->_data['language']);
 
 
-        if ($this->_recipient == 'admin' && is_null($this->_from))
+        if (is_null($this->_from))
             $this->_from = $notification['NM_Email'];
 
         if ($this->_recipient == 'admin' && is_null($this->_to))

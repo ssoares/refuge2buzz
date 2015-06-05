@@ -36,8 +36,55 @@
         }
     }
 <?php $this->headScript()->captureEnd() ?>
-
-<div class="block">
-    <?php echo $this->partial('partials/login.phtml', array('form' => $this->form, 'error' => $this->error, 'message' => $this->message)); ?>
-    <?php echo $this->partial('partials/lostPasswordPanel.phtml', array('form' => $this->form, 'error' => $this->error, 'message' => $this->message)); ?>
-</div>
+<section class="login container">
+    <div class="row">
+        <div class="col-xs-12 col-md-6">
+            <div class="col-xs-12">
+                <?php echo $this->getClientText('login_create_new_team_info'); ?>
+                <p class="text-center"><?php echo $this->formSelect('campaign', null, array(), $this->campaignsList); ?></p>
+                <div class="shareTeams">
+                    <section class="teams">
+                        <h2 class="title">
+                            <?php echo $this->getClientText("challengeTeamTitle");?>
+                        </h2>
+                        <a href="<?php echo $this->teamsLink; ?>" class="btn-banner">
+                        <?php echo $this->getClientText("challengeTeamButton");?>
+                        </a>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-12 col-md-6">
+            <?php if($this->message): ?>
+                <span class="subtitles"><?php echo $this->message ?></span>
+            <?php else: ?>
+                <span class="subtitles">
+                    <?php echo $this->getClientText('login_form_login_title') ?>
+                </span>
+            <?php endif; ?>
+            <?php if(isset($this->error)): ?>
+                <p class="login_error"><?php echo $this->error ?></p>
+            <?php endif; ?>
+            <?php echo $this->form; ?>
+            <div id="forgot-password">
+                <?php echo $this->link('javascript:toggleLostPassword();',
+                    $this->getClientText('lost_password_link'))
+                ?>
+            </div>
+            <?php echo $this->partial('partials/lostPasswordPanel.phtml',
+                array('form' => $this->form, 'error' => $this->error,
+                    'message' => $this->message));
+            ?>
+        </div>
+    </div>
+</section>
+<script type="text/javascript">
+//<![CDATA[
+$(document).ready(function(){
+    $('#campaign').on('change', function(){
+        var btn = $('.btn-banner');
+        btn.prop('href', btn.prop('href') + '/' + $(this).val())
+    }).change();
+});
+//]]>
+</script>

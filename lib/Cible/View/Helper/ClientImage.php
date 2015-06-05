@@ -58,7 +58,7 @@
             if( !empty($option) )
             {
                 foreach($option as $key => $value){
-                    if(empty($_alt) && !in_array($key,$exludeOptions))
+                    if(!in_array($key,$exludeOptions))
                         $_attr .= "$key=\"$value\" ";
                 }
             }

@@ -70,14 +70,17 @@ class Cible_Log
 
     public function setUser($user = null)
     {
-        if (is_null($user) && Zend_Registry::isRegistered('user'))
-            $user = Zend_Registry::get('user');
-        elseif (is_null($user) && Zend_Auth::getInstance()->hasIdentity())
-        {
+        if (!is_null($user)){
+            $this->_user = $user;
+        }elseif (Zend_Auth::getInstance()->hasIdentity()
+            && preg_match('/extranet/', FRONTEND)){
             $identity = Zend_Auth::getInstance()->getIdentity();
             $user['member_id'] = $identity->EU_ID;
             $user['email'] = $identity->EU_Email;
+        }elseif (is_null($user) && Zend_Registry::isRegistered('user')){
+            $user = Zend_Registry::get('user');
         }
+
         $this->_user = $user;
         return $this;
     }
@@ -128,18 +131,17 @@ class Cible_Log
     }
 
 
-    public function __construct($options = null)
+    public function __construct($options = array())
     {
         $this->_oLog = new LogObject();
         $this->setProperties($options);
-        if (empty($this->_user))
+        if (empty($this->_user)){
             $this->setUser();
-
+        }
         if (!empty($this->_user))
         {
             $this->setLogged();
-            if(empty($this->_userId))
-                $this->setUserId($this->_user['member_id']);
+            $this->setUserId($this->_user['member_id']);
             if (!empty($this->_user['email']))
                 $this->setUserEmail($this->_user['email']);
         }
@@ -168,11 +170,15 @@ class Cible_Log
 
     public function log(array $options = array())
     {
-        if (isset($options['data']) && empty($this->_data))
+        if (isset($options['data']) && empty($this->_data)){
             $this->setData($options['data']);
-        if (!empty($this->_data['L_Data']))
+        }
+        if (!empty($this->_data['L_Data'])){
             $this->_cleanEmptyFields($this->_data['L_Data']);
-
+        }
+        if (empty($this->_data['L_ModuleId']) && $this->_moduleId > 0){
+            $this->_data['L_ModuleID'] = $this->_moduleId;
+        }
         $this->setHistory('history');
         // User is connected ?
         if ($this->_logged)
@@ -181,18 +187,21 @@ class Cible_Log
             $this->_processLoggedOut();
 
         // create / update Cookie
-        $this->manageCookieHistory('history');
+        if (SESSIONNAME == 'application'){
+            $this->manageCookieHistory('history');
+        }
         if (!empty($this->_data['L_Data']))
         {
             if ($this->_logIfExists)
                 $exists = false;
-            else
+            else{
+                $this->_oLog->setModuleId($this->_moduleId);
                 $exists = $this->_oLog->findRecords($this->_data);
-
-        }
+            }
         // log data
         if (!$exists)
             $this->_oLog->writeData($this->_data);
+        }
     }
 
     public function manageCookieHistory($name)

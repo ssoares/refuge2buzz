@@ -9,7 +9,7 @@
  * @subpackage Cible_View_Helper
  * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
  *             (http://www.ciblesolutions.com)
- * @version    $Id: CssFromLess.php 1741 2014-12-10 18:05:21Z ssoares $
+ * @version    $Id: CssFromLess.php 1683 2014-09-08 20:59:58Z ldrapeau $
  */
 
 /**
@@ -54,9 +54,9 @@ class Cible_View_Helper_CssFromLess extends Zend_View_Helper_Abstract {
         }
         foreach ($styles as $less => $css) {
             foreach ($types as $type) {
-                $source = Zend_Registry::get('serverDocumentRoot') . $this->view->locateFile($type . $less);
+                $source = Zend_Registry::get('fullDocumentRoot') . $this->view->locateFile($type . $less);
                 $output = str_replace('less', 'css', $source);
-//                $output = Zend_Registry::get('serverDocumentRoot') . $this->view->locateFile($type . $css);
+//                $output = Zend_Registry::get('fullDocumentRoot') . $this->view->locateFile($type . $css);
                 $importCacheFile = $lessParserImportDir . $type . $less . '.json';
                 $this->_importsList = array();
                 $hasToBeParsed = false;

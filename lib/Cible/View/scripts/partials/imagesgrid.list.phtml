@@ -145,7 +145,7 @@ $('#filteredSearch').click();
         <?php if ($this->disable_export_to_excel != "true"): ?>
 
             <div class="exporter">
-                <a href="<?php echo $this->url(array('action' => $this->to_excel_action)) ?>" id="export_to_excel"><?php echo $this->getCibleText('export_to_excel') ?></a>
+                <a href="<?php echo $this->url(array('action' => $this->to_excel_action)) ?>" id="export_to_excel" class="export_to_excel"><?php echo $this->getCibleText('export_to_excel') ?></a>
             </div>
 
         <?php endif; ?>

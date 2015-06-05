@@ -8,12 +8,14 @@
 
             $aclSession = new Zend_Session_Namespace(SESSIONNAME);
             $acl = $aclSession->acl;
+            if (!$this->view){
+                $vRender = Zend_Controller_Action_HelperBroker::getStaticHelper('ViewRenderer');
+                $this->view = $vRender->view;
+            }
             $adminInfo = $this->view->IsAdministrator();
             $aclInfo = $acl->isAllowed($authID, $resource, $action);
-           // if(!$aclInfo)
-             //   exit;
 
-            if ( ($adminInfo==1||$adminInfo==2) || $aclInfo){
+            if ( ($adminInfo==1) || $aclInfo){
                 return true;
             }
             else{

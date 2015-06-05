@@ -29,94 +29,92 @@ class Cible_View_Helper_BreadcrumbCatalog extends Zend_View_Helper_Abstract
      *
      * @return string
      */
-    public function breadcrumbCatalog($level = 1, $showHome = true, $langId = null, $options = array())
+    public function breadcrumbCatalog($level = 1, $showHome = true, $langId = null)
     {
-
-        $_breadcrumb = array();
-        $this->first = true;
 
         if( $langId == null )
             $langId = Zend_Registry::get('languageID');
-        $this->langId = $langId;
+
+        $_baseUrl = Zend_Registry::get('baseUrl');
+
+        $_breadcrumb = array();
+        $_first = true;
 
         $pathInfo  = $this->view->request->getPathInfo();
-        $oProducts = new CatalogCollection();
+        $oProducts = new ProductsCollection();
+
         $oProducts->setActions($pathInfo);
         $oProducts->getDataByName();
 
-        $subCatId = null;
-        $this->catId = $oProducts->getCatId();
-        $this->prodId = $oProducts->getProdId();
-        $details = Cible_FunctionsPages::getPageDetails($this->view->currentPageID, $this->langId);
-        $pageLink = $this->view->link($this->view->baseUrl() . '/' .$details['PI_PageIndex'],$details['PI_PageTitle']);
-        if ($this->catId == null && $subCatId == null && $this->prodId == null)
+        $catId    = $oProducts->getCatId();
+        $subCatId = $oProducts->getSubCatId();
+        $prodId   = $oProducts->getProdId();
+
+        if ($catId == null && $subCatId == null && $prodId == null)
         {
-            $_breadcrumb[0] = $this->view->pageTitle()->toString(null, null, true);
+            $_breadcrumb = $this->view->breadcrumb(true) . "<b>" . $this->view->selectedPage . "</b>";
             return  $_breadcrumb;
         }
         else
         {
-            $this->pathElemts = $oProducts->getActions();
-            $tmp = array_reverse($this->pathElemts, true);
-            foreach( $tmp as $key => $value)
+            $pathElemts = $oProducts->getActions();
+
+            if($prodId)
             {
-                if ($value != $details['PI_PageIndex']){
-                    $link = $this->_getLinks($value);
-                    unset($this->pathElemts[$key]);
-                    array_push($_breadcrumb, $link);
-                }
+
+                $_class = '';
+                $product = new ProductsObject();
+                $details = $product->populate($prodId, $langId);
+                if( $_first ){$_class = 'current_page';}
+                $link = $_first ? "<b>" . $details['PI_Name'] . "</b>" : "<a href='{$_baseUrl}/{$this->view->selectedPage}/{$pathElemts[0]}/{$pathElemts[1]}/{$pathElemts[2]}' class='{$_class}'>{$details['PI_Name']}</a>";
+                array_push($_breadcrumb, $link);
+                if( $_first ){$_first = false;}
             }
-            array_push($_breadcrumb, $pageLink);
-            return $_breadcrumb;
+
+            if($subCatId)
+            {
+                $_class = '';
+                $object = new SubCategoriesObject();
+                $details = $object->populate($subCatId, $langId);
+                if( $_first ){$_class = 'current_page';}
+                $link = $_first ? "<b>" . $details['SCI_Name'] . "</b>" : "<a href='{$_baseUrl}/{$this->view->selectedPage}/{$pathElemts[0]}/{$pathElemts[1]}' class='{$_class}'>{$details['SCI_Name']}</a>";
+                array_push($_breadcrumb, $link);
+                if( $_first ){$_first = false;}
+            }
+            if($catId)
+            {
+                $_class = '';
+                $object = new CatalogCategoriesObject();
+                $details = $object->populate($catId, $langId);
+                if( $_first ){$_class = 'current_page';}
+                $link = $_first ? "<b>" . $details['CCI_Name'] . "</b>" : "<a href='{$_baseUrl}/{$this->view->selectedPage}/{$pathElemts[0]}' class='{$_class}'>{$details['CCI_Name']}</a>";
+                array_push($_breadcrumb, $link);
+                if( $_first ){$_first = false;}
+
+            }
+
+            $details = Cible_FunctionsPages::getPageDetails($this->view->currentPageID, $langId);
+
+            $link = $_first ? '' : "<a href='{$_baseUrl}/{$details['PI_PageIndex']}' class='{$_class}'>{$details['PI_PageTitle']}</a>";
+            array_push($_breadcrumb, $link);
+
+            if($showHome){
+                $homeDetails = Cible_FunctionsPages::getHomePageDetails();
+                $link = "<a href='{$_baseUrl}/{$homeDetails['PI_PageIndex']}' class='{$_class}'>". $homeDetails['PI_PageTitle'] . "</a>";
+                array_push($_breadcrumb, $link);
+            }
+
+            $_breadcrumb = array_reverse($_breadcrumb);
+//            for($i=0;$i<$level;$i++){
+//                array_splice($_breadcrumb,$i+1,1);
+//            }
+            // add the > after the breadcrumb when only on item is found
+            if( count($_breadcrumb) == 1 )
+                return "{$_breadcrumb[0]} > ";
+            else
+                return implode( ' > ', $_breadcrumb);
+
         }
-    }
-
-    private function _getLinks($value)
-    {
-        if ($this->prodId > 0){
-            $link = $this->_getProductLink($value);
-            $this->prodId = 0;
-        }else{
-            $link = $this->_getCategoriesLink($value);
-        }
-
-        return $link;
-    }
-
-    private function _getProductLink($value)
-    {
-        $_class = '';
-        $obj = new ProductsObject();
-        $details = $obj->populate($this->prodId, $this->langId);
-        if( $this->first){
-            $_class = 'current_page';
-            $link = $details[$obj->getTitleField()];
-            $this->first = false;
-
-        }else{
-            $href = $this->view->baseUrl() . implode('/', $this->pathElemts);
-            $link = $this->view->link($href, $details[$obj->getTitleField()]);
-        }
-
-        return $link;
-    }
-
-    private function _getCategoriesLink($value)
-    {
-        $_class = '';
-        $obj = new CatalogCategoriesObject();
-        if( $this->first){
-            $details = $obj->populate($this->catId, $this->langId);
-            $_class = 'current_page';
-            $link = $details[$obj->getTitleField()];
-            $this->first = false;
-        }else{
-            $id = $obj->getIdByName($value);
-            $details = $obj->populate($id, $this->langId);
-            $href = $this->view->baseUrl() . implode('/', $this->pathElemts);
-            $link = $this->view->link('/' . $href, $details[$obj->getTitleField()]);
-        }
-
-        return $link;
     }
 }
+?>

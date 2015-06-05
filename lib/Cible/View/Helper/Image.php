@@ -4,7 +4,8 @@
         public function image($source, $option=null){
 
             $_image_tag = '<img src="%SOURCE%" alt="%ALT%" %ATTR%  />';
-            if (!file_exists($_SERVER['DOCUMENT_ROOT'] . $source) && !strlen(strstr($source, 'http://')) && !isset($option['direct']))
+            $docRoot = rtrim(Zend_Registry::get('fullDocumentRoot'), '/');
+            if (!file_exists($docRoot . $source) && !strlen(strstr($source, 'http://')) && !isset($option['direct']))
                 $_source = $this->view->locateFile($source);
             else
                 $_source = $source;

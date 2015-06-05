@@ -447,7 +447,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
             $defaultStates = $config->address->default->states;
             $hiddenSrc = new Zend_Form_Element_Hidden('selectedState');
             $hiddenSrc->setValue($defaultStates);
-            $hiddenSrc->removeDecorator('Label');
+            $hiddenSrc->setDecorators(array('ViewHelper'));
             $this->_form->addElement($hiddenSrc);
             $this->_form->addElement($field);
         }
@@ -562,7 +562,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
                 ->addFilter('StripTags')
                 ->addFilter('StringTrim')
                 ->addFilter('StringToLower')
-                ->setAttrib('class', 'fullTextInput')
+                ->setAttrib('class', 'stdTextInput')
                 ->addValidator($regexValidate);
 
             if($this->$seq)
@@ -616,7 +616,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
         {
             $field = new Zend_Form_Element_Text($this->$property);
             $field->setRequired ($this->$req)
-                ->setAttrib('class', 'fullTextInput')
+                ->setAttrib('class', 'stdTextInput')
                 ->setLabel($this->view->getCibleText('form_label' . $property));
 
             if($this->$seq)
@@ -624,7 +624,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
             if ($this->$req)
             {
-                $field->setAttrib('class', 'fullTextInput ' . $req);
+                $field->setAttrib('class', 'stdTextInput ' . $req);
                 $this->_addRequiredValidator ($field);
             }
             $label = $field->getDecorator('Label');
@@ -645,7 +645,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
             $field = new Zend_Form_Element_Text($this->$property);
             $field->setRequired ($this->$req)
                     ->setLabel($this->view->getCibleText('form_label' . $property))
-                    ->setAttrib('class', 'fullTextInput');
+                    ->setAttrib('class', 'stdTextInput');
 
 
             if($this->$seq)
@@ -653,7 +653,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
             if ($this->$req)
             {
-                $field->setAttrib('class', 'fullTextInput ' . $req);
+                $field->setAttrib('class', 'stdTextInput ' . $req);
                 $this->_addRequiredValidator ($field);
             }
 
@@ -791,7 +791,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
             $field = new Zend_Form_Element_Text($this->$property);
             $field->setRequired ($this->$req)
                     ->setLabel($this->view->getCibleText('form_label' . $property))
-                    ->setAttrib('class', 'fullTextInput');
+                    ->setAttrib('class', 'stdTextInput');
 
 
             if($this->$seq)
@@ -799,7 +799,7 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
             if ($this->$req)
             {
-                $field->setAttrib('class', 'fullTextInput ' . $req);
+                $field->setAttrib('class', 'stdTextInput ' . $req);
                 $this->_addRequiredValidator ($field);
             }
             $label = $field->getDecorator('Label');
@@ -837,31 +837,31 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
         {
             $tmp  = "var selectedState = 0;\r\n";
             $tmp .= "var selectedCity  = 0;\r\n";
-            $tmp .= "if($('input[id$=selectedState]').length)\r\n";
-            $tmp .= "    selectedState = ($('input[id$=selectedState]').val()).split('||');\r\n";
-            $tmp .= "if($('input[id$=selectedCity]').length)\r\n";
-            $tmp .= "    selectedCity  = ($('input[id$=selectedCity]').val()).split('||');\r\n";
+            $tmp .= "if($('input[id$=selectedState]').length){\r\n";
+            $tmp .= "    selectedState = ($('input[id$=selectedState]').val()).split('||');}\r\n";
+            $tmp .= "if($('input[id$=selectedCity]').length){\r\n";
+            $tmp .= "    selectedCity  = ($('input[id$=selectedCity]').val()).split('||');}\r\n";
         }
         $langId = Zend_Registry::get('languageID');
-
-        $countries      = Cible_FunctionsGeneral::getCountries();
-        $json_countries = json_encode($countries);
-
-        $script =<<< EOS
+        $onLive = SESSIONNAME == 'application' ? 'on' : 'live';
+//        $countries      = Cible_FunctionsGeneral::getCountries();
+//        $json_countries = json_encode($countries);
 //        var countries = {$json_countries};
+        $script =<<< EOS
         var langId = {$langId};
         {$tmp}
-        $('#{$idPrefix}{$this->_country}').live('change',function()
+        $('select[id$={$idPrefix}{$this->_country}]').{$onLive}('change',function()
         {
-            var ctl_states = $('#{$idPrefix}{$this->_state}')
-            var ctl_cities = $('#{$idPrefix}{$this->_city}')
+            var ctl_states = $('select[id$={$idPrefix}{$this->_state}]')
+            var ctl_cities = $('select[id$={$idPrefix}{$this->_city}]')
             var states_list = [];
+            ctl_states.empty();
+            ctl_cities.empty();
+
             $.getJSON(
                 '{$this->view->baseUrl()}/default/index/ajax-states/countryId/' + $(this).val() + '/langId/' + langId,
                 function(states_list){
-                    ctl_states.empty();
-                    ctl_cities.empty();
-                    $('<option value="-1" label="">{$this->view->getCibleText('form_label_select_state')}</option>').appendTo(ctl_states);
+                    $('<option value="-1" label="">{$this->view->getCibleText('form_select_default_label')}</option>').appendTo(ctl_states);
                     $.each(states_list, function(i, item){
                         if(selectedState[{$index}] == item.id){
                             $('<option value="'+item.id+'" label="'+item.name+'" selected="selected">'+item.name+'</option>').appendTo(ctl_states);
@@ -873,20 +873,20 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
                     });
 
-                    $('#{$idPrefix}{$this->_state}').trigger('cible.modification');
-                    if ($('#{$idPrefix}{$this->_state} option').length < 2)
+                    ctl_states.trigger('cible.modification');
+                    if ($('select[id$={$idPrefix}{$this->_state}] option').length < 2)
                     {
                         ctl_states.parent('dd').addClass('hidden');
                         ctl_states.attr('disabled', 'disabled');
                         $('label[for={$idPrefix}{$this->_state}]').parent('dt').addClass('hidden');
-                        $('#{$idPrefix}{$this->_stateTxt}').parent('dd').removeClass('hidden');
+                        $('select[id$={$idPrefix}{$this->_stateTxt}]').parent('dd').removeClass('hidden');
                     }
                     else
                     {
                         ctl_states.parent('dd').removeClass('hidden');
                         ctl_states.removeAttr('disabled');
                         $('label[for={$idPrefix}{$this->_state}]').parent('dt').removeClass('hidden');
-                        $('#{$idPrefix}{$this->_stateTxt}').parent('dd').addClass('hidden');
+                        $('select[id$={$idPrefix}{$this->_stateTxt}]').parent('dd').addClass('hidden');
                     }
                 }
             );
@@ -895,9 +895,9 @@ EOS;
         if ($this->_addScriptState)
         {
             $script .=<<<EOS
-            $('#{$idPrefix}{$this->_state}').live('change', function()
+            $('select[id$={$idPrefix}{$this->_state}]').{$onLive}('change', function()
             {
-                var ctl_cities = $('#{$idPrefix}{$this->_city}');
+                var ctl_cities = $('select[id$={$idPrefix}{$this->_city}]');
                 ctl_cities.empty();
                 var stateId = $(this).val();
 
@@ -953,7 +953,7 @@ EOS;
             $this->view->jQuery()->addJavascriptFile("{$this->view->baseUrl()}/js/jquery/jquery.maskedinput.min.js");
 
             $script =<<< EOS
-            $('.zipCode_format').mask('a9a 9a9');
+//            $('.zipCode_format').mask('a9a 9a9');
 //            $('.phoneNum').mask('(999) 999-9999');
 //            $('.faxNum').mask('(999) 999-9999');
 //            $('.phoneFree').mask('1-999-999-9999');
@@ -1164,6 +1164,7 @@ EOS;
     private function _addJsActions($prefix = "", $type = "")
     {
         $script = "";
+        $onLive = SESSIONNAME == 'application' ? 'on' : 'live';
         switch ($type)
         {
             case 'duplicate':
@@ -1222,7 +1223,7 @@ EOS;
                     }
                 });
 
-                $('input[id^={$prefix}]').live('click',function(){
+                $('input[id^={$prefix}]').{$onLive}('click',function(){
                     var dl = $('input[id^={$prefix}]').parents('dl:first')
                     var inputs = dl.children().children('input[type=text]');
                     var selects = dl.children().children('select');

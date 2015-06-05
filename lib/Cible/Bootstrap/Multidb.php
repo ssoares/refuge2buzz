@@ -15,6 +15,7 @@
 class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
 
     const NAME = 'multidb';
+    const CFG_EXT = '.ini';
 
     /**
      * String to define if we are int the front office
@@ -33,7 +34,9 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
     protected $_importsList = array();
 
     public function run() {
+
         try {
+            Zend_Registry::set('config', $this->config);
             $this->bootstrap('FrontController');
             $front = $this->getResource('FrontController');
             if (!preg_match(self::BO_NAME, FRONTEND)) {
@@ -51,7 +54,9 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
                 $router->addRoute('rss', $route);
             }
 
+
             $front->dispatch();
+
         } catch (Exception $e) {
             echo 'An error has occured.' . PHP_EOL;
             echo "<pre>";
@@ -92,26 +97,48 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
     }
 
     protected function _initConfig() {
+        $entity = '';
         // Load the config files with parameters form the front-office and back-office.
-        try
-        {
-            $imgConfig = $this->session->currentSite;
-            if (!$this->session->currentSite){
-                $imgConfig = APPLICATION_ENV;
-            }
-            $imgCfg = new Zend_Config_Ini($this->_applicationPath . "config.ini", 'Image-' . $imgConfig, true);
-        } catch (Exception $ex) {
-        $imgCfg = new Zend_Config_Ini($this->_applicationPath . "config.ini", 'Images', true);
+        if (isset($this->session->currentSite)
+            && $this->session->currentSite != $this->_options['cfgKey']){
+            $entity = $this->session->currentSite;
         }
-
-        $cfg = new Zend_Config_Ini($this->_appPath . "config.ini", 'general', true);
-        $config = new Zend_Config($this->getOptions(), true);
-        $config->merge($imgCfg);
-        $config->merge($cfg);
-
-        Zend_Registry::set('config', $config);
+        $config = $this->_setConfig($entity);
 
         return $config;
+    }
+
+    protected function _initLoadEntitiesConfig()
+    {
+        $list = array_values( preg_grep( '/^((?!master.ini|config.ini).)*$/', glob($this->_applicationPath . "config/*.ini") ) );
+        $type = $this->_options['type'];
+        foreach ($list as $value)
+        {
+            $tmpCfg = new Zend_Config_Ini($value);
+            $file = pathinfo($value);
+            $tmpConfigs[$file['filename']] = $multisite[] = array('name' => $file['filename'],
+                'label' => $tmpCfg->general->label,
+                'active' => $tmpCfg->$type->active,
+                'firstRun' => $tmpCfg->$type->firstRun,
+                'parent' => $tmpCfg->general->parent,
+                );
+            if ($tmpCfg->general->children){
+                $tmpConfigs[$file['filename']]['children'] = $tmpCfg->general->children->toArray();
+            }
+        }
+        $this->config->multisite = $multisite;
+        $this->config->levels = array();
+        $related = $this->_getFirstParentChildren($tmpConfigs);
+        $this->_getParentChildrenLevels($tmpConfigs);
+        $this->config->relatedEntities = $related;
+        // ensure that the errors appear
+        //error_reporting(E_ALL ^ E_NOTICE | E_STRICT);
+        if (ISDEV){
+            error_reporting(E_ALL | E_STRICT);
+            ini_set('display_errors', true);
+            ini_set('xdebug.max_nesting_level', 2000);
+        }
+
     }
 
     /**
@@ -124,19 +151,27 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
         $multidb = $this->getPluginResource('multidb');
         Zend_Registry::set('dbs', $multidb);
         $dbAdapter = $multidb->getDefaultDb();
-        if (isset($this->session->currentSite) && !preg_match(self::FO_NAME, FRONTEND))
+
+        try{
+            if (isset($this->session->currentSite) && !preg_match(self::FO_NAME, FRONTEND)){
+
+            }else {
+            }
+
             $dbAdapter = $multidb->getDb($this->session->currentSite);
-        else {
+        }catch(Exception $exc){
+            $currentDbName = $dbAdapter->fetchOne("select DATABASE();");
             foreach ($this->config->multisite as $data) {
                 if ((bool) $data->active) {
                     $name = $data->name;
                     $dbName = $this->config->resources->multidb->$name->dbname;
-                    $currentDbName = $dbAdapter->fetchOne("select DATABASE();");
                     if ($dbName === $currentDbName)
                         $this->session->currentSite = $data->name;
                 }
             }
+            echo $exc->getTraceAsString();
         }
+
         if (version_compare(phpversion(), '5.3.6', '<'))
             $dbAdapter->query('SET NAMES utf8');
 
@@ -174,6 +209,9 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
         $view->addBasePath("{$lib_path}/Cible/Validate");
         $view->assign('currentSite', $this->session->currentSite);
         $view->setEncoding('utf-8');
+        Zend_Controller_Action_HelperBroker::addHelper(new Cible_Controller_Action_Helper_SwitchDB());
+        Zend_Controller_Action_HelperBroker::addHelper(new Cible_Controller_Action_Helper_WriteFile());
+        Zend_Controller_Action_HelperBroker::addHelper(new Cible_Controller_Action_Helper_Reports());
         // Ajoutons la  au ViewRenderer
         $viewRenderer = Zend_Controller_Action_HelperBroker::getStaticHelper(
                         'ViewRenderer'
@@ -214,25 +252,31 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
          *  Enable (static texts) cache lifetime accordingto the cache duration
          * value in the config (default value: 7200 = 2 hours)
          */
-        if ((bool) $this->config->cache->enabled)
+        if ((bool) $this->config->cache->enabled){
             $frontendOptions = array(
                 'lifetime' => $this->config->cache->duration,
                 'automatic_serialization' => true
             );
+        }
 
         // Directory where to put the cache files
-        if (!is_dir(APPLICATION_PATH . '/tmp/' . $this->session->currentSite))
-            mkdir(APPLICATION_PATH . '/tmp/' . $this->session->currentSite);
+        if (!is_dir(APPLICATION_PATH . '/localtmp/' . $this->session->currentSite))
+            mkdir(APPLICATION_PATH . '/localtmp/' . $this->session->currentSite);
         $backendOptions = array(
-            'cache_dir' => APPLICATION_PATH . '/tmp/' . $this->session->currentSite
+            'cache_dir' => APPLICATION_PATH . '/localtmp/' . $this->session->currentSite
         );
         $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
-
+        if ((bool) $this->config->cache->enabled){
+            Zend_Db_Table_Abstract::setDefaultMetadataCache($cache);
+        }
         Zend_Registry::set('cache', $cache);
     }
 
     protected function _initPaths() {
         $www_root = rtrim(dirname(dirname(filter_input(INPUT_SERVER, 'PHP_SELF'))), '/') . "/";
+        if (empty($www_root)){
+            $www_root = rtrim(dirname(dirname($_SERVER['PHP_SELF'])), '/') . "/";
+        }
         $tmpPath = "";
         $root = filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
         $isHttpsOn = filter_input(INPUT_SERVER, 'HTTPS');
@@ -248,15 +292,16 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
             $www_root .= $tmpPath;
         }
         $protocol = 'http://';
-        if ($isHttpsOn)
+        if ($isHttpsOn){
             $protocol = 'https://';
-
+        }
+        Zend_Registry::set('protocol', $protocol);
+        $this->view->assign('protocol', $protocol);
         $absolute_web_root = $protocol . $this->config->domainName . $www_root;
 
         if (preg_match(self::FO_NAME, FRONTEND)) {
-            $this->_currentSite = $this->view->siteList(array('getValues' => true, 'frontOffice' => true));
-        } else {
-            if (!empty($this->session->currentSite))
+            $this->_currentSite = $this->_options['cfgKey'];
+        } elseif (!empty($this->session->currentSite)){
                 $this->_currentSite = $this->session->currentSite;
         }
         $lucenePath = APPLICATION_PATH . "/{$this->config->document_root}/" . $this->_currentSite . '/indexation/all_index';
@@ -266,7 +311,6 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
             mkdir(APPLICATION_PATH . "/{$this->config->document_root}/" . $this->_currentSite);
         }
         if (!is_dir(APPLICATION_PATH . "/{$this->config->document_root}/" . $this->_currentSite . '/indexation/')) {
-
             mkdir(APPLICATION_PATH . "/{$this->config->document_root}/" . $this->_currentSite . '/indexation/');
             mkdir($lucenePath);
         }
@@ -276,8 +320,9 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
         Zend_Registry::set('lucene_index', $lucenePath);
         Zend_Registry::set('lucene_pdf', $lucenePathPdf);
         Zend_Registry::set('document_root', $www_root);
-        Zend_Registry::set('serverDocumentRoot', $root);
-        Zend_Registry::set('fullDocumentRoot', $root . $www_root);
+        Zend_Registry::set('serverDocumentRoot', dirname($root));
+        Zend_Registry::set('fullDocumentRoot', rtrim($root,'/') . $www_root);
+        Zend_Registry::set('logPath', $root . $www_root . '../logfiles');
         Zend_Registry::set('web_root', $www_root);
         Zend_Registry::set('www_root', $www_root);
         Zend_Registry::set('absolute_web_root', $absolute_web_root);
@@ -292,6 +337,14 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
 
         $appConfigCronSend = $this->config->resources->cron->actions->SendNewsletter;
         Zend_Registry::set('appConfigCronSend', $appConfigCronSend);
+        if ((bool)$this->config->log->active && ISDEV){
+            $orderLogPath = Zend_Registry::get('logPath'). "/";
+            $suffix      = date('Ymd');
+            $logFileName = SESSIONNAME . '-' . APPLICATION_ENV .'-queries_' . $suffix . '.log';
+            $file     = $orderLogPath . $logFileName;
+            $stream = new Zend_Log_Writer_Stream($file, 'a');
+            Zend_Registry::set('LOG', new Zend_Log($stream));
+        }
     }
 
     /**
@@ -299,7 +352,8 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
      *
      * @return void
      */
-    protected function _initModulesPath() {
+    protected function _initModulesPath()
+    {
         $path = array();
         $modules = Cible_FunctionsModules::getModules();
 
@@ -308,15 +362,15 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
                 . PATH_SEPARATOR . $this->_appPath . "$this->_moduleDirectory/search/models/"
                 . PATH_SEPARATOR . get_include_path());
 
-        foreach ($modules as $module)
+        foreach ($modules as $module){
             $path[] = $this->_appPath . "$this->_moduleDirectory/" . $module['M_MVCModuleTitle'] . "/models/";
-
+        }
         set_include_path(get_include_path()
                 . PATH_SEPARATOR . implode(PATH_SEPARATOR, $path));
-
         array_push($modules, array('M_MVCModuleTitle' => 'menu'));
 
         if (preg_match(self::BO_NAME, FRONTEND))
+        {
             foreach ($this->config->multisite as $params) {
                 if ((bool) $params->firstRun) {
                     $sitePath = APPLICATION_PATH . "/{$this->config->document_root}/" . $params->name;
@@ -326,6 +380,81 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
                     Cible_FunctionsModules::firstRun($modules, $sitePath);
                 }
             }
+        }
     }
 
+    private function _setConfig($entity = "")
+    {
+        try
+        {
+            define('ISDEV', (bool)$this->_options['isdev']);
+            if (empty($entity)){
+                $entity = $this->_options['cfgKey'];
+            }
+            if (empty($this->session->currentSite)){
+                $this->session->currentSite = $entity;
+            }
+            $configFile = 'config/' . $entity . self::CFG_EXT;
+            $cfg = new Zend_Config_Ini($this->_applicationPath . $configFile, $this->_options['type'], true);
+            $cfgGeneral = new Zend_Config_Ini($this->_applicationPath . $configFile, 'general', true);
+            $cfgImages = new Zend_Config_Ini($this->_applicationPath . $configFile, 'images', true);
+
+        } catch (Exception $ex) {
+            echo TOP_LEVEL_ERROR;
+//            echo $ex->getMessage();
+            exit;
+        }
+
+        $defaultCfg = new Zend_Config_Ini($this->_appPath . "config/config.ini", 'general', true);
+        $defaultImgCfg = new Zend_Config_Ini($this->_applicationPath . "config/config.ini", 'images', true);
+        $config = new Zend_Config($this->getOptions(), true);
+        $config->merge($defaultCfg);
+        $config->merge($defaultImgCfg);
+        if (!empty($cfgGeneral)){
+            $config->merge($cfgGeneral);
+        }
+        if (!empty($cfgImages)){
+            $config->merge($cfgImages);
+        }
+        $config->merge($cfg);
+
+        Zend_Registry::set('config', $config);
+        $this->setOptions($config->toArray());
+
+        return $config;
+    }
+
+    private function _getFirstParentChildren($configs, $name = '')
+    {
+
+        $name = empty($name)?$this->config->name:$name;
+
+        $hasParent = !empty($configs[$name]['parent']) ? true : false;
+        if ($hasParent){
+            $first = $this->_getFirstParentChildren($configs, $configs[$name]['parent']);
+        }else{
+            if (!empty($configs[$name]['children'])){
+                $first[$name] = $configs[$name]['label'];
+                foreach($configs[$name]['children'] as $child){
+                    $first[$child] = $configs[$child]['label'];
+                }
+            }else{
+                $first = array();
+            }
+        }
+
+        return $first;
+    }
+
+    private function _getParentChildrenLevels($configs, $name = '', $level = 0)
+    {
+        $name = empty($name)?$this->config->name:$name;
+        $test = $this->config->levels->toArray();
+        $this->config->levels = array_merge($test, array($name => $level++));
+
+        $hasParent = !empty($configs[$name]['parent']) ? true : false;
+        if ($hasParent){
+            $this->_getParentChildrenLevels($configs, $configs[$name]['parent'], $level);
+        }
+    }
 }

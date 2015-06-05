@@ -62,8 +62,8 @@
 			$content = $this->getView()->collapsibleTree($_pages, array(
                 'id' => $this->getId(),
                 'images'=> array(
-                    'close'=> $this->getView()->baseUrl() . '/themes/default/images/treeview-open.gif',
-                    'open'=> $this->getView()->baseUrl() . '/themes/default/images/treeview-close.gif'
+                    'close'=> $this->getView()->baseUrl() . '/themes/default/images/treeview-open.png',
+                    'open'=> $this->getView()->baseUrl() . '/themes/default/images/treeview-close.png'
                 ),
                 'class' => 'collapsible_tree'
             ));

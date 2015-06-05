@@ -84,17 +84,17 @@ class Cible_Form_Element_FileManager extends Zend_Form_Element_Hidden
             $fileContentFolder .= $session->currentSite;
 
         $fileContentFolder .= '/data/files/';
-        $dir = $_SERVER['DOCUMENT_ROOT'] . Zend_Registry::get('www_root');
+        $dir = Zend_Registry::get('fullDocumentRoot');
         if (!empty($this->storage))
         {
             $fileContentFolder = $this->storage;
             if (!is_dir($dir . $fileContentFolder))
                 mkdir ($dir . $fileContentFolder);
         }
-        
+
         $session = new Zend_Session_Namespace(SESSIONNAME);
         $_SESSION["moxiemanager.filesystem.rootpath"] = "../../../../../" . $session->currentSite . '/data';
-        
+
         $dir .= trim($this->pathTmp, './../.');
         if (!is_dir($dir))
             mkdir ($dir);
@@ -133,7 +133,7 @@ class Cible_Form_Element_FileManager extends Zend_Form_Element_Hidden
 
 
         $content .= "<a href=\"javascript:;\" onclick=\"moxman.".$api."(" . $moxiConfig . ");\">[".$this->getView()->getCibleText('form_label_parcourir')."]</a>";
-        $content .=  "&nbsp;&nbsp;<img class='action_icon' alt='Supprimer' title='Supprimer' src='".$this->getView()->locateFile('button_cancel_16x16.png', null, 'back')."'
+        $content .=  "&nbsp;&nbsp;<img class='action_icon' alt='Supprimer' title='Supprimer' src='".$this->getView()->locateFile('icon-close-16x16.png', null, 'back')."'
             onclick='separateFile_". $this->displayElement ."()'' />";
 
         foreach ($this->getDecorators() as $decorator) {

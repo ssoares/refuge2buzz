@@ -1,5 +1,5 @@
 <?php
-    
+
     class FormLogin extends Cible_Form
     {
         public function __construct($options = null)
@@ -9,7 +9,7 @@
             parent::__construct($options);
             $baseDir = $this->getView()->baseUrl();
 
-            $this->getView()->headLink()->appendStylesheet("{$this->getView()->baseUrl()}/themes/default/css/login.css",'all');
+//            $this->getView()->headLink()->appendStylesheet("{$this->getView()->baseUrl()}/themes/default/css/login.css",'all');
 
             $this->setAttrib('class','login');
 

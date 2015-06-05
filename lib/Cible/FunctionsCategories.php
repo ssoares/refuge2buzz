@@ -1,13 +1,13 @@
 <?php
 abstract class Cible_FunctionsCategories
 {
-    public static function getRootCategoriesList($moduleID){
+    public static function getRootCategoriesList($moduleID, $parent = 0){
         $db  = Zend_Registry::get("db");
         $select = $db->select()
             ->from('Categories', array('C_ID'))
             ->joinInner('CategoriesIndex', 'CategoriesIndex.CI_CategoryID = Categories.C_ID', array('CI_Title','CI_WordingShowAllRecords'))
             ->where('CategoriesIndex.CI_LanguageID = ?', Zend_Registry::get('languageID'))
-            ->where('Categories.C_ParentID = ?', 0)
+            ->where('Categories.C_ParentID = ?', $parent)
             ->where('Categories.C_ModuleID = ?', $moduleID);
 
         return $db->fetchAll($select);
@@ -39,8 +39,8 @@ abstract class Cible_FunctionsCategories
         return $row;
     }
 
-    public static function getFilterCategories($moduleID){
-        $categories = self::getRootCategoriesList($moduleID);
+    public static function getFilterCategories($moduleID, $parent = 0){
+        $categories = self::getRootCategoriesList($moduleID, $parent);
         $choices = array('' => Cible_Translation::getCibleText('filter_empty_category'));
 
         foreach($categories as $category)
@@ -79,7 +79,20 @@ abstract class Cible_FunctionsCategories
 
         return $views;
     }
- 
+
+    public static function getDefaultCategoryPerModuleID($moduleID=0){
+        $db  = Zend_Registry::get("db");
+        $select = $db->select()
+            ->from('Categories', array("C_ID"))
+            ->where("C_ModuleID=?" , $moduleID)
+            ->order("C_ID ASC");
+
+
+        return $db->fetchOne($select);
+    }
+
+
+
     public static function getPagePerCategoryView($category_id, $view_name, $module=0, $lang = null, $pageOnly = false){
 
         if( is_null($lang) )

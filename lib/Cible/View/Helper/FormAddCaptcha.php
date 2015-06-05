@@ -31,8 +31,8 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
     protected $_captchaOptions = array(
         'captcha' => 'Word',
         'wordLen' => 6,
-        'height'  => 55,
-        'width'   => 150,
+        'height'  => 100,
+        'width'   => 200,
         'timeout' => 600,
         'dotNoiseLevel' => 0,
         'lineNoiseLevel' => 0,
@@ -67,6 +67,8 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
      */
     public function formAddCaptcha(Zend_Form $form = null, array $options = array())
     {
+
+
         $this->_captchaOptions['imgUrl']  = rtrim($this->view->baseUrl(), '/') ."/captcha/tmp";
         if (isset($options['getCaptcha']) && $options['getCaptcha'])
             return $this->_getCaptchaImage();
@@ -104,7 +106,7 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
         $refresh_captcha = new  Zend_Form_Element_Button('refresh_captcha');
         $refresh_captcha->setLabel($this->view->getCibleText('button_captcha_refresh'))
                ->setAttrib('onclick', "refreshCaptcha('captcha-id')")
-               ->setAttrib('class','grayish-button refresh-captcha')
+               ->setAttrib('class','refresh-captcha')
                ->removeDecorator('Label')
                 ->setDecorators(array(
                 'ViewHelper',
@@ -112,6 +114,12 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
             ));
 
         $form->addElement($refresh_captcha);
+
+        if(isset($options['containerDiv'])){
+
+            $form->setRowDecorator(array($form->getElement("captcha")->getName(), $form->getElement("refresh_captcha")->getName()), "zoneC", array("class" => "col-md-12"));
+
+        }
 
         $this->view->jQuery()->enable();
         $script = <<< EOS
@@ -127,6 +135,8 @@ class Cible_View_Helper_FormAddCaptcha extends Zend_View_Helper_FormElement
 EOS;
 
         $this->view->headScript()->appendScript($script);
+
+
     }
 
     private function _getCaptchaImage()

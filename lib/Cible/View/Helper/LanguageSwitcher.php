@@ -95,8 +95,10 @@ class Cible_View_Helper_LanguageSwitcher extends Zend_View_Helper_Abstract
                 $textTruncate = $lang['L_Title'];
             if ($lang['L_ID'] != $currentLang)
             {
-                if (count($this->_config->site->domainsName) > 1)
-                    $this->_domain = 'http://' . $this->_config->site->domainsName->$lang['L_ID'];
+                if (count($this->_config->site->domainsName) > 1){
+                    $protocol = Zend_Registry::get('protocol');
+                    $this->_domain = $protocol . $this->_config->site->domainsName->$lang['L_ID'];
+                }
                 $localizedPage = Cible_FunctionsPages::getPageNameByID($currentPageId, $lang['L_ID']);
 //                $localizedAction = Cible_FunctionsPages::getActionNameByLang(Zend_Registry::get('currentUrlAction'), $lang['L_ID']);
                 $localizedAction = '';

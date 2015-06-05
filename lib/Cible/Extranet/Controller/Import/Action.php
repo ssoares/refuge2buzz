@@ -62,8 +62,7 @@ class Cible_Extranet_Controller_Import_Action extends Cible_Controller_Block_Abs
     public function init()
     {
         parent::init();
-        $dataPath = $_SERVER['DOCUMENT_ROOT']
-                    . Zend_Registry::get("www_root")
+        $dataPath = Zend_Registry::get("fullDocumentRoot")
                     . "/data/";
 
         $this->_exportFilesFolder = $dataPath
@@ -146,7 +145,7 @@ class Cible_Extranet_Controller_Import_Action extends Cible_Controller_Block_Abs
                 // call the method to process data.
                 $nbLines[$fileName] = $oData->processImport($fileLines);
                 // Update last file access
-                
+
 //                touch($fileData['FI_FileName'], date('U', filemtime($fileData['FI_FileName'])), time());
                 // Update database
                 $this->_findCsvFiles('import');
@@ -358,7 +357,7 @@ class Cible_Extranet_Controller_Import_Action extends Cible_Controller_Block_Abs
             $returnUrl .= $this->_moduleTitle . "/"
                         . $this->_name . "/"
                         . $this->_firstAction . "/";
-            
+
             if ($pageID > 0)
                 $returnUrl .= "page/" . $pageID . "/";
 
@@ -383,7 +382,7 @@ class Cible_Extranet_Controller_Import_Action extends Cible_Controller_Block_Abs
             {
                 $formData       = $this->_request->getPost();
                 $selectedTables = $formData['tablesList'];
-                
+
                 if ($selectedTables[0] == 'checkAll')
                         unset($selectedTables[0]);
 
@@ -393,7 +392,7 @@ class Cible_Extranet_Controller_Import_Action extends Cible_Controller_Block_Abs
                     {
                         $config     = Zend_Registry::get('config');
                         $properties = $config->toArray();
-                        
+
                         $ftp = new Cible_Ftp($properties['ftpTransfer']);
                     }
                     // Process export
@@ -452,7 +451,7 @@ class Cible_Extranet_Controller_Import_Action extends Cible_Controller_Block_Abs
                                 }
                                 $name .= "_" . $this->_getParam('ID');
                             }
-                            
+
                             $this->filename = $name . ".csv";
                             parent::toCsvAction();
 

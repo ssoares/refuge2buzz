@@ -532,7 +532,7 @@ abstract class Cible_Controller_Block_Abstract extends Cible_Extranet_Controller
 
         // if file extension is empty or invalid, use .gif
         if (empty($ext) || !in_array($ext, array('gif', 'jpg', 'jpeg', 'png')))
-            $ext = 'gif';
+            $ext = 'png';
 
         $ressource_path = $this->getFrontController()
                 ->getModuleDirectory(
