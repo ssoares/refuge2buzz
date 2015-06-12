@@ -5,8 +5,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Banner
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormBlockImageslibrary.php 428 2013-02-10 05:35:21Z ssoares $id
  */
@@ -16,8 +16,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormBlockImageslibrary.php 428 2013-02-10 05:35:21Z ssoares $id
  */

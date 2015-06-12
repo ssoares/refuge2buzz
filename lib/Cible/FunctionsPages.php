@@ -731,7 +731,7 @@ abstract class Cible_FunctionsPages extends DataObject
         $typeArray = array('background' => 'PI_ImageBackground',
             'header' => 'PI_TitleImageSrc');
         $fieldImage = $typeArray[$type];
-
+        
         if (!empty($page[$fieldImage])){
             $params = array('page', $type, $page[$fieldImage]) ;
         }elseif (!empty($page['P_ParentID'])){

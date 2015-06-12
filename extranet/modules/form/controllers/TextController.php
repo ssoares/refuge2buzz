@@ -3,7 +3,7 @@
  * Class Form_TextController - Manage text zone data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 
@@ -14,7 +14,7 @@
  * Not to be confused with the question type text.
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class Form_TextController extends Cible_Extranet_Controller_Module_Action

@@ -6,8 +6,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Banners
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FeaturedController.php 172 2011-07-05 16:51:02Z ssoares $
  *
@@ -18,8 +18,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Banners
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  */
 class Banners_FeaturedController extends Cible_Controller_Block_Abstract

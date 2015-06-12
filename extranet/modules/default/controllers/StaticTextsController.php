@@ -9,9 +9,6 @@
 *
 * @category   Controller
 * @package    Default
-* @author     JP Bernard <jean-philip.bernard@ciblesolutions.com>
-* @copyright  2010 CIBLE Solutions d'Affaires
-* @license    http://www.ciblesolutions.com
 * @version    CVS: <?php $ ?> Id:$
 */
 class StaticTextsController extends Cible_Extranet_Controller_Module_Action

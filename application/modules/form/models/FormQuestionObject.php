@@ -3,7 +3,7 @@
  * Class FromQuestionObject - Manage questions data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 
@@ -11,7 +11,7 @@
  * Class FormQuestionObject - Manage questions data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class FormQuestionObject extends DataObject

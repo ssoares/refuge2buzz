@@ -5,7 +5,7 @@ REPLACE INTO `Static_Texts` (`ST_Identifier`, `ST_LangID`, `ST_Value`, `ST_Type`
 ('newsletter_button_archives', 3, 'Archivos', 'cible', '', 0, 8, '2012-10-15 10:33:13'),
 ('news_no_news', 3, 'Actualmente no hay ninguna noticia', 'cible', '', 0, 2, '2012-10-15 10:40:58'),
 ('footer_text_newsletter', 3, '<p class="titre_blanc_footer"><a href="/abonarse">BOLET&Iacute;N</a></p>\r\n<p class="link_blanc_footer text_blanc_footer"><a href="/abonarse">Inscr&iacute;base</a> en nuestro bolet&iacute;n para estar al d&iacute;a en el desarrollo del proyecto.</p>', 'client', 'Pied de page - infolettre esapgnol', 1, 0, '2012-10-26 16:38:37'),
-('footer_cible_realisation', 3, '<a href="http://www.ciblesolutions.com" target="_blank">CIBLE</a> | Propulsé par EDITH', 'client', '', 0, 0, '2012-10-19 09:08:44'),
+('footer_cible_realisation', 3, '<a href="#" target="_blank">CIBLE</a>', 'client', '', 0, 0, '2012-10-19 09:08:44'),
 ('footer_copyright', 3, '<p>&copy; ##sitename## %%%GET_DATE_YEAR%%%</p>', 'client', '', 1, 0, '2012-10-19 09:08:21'),
 ('button_refresh_captcha', 3, 'Recargar', 'cible', '', 0, 0, '2012-10-15 11:39:21'),
 ('button_submit', 3, 'Enviar', 'cible', '', 0, 0, '2012-10-15 11:13:29'),

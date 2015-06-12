@@ -5,7 +5,7 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Order
- * @copyright Copyright (c)2010 Cibles solutions d'affaires - http://www.ciblesolutions.com
+ 
  * @license   Empty
  * @version   $Id: OrderLog.php 829 2012-02-03 22:22:04Z ssoares $
  */
@@ -15,7 +15,7 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Order
- * @copyright Copyright (c)2010 Cibles solutions d'affaires - http://www.ciblesolutions.com
+ 
  * @license   Empty
  * @version   $Id: OrderLog.php 829 2012-02-03 22:22:04Z ssoares $
  */

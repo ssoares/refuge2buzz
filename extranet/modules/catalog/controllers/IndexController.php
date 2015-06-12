@@ -6,8 +6,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: IndexController.php 1701 2014-10-16 19:18:35Z ssoares $
  *
@@ -18,8 +18,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  */
 class Catalog_IndexController extends Cible_Controller_Block_Abstract

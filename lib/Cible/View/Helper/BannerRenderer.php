@@ -6,8 +6,8 @@
  * @category   Cible
  * @package    Cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
- *             (http://www.ciblesolutions.com)
+ 
+
  * @version    $Id: BannerRenderer.php 1221 2013-05-31 15:08:07Z ssoares $
  */
 
@@ -17,8 +17,8 @@
  * @category   Cible
  * @package    cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaire
- *             (http://www.ciblesolutions.com)
+*
+
  */
 class Cible_View_Helper_BannerRenderer extends Zend_View_Helper_Abstract
 {

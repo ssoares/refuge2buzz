@@ -7,8 +7,8 @@
  * @category   Cible
  * @package    Cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
- *             (http://www.ciblesolutions.com)
+ 
+
  * @version    $Id: SetBgStyle.php 762 2012-01-12 19:21:56Z ssoares $
  */
 
@@ -18,8 +18,8 @@
  * @category   Cible
  * @package    cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaire
- *             (http://www.ciblesolutions.com)
+*
+
  */
 class Cible_View_Helper_setBgStyle extends Zend_View_Helper_Abstract
 {

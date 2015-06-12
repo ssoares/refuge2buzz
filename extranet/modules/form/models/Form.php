@@ -3,7 +3,7 @@
  * Class Form - Manage actions for the module administration.
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 
@@ -11,7 +11,7 @@
  * Class Form - Manage db access for the table Form
  *
  * @package    Form
- * @copyright  (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class Form extends Zend_Db_Table

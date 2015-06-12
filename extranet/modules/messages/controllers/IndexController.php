@@ -1,11 +1,11 @@
 <?php
 /**
- * Cible Solutions
+*
  * Messages and alerts management.
  *
  * @category  Modules
  * @package   Messages
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: IndexController.php 1478 2014-02-21 18:59:23Z freynolds $
  */
 
@@ -15,7 +15,7 @@
  *
  * @category  Modules
  * @package   Messages
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class Messages_IndexController extends Cible_Controller_Block_Abstract
 {

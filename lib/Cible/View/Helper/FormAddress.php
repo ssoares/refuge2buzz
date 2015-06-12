@@ -5,7 +5,7 @@
  * @category   Cible
  * @package    Cible_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2010 Cible solutions (http://www.ciblesolutions.com)
+
  * @license
  */
 
@@ -22,7 +22,7 @@ require_once 'Zend/View/Helper/FormElement.php';
  * @category   Cible
  * @package    Cible_View
  * @subpackage Helper
- * @copyright  Copyright (c) 2010 Cible solutions (http://www.ciblesolutions.com)
+
  * @license
  */
 class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement

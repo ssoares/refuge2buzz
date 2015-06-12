@@ -1,11 +1,10 @@
 <?php
 /**
- * Cible Solutions - Vêtements SP
+*
  *
  *
  * @category  Modules
  * @package   Cart
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
  * @version   $Id: IndexController.php 1367 2013-12-27 04:19:31Z ssoares $
  */
 
@@ -15,7 +14,6 @@
  *
  * @category  Modules
  * @package   Cart
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
  */
 class Cart_IndexController extends Cible_Controller_Action
 {

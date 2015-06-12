@@ -6,8 +6,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Utilities
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: BannerImageObject.php 1668 2014-08-27 13:30:00Z ldrapeau $id
  */
@@ -17,8 +17,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_References
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: BannerImageObject.php 1668 2014-08-27 13:30:00Z ldrapeau $id
  */

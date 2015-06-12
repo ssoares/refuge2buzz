@@ -3,7 +3,7 @@
  * Class FormQuestionValidationTypeObject - Manage validation type data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 
@@ -11,7 +11,7 @@
  * Class FormQuestionValidationTypeObject - Manage validation type data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class FormQuestionValidationTypeObject extends DataObject

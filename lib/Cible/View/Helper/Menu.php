@@ -6,8 +6,8 @@
  * @category   Cible
  * @package    Cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
- *             (http://www.ciblesolutions.com)
+ 
+
  * @version    $Id: Menu.php 1689 2014-09-12 20:48:25Z ldrapeau $
  */
 
@@ -17,8 +17,8 @@
  * @category   Cible
  * @package    cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaire
- *             (http://www.ciblesolutions.com)
+*
+
  */
 class Cible_View_Helper_Menu extends Cible_View_Helper_Tree
 {

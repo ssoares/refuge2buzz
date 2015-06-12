@@ -5,7 +5,6 @@
  *
  * @category
  * @package
- * @copyright Copyright (c)2014 Cibles solutions d'affaires - http://www.ciblesolutions.com
  * @license   Empty
  */
 
@@ -14,7 +13,6 @@
  *
  * @category
  * @package
- * @copyright Copyright (c)2014 Cibles solutions d'affaires - http://www.ciblesolutions.com
  * @license   Empty
  * @version   $Id: DbTable.php 1534 2014-04-09 13:51:21Z ssoares $
  */

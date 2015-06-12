@@ -5,8 +5,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Banners
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: BannerFeaturedIndex.php 134 2011-06-30 20:25:08Z ssoares $id
  */

@@ -3,7 +3,7 @@
  * Class FromElementObject - Manage elements data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 
@@ -11,7 +11,7 @@
  * Class FormElementObject - Manage elements data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class FormElementObject extends DataObject

@@ -1,11 +1,11 @@
 <?php
 /**
- * Cible Solutions - Vêtements SP
+*
  * Product management. Data import.
  *
  * @category  Modules
  * @package   Catalog
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: Action.php 1367 2013-12-27 04:19:31Z ssoares $
  */
 
@@ -15,7 +15,7 @@
  *
  * @category  Modules
  * @package   Catalog
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class Cible_Extranet_Controller_Import_Action extends Cible_Controller_Block_Abstract
 {

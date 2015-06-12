@@ -4,8 +4,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Banners
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: BannersObject.php 1191 2013-05-14 02:45:42Z ssoares $
  */
@@ -15,8 +15,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Banners
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: BannersObject.php 1191 2013-05-14 02:45:42Z ssoares $
  */

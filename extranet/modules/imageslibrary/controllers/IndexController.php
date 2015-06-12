@@ -6,8 +6,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Imageslibrary
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: IndexController.php 425 2013-02-08 21:36:45Z ssoares $
  *
@@ -18,8 +18,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Banners
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  */
 class Imageslibrary_IndexController extends Cible_Controller_Categorie_Action

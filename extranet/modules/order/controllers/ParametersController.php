@@ -8,9 +8,6 @@
 *
 * @category   Controller
 * @package    Default
-* @author     ssoares <sergio.soares@ciblesolutions.com>
-* @copyright  2010 CIBLE Solutions d'Affaires
-* @license    http://www.ciblesolutions.com
 * @version    CVS: <?php $ ?> Id:$
 */
 class Order_ParametersController extends Cible_Controller_Block_Abstract

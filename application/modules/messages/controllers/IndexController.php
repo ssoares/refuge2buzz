@@ -1,11 +1,11 @@
 <?php
 /**
- * Cible Solutions - Vêtements SP
+*
  * Messages management.
  *
  * @category  Modules
  * @package   Messages
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: IndexController.php 1367 2013-12-27 04:19:31Z ssoares $
  */
 
@@ -15,7 +15,7 @@
  *
  * @category  Modules
  * @package   Messages
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class Messages_IndexController extends Cible_Controller_Action
 {

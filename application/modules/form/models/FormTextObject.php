@@ -3,7 +3,7 @@
  * Class FromTextObject - Manage texts data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 
@@ -11,7 +11,7 @@
  * Class FormTextObject - Manage Texts data
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class FormTextObject extends DataObject

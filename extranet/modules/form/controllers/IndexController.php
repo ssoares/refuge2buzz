@@ -3,7 +3,7 @@
  * Class Form - Manage actions for the module administration.
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 
@@ -11,7 +11,7 @@
  * Class Form - Manage actions for the module administration.
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class Form_IndexController extends Cible_Controller_Categorie_Action

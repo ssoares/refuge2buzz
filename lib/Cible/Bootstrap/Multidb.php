@@ -260,10 +260,10 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
         }
 
         // Directory where to put the cache files
-        if (!is_dir(APPLICATION_PATH . '/localtmp/' . $this->session->currentSite))
-            mkdir(APPLICATION_PATH . '/localtmp/' . $this->session->currentSite);
+        if (!is_dir(APPLICATION_PATH . '/tmp/' . $this->session->currentSite))
+            mkdir(APPLICATION_PATH . '/tmp/' . $this->session->currentSite);
         $backendOptions = array(
-            'cache_dir' => APPLICATION_PATH . '/localtmp/' . $this->session->currentSite
+            'cache_dir' => APPLICATION_PATH . '/tmp/' . $this->session->currentSite
         );
         $cache = Zend_Cache::factory('Core', 'File', $frontendOptions, $backendOptions);
         if ((bool) $this->config->cache->enabled){
@@ -322,7 +322,7 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
         Zend_Registry::set('document_root', $www_root);
         Zend_Registry::set('serverDocumentRoot', dirname($root));
         Zend_Registry::set('fullDocumentRoot', rtrim($root,'/') . $www_root);
-        Zend_Registry::set('logPath', $root . $www_root . '../logfiles');
+        Zend_Registry::set('logPath', $root . $www_root . '../log');
         Zend_Registry::set('web_root', $www_root);
         Zend_Registry::set('www_root', $www_root);
         Zend_Registry::set('absolute_web_root', $absolute_web_root);

@@ -5,8 +5,8 @@
  *
  * @category  Cible
  * @package   Cible_MemberProfilesObject
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: MemberProfilesObject.php 1372 2013-12-27 22:07:54Z ssoares $id
  */
@@ -16,8 +16,8 @@
  *
  * @category  Cible
  * @package   Cible_MemberProfiles
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: MemberProfilesObject.php 1372 2013-12-27 22:07:54Z ssoares $id
  */

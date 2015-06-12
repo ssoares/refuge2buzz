@@ -6,8 +6,8 @@
  * @category   Cible
  * @package    Cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
- *             (http://www.ciblesolutions.com)
+ 
+
  * @version    $Id: SubMenu.php 1303 2013-10-25 20:37:48Z ssoares $
  */
 
@@ -17,8 +17,8 @@
  * @category   Cible
  * @package    cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaire
- *             (http://www.ciblesolutions.com)
+*
+
  */
 class Cible_View_Helper_SubMenu extends Cible_View_Helper_Tree
 {

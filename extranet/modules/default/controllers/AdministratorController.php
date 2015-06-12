@@ -10,9 +10,9 @@
 *
 * @category   Controller
 * @package    Default
-* @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
-* @copyright  2009 CIBLE Solutions d'Affaires
-* @license    http://www.ciblesolutions.com
+
+
+
 * @version    CVS: <?php $ ?> Id:$
 */
 class AdministratorController extends Cible_Extranet_Controller_Module_Action

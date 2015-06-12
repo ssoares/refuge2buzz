@@ -5,8 +5,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: ProductsImagesData.php 1307 2013-10-28 21:42:58Z ssoares $id
  */
@@ -16,8 +16,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: ProductsImagesData.php 1307 2013-10-28 21:42:58Z ssoares $id
  */

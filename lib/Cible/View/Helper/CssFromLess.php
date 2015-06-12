@@ -7,8 +7,8 @@
  * @category   Cible
  * @package    Cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
- *             (http://www.ciblesolutions.com)
+ 
+
  * @version    $Id: CssFromLess.php 1683 2014-09-08 20:59:58Z ldrapeau $
  */
 
@@ -18,8 +18,8 @@
  * @category   Cible
  * @package    cible_View
  * @subpackage Cible_View_Helper
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaire
- *             (http://www.ciblesolutions.com)
+*
+
  */
 class Cible_View_Helper_CssFromLess extends Zend_View_Helper_Abstract {
 

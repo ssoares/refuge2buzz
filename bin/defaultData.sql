@@ -730,18 +730,6 @@ CREATE TABLE IF NOT EXISTS `Extranet_Users` (
   PRIMARY KEY  (`EU_ID`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYNAMIC AUTO_INCREMENT = 50;
 
---
--- Dumping data for table `Extranet_Users`
---
-
--- INSERT INTO `Extranet_Users` (`EU_ID`, `EU_LName`, `EU_FName`, `EU_Email`, `EU_Username`, `EU_Password`, `EU_lastAccess`) VALUES
--- (19, 'Studio', 'Cible', 'studio@ciblesolutions.com', 'studio', '14dae4e21624989d8ae661453037935f', NULL),
--- (20, 'Soares', 'Sergio', 'sergio.soares@ciblesolutions.com', 'sergio', '318bad9b51d84fd8757e722a784f7459', NULL),
--- (22, 'Reynolds', 'Francis', 'francis.reynolds@ciblesolutions.com', 'francis', '318bad9b51d84fd8757e722a784f7459', NULL),
--- (24, 'Annick', 'Lavigne', 'annick.lavigne@ciblesolutions.com', 'annick', '318bad9b51d84fd8757e722a784f7459', NULL),
--- (25, 'Noël', 'Marc-Olivier', 'marc-olivier.noel@ciblesolutions.com', 'marc-olivier', '318bad9b51d84fd8757e722a784f7459', NULL),
--- (26, 'Drapeau', 'Lucas', 'lucas.drapeau@ciblesolutions.com', 'lucas', '318bad9b51d84fd8757e722a784f7459', NULL)
--- ;
 
 -- --------------------------------------------------------
 
@@ -1330,7 +1318,7 @@ REPLACE INTO `Static_Texts` (`ST_Identifier`, `ST_LangID`, `ST_Value`, `ST_Type`
 ('button_delete', 1, 'Supprimer', 'cible', '', 0, 0),
 ('button_move_up', 1, 'Monter', 'cible', '', 0, 0),
 ('button_move_down', 1, 'Descendre', 'cible', '', 0, 0),
-('cible_all_right_reserved', 1, '© CIBLE solutions d''affaires ##YEAR##  -- Tous droits réservés', 'cible', '', 0, 0),
+('cible_all_right_reserved', 1, '© ##YEAR##  -- Tous droits réservés', 'cible', '', 0, 0),
 ('extranet_profile_modify_link', 1, 'Profil', 'cible', '', 0, 0),
 ('extranet_welcome_message', 1, 'Bienvenue dans l''extranet', 'cible', '', 0, 0),
 ('extranet_back_main_menu', 1, 'Tableau de bord', 'cible', '', 0, 0),
@@ -1400,7 +1388,7 @@ REPLACE INTO `Static_Texts` (`ST_Identifier`, `ST_LangID`, `ST_Value`, `ST_Type`
 ('form_label_noRight', 2, 'No right', 'cible', '', 0, 0),
 ('error_message_permission', 1, 'Vous n''avez pas les droits nécessaire pour effectuer cette action.', 'cible', '', 0, 0),
 ('error_message_permission', 2, 'You do not have necessary permissions to perform this action.', 'cible', '', 0, 0),
-('cible_all_right_reserved', 2, '© ##YEAR## Cible Solutions d''Affaires -- All Rights Reserved', 'cible', '', 0, 0),
+('cible_all_right_reserved', 2, '© ##YEAR## -- All Rights Reserved', 'cible', '', 0, 0),
 ('form_label_menu_link', 1, 'Lien *', 'cible', '', 0, 0),
 ('form_label_description_image', 1, 'Description de l''image', 'cible', '', 0, 0),
 ('form_label_description_image', 2, 'Image description', 'cible', '', 0, 0),
@@ -1832,8 +1820,6 @@ REPLACE INTO Static_Texts (ST_Identifier, ST_LangID, ST_Value, ST_Type, ST_Desc_
 ('form_select_option_view_module_inscription', 2, 'Registration', 'cible', '', 0, 0),
 ('footer_copyright', 1, '<p>&copy; %%%GET_DATE_YEAR%%%, %%%SITE_NAME%%% - Tous droits r&eacute;serv&eacute;s </p>', 'client', 'Texte du pied de page', 1, 0),
 ('footer_copyright', 2, '<p>&copy; %%%GET_DATE_YEAR%%%, %%%SITE_NAME%%% - All right reserved</p>', 'client', 'Texte du pied de page', 1, 0),
-('footer_cible_realisation', 1, 'Conception Web : <a href="http://www.ciblesolutions.com" class="cibleLink" target="_blank">CIBLE</a>', 'client', '', 0, 0),
-('footer_cible_realisation', 2, 'Web Design : <a href="http://www.ciblesolutions.com" class="cibleLink" target="_blank">CIBLE</a>', 'client', '', 0, 0),
 ('module_search', 1, 'Rechercher', 'cible', '', 0, 0),
 ('module_search', 2, 'Search', 'cible', '', 0, 0),
 ('search_module_name', 1, 'Recherche', 'cible', '', 0, 0),

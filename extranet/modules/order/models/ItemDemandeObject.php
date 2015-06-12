@@ -1,10 +1,10 @@
 <?php
 /**
- * Cible Solutions - Vêtements SP
+*
  *
  * @category  Extranet_Modules
  * @package   Extranet_Modules_Order
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: ItemDemandeObject.php 1367 2013-12-27 04:19:31Z ssoares $
  */
 
@@ -13,7 +13,7 @@
  *
  * @category  Extranet_Modules
  * @package   Extranet_Modules_Order
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class ItemDemandeObject extends DataObject
 {

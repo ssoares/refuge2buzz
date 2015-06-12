@@ -5,7 +5,6 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Newsletter
- * @copyright Copyright (c)2010 Cibles solutions d'affaires - http://www.ciblesolutions.com
  * @license   Empty
  * @version   $Id: NewsletterLog.php 1266 2013-08-27 14:35:36Z ssoares $
  */
@@ -15,7 +14,6 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Newsletter
- * @copyright Copyright (c)2010 Cibles solutions d'affaires - http://www.ciblesolutions.com
  * @license   Empty
  * @version   $Id: NewsletterLog.php 1266 2013-08-27 14:35:36Z ssoares $
  */

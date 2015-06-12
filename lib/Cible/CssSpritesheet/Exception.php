@@ -1,6 +1,6 @@
 <?php
 /**
- * Cible Solutions d'affaire
+ *
  *
  *
  * @category  Cible

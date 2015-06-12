@@ -3,7 +3,7 @@
  * Class QuestionSelectObject -
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
+ 
  * @version    $Id:
  */
 class QuestionMultiChoiceObject extends FormQuestionObject

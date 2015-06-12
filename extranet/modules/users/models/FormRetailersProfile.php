@@ -5,8 +5,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Users
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormRetailersProfile.php 804 2012-01-23 17:53:00Z ssoares $id
  */
@@ -17,8 +17,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Users
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormRetailersProfile.php 804 2012-01-23 17:53:00Z ssoares $id
  */

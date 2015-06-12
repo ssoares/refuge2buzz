@@ -4,7 +4,7 @@
  *
  * @category   Cible
  * @package    Cible_Validate
- * @copyright  Copyright (c) Cibles solutions d'affaires
+ *
  * @version    $Id: Password.php 1330 2013-11-15 18:56:06Z ssoares $
  */
 
@@ -13,7 +13,7 @@
  *
  * @category  Cible
  * @package   Cible_Validate
- * @copyright Copyright (c) Cibles solutions d'affaires
+ *
  * @version   $Id: Password.php 1330 2013-11-15 18:56:06Z ssoares $
  */
 class Cible_Validate_Password extends Zend_Validate_Regex

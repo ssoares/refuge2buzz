@@ -6,8 +6,8 @@
  *
  * @category  Application_Module
  * @package   Application_Module_Imageslibrary
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormImageslibrary.php 360 2013-02-05 22:38:38Z ssoares $
  */
@@ -17,8 +17,8 @@
  *
  * @category  Application_Module
  * @package   Application_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormImageslibrary.php 360 2013-02-05 22:38:38Z ssoares $id
  */

@@ -4,7 +4,7 @@
  *
  * @category   Cible
  * @package    Cible_Validate
- * @copyright  Copyright (c) Cibles solutions d'affaires
+ *
  * @version    $Id: CheckedBox.php 483 2011-05-17 17:55:12Z ssoares $
  */
 
@@ -18,7 +18,7 @@ require_once 'Zend/Validate/Abstract.php';
  * 
  * @category   Cible
  * @package    Cible_Validate
- * @copyright  Copyright (c) Cibles solutions d'affaires
+ *
  */
 class Cible_Validate_CheckedBox extends Zend_Validate_Abstract
 {

@@ -10,9 +10,9 @@
 *
 * @category   Views Helpers
 * @package    Default
-* @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
-* @copyright  2009 CIBLE Solutions d'Affaires
-* @license    http://www.ciblesolutions.com
+
+
+
 * @version    CVS: <?php $ ?> Id:$
 */
 
@@ -25,7 +25,7 @@ class Zend_View_Helper_Navigation
     * 2- Call a recursive function to get all the child pages 
     * 3- Return the result to the main view
     *
-    * @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
+    
     */
     public function navigation()
     {
@@ -62,7 +62,7 @@ class Zend_View_Helper_Navigation
     * 2- Call the function again to find the children's children recursively 
     * 3- Return the result to the previous call
     *
-    * @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
+    
     */
     public function findChildrensPage($ParentID)
     {

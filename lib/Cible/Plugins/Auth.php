@@ -2,7 +2,6 @@
 /***
 *  Authentication Plugin
 *
-* @Author Yannick Gagnon yannick.gagnon@ciblesolutions.com
 */
 class Cible_Plugins_Auth extends Zend_Controller_Plugin_Abstract
 {

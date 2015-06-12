@@ -5,8 +5,8 @@
  *
  * @category  Cilbe
  * @package   Cible_Module
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: ModCatViewPageObject.php 1159 2013-02-10 15:21:07Z ssoares $id
  */

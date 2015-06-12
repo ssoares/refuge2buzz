@@ -6,8 +6,8 @@
  *
  * @category  Application_Module
  * @package   Application_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: ItemsIndex.php 1306 2013-10-28 20:51:12Z ssoares $id
  */
@@ -17,8 +17,8 @@
  *
  * @category  Application_Module
  * @package   Application_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: ItemsIndex.php 1306 2013-10-28 20:51:12Z ssoares $id
  */

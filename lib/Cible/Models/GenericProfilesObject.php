@@ -5,8 +5,8 @@
  *
  * @category  Cible
  * @package   Cible_GenericProfilesObject
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: GenericProfilesObject.php 730 2011-12-09 03:45:25Z ssoares $id
  */
@@ -16,8 +16,8 @@
  *
  * @category  Cible
  * @package   Cible_GenericProfiles
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: GenericProfilesObject.php 730 2011-12-09 03:45:25Z ssoares $id
  */

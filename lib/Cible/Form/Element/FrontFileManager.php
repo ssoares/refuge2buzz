@@ -5,8 +5,8 @@
  *
  * @category  Lib_Cible
  * @package   Lib_Cible_Form_Element
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FrontFileManager.php 59 2012-10-29 22:36:37Z ssoares $id
  */
@@ -19,8 +19,8 @@ require_once 'Zend/Form/Element/Text.php';
  *
  * @category  Lib_Cible
  * @package   Lib_Cible_Form_Element
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FrontFileManager.php 59 2012-10-29 22:36:37Z ssoares $id
  */

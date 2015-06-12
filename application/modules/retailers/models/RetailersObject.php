@@ -1,11 +1,11 @@
 <?php
 /**
- * Cible Solutions -
+* -
  * Orders management.
  *
  * @category  Application_Modules
  * @package   Application_Modules_Order
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: RetailersObject.php 694 2011-10-28 18:19:58Z ssoares $
  */
 
@@ -14,7 +14,7 @@
  *
  * @category  Application_Modules
  * @package   Application_Modules_Order
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class RetailersObject extends DataObject
 {

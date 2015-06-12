@@ -11,9 +11,9 @@
 *
 * @category   Views Helpers
 * @package    Default
-* @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
-* @copyright  2009 CIBLE Solutions d'Affaires
-* @license    http://www.ciblesolutions.com
+
+
+
 * @version    CVS: <?php $ ?> Id:$
 */
 
@@ -26,7 +26,7 @@ class Zend_View_Helper_NavigationBreadcrumb
     * 2- If the current page is a main page(not a child of another page), do not display the breadcrumb 
     * 3- Return the result to the main view
     *
-    * @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
+    
     */
     public function navigationBreadcrumb()
     {
@@ -47,7 +47,7 @@ class Zend_View_Helper_NavigationBreadcrumb
     * 2.1- Keep the information of the current record to be displayed in the breadcrumb 
     * 3-If the displayed page is a main page(not a child of another page), do not display the link to that page 
     *
-    * @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
+    
     */
     public function findParentsPage($PageID)
     {

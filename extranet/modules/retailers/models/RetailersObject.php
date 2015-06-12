@@ -1,11 +1,11 @@
 <?php
 /**
- * Cible Solutions
+*
  * Retailer management.
  *
  * @category  Extranet_Modules
  * @package   Extranet_Modules_Retailer
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: RetailersObject.php 1191 2013-05-14 02:45:42Z ssoares $
  */
 
@@ -14,7 +14,7 @@
  *
  * @category  Extranet_Modules
  * @package   Extranet_Modules_Retailer
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class RetailersObject extends DataObject
 {

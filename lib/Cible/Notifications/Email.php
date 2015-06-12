@@ -4,7 +4,7 @@
  *
  * @category
  * @package
- * @copyright Copyright (c)2011 Cibles solutions d'affaires - http://www.ciblesolutions.com
+ 
  * @license   Empty
  */
 
@@ -13,7 +13,7 @@
  *
  * @category Cible
  * @package
- * @copyright Copyright (c)2011 Cibles solutions d'affaires - http://www.ciblesolutions.com
+ 
  * @license   Empty
  * @version   $Id: Email.php 1325 2013-11-08 17:51:41Z ssoares $
  */

@@ -5,8 +5,8 @@
  *
  * @category  Apploication_Module
  * @package   Application_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: CatalogCollection.php 1684 2014-09-09 13:13:58Z jpbernard $
  */
@@ -16,8 +16,8 @@
  *
  * @category  Application_Module
  * @package   Application_Module_Catalog
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: CatalogCollection.php 1684 2014-09-09 13:13:58Z jpbernard $
  */

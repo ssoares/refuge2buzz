@@ -5,8 +5,8 @@
  *
  * @category  Cible
  * @package   Cible_Pages
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: PagesObject.php 1191 2013-05-14 02:45:42Z ssoares $id
  */
@@ -16,8 +16,8 @@
  *
  * @category  Cible
  * @package   Cible_Pages
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: PagesObject.php 1191 2013-05-14 02:45:42Z ssoares $id
  */

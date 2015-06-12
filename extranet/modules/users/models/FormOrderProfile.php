@@ -6,8 +6,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Users
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormOrderProfile.php 1367 2013-12-27 04:19:31Z ssoares $id
  */
@@ -18,8 +18,8 @@
  *
  * @category  Extranet_Module
  * @package   Extranet_Module_Users
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: FormOrderProfile.php 1367 2013-12-27 04:19:31Z ssoares $id
  */

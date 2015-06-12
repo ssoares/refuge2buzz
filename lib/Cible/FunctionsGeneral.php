@@ -5,8 +5,8 @@
  * @category   Cible
  * @package    Cible
  * @subpackage Cible
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
- *             (http://www.ciblesolutions.com)
+ 
+
  * @version    $Id: FunctionsGeneral.php 1555 2014-04-22 17:36:15Z ssoares $
  */
 
@@ -14,8 +14,8 @@
  * Offers various tools
  *
  * @category   Cible
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaire
- *             (http://www.ciblesolutions.com)
+*
+
  */
 abstract class Cible_FunctionsGeneral
 {

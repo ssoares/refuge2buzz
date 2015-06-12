@@ -1,10 +1,8 @@
 <?php
 /**
- * Cible solution d'affaires: Edith Framework
  *
  * @category   Cible
  * @package    Cible_Models
- * @copyright  Copyright (c) 2010 Cible (http://www.ciblesolutions.com)
  * @version    $Id: DataObject.php 1662 2014-08-14 20:40:46Z ssoares $
  */
 
@@ -19,7 +17,6 @@
  *
  * @category   Cible
  * @package    Cible_Models
- * @copyright  Copyright (c) 2010 Cible (http://www.ciblesolutions.com)
  */
 class DataObject
 {

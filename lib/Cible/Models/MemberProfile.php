@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Cible Solutions - EDITH
+* - EDITH
  * Profile and account managament.
  *
  * @category  Cible
  * @package   Cible_Models
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: MemberProfile.php 1018 2012-08-10 20:16:23Z freynolds $MP_Password
  */
 
@@ -16,7 +16,7 @@
  *
  * @category  Cible
  * @package   Cible_Models
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class MemberProfile extends GenericProfile
 {

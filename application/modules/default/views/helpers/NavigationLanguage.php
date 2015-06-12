@@ -11,9 +11,9 @@
 *
 * @category   Views Helpers
 * @package    Default
-* @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
-* @copyright  2009 CIBLE Solutions d'Affaires
-* @license    http://www.ciblesolutions.com
+
+
+
 * @version    CVS: <?php $ ?> Id:$
 */
 
@@ -26,7 +26,7 @@ class Zend_View_Helper_NavigationLanguage
     * 2- If no links to other language for the current page, show links to the home page
     * 3- Return the result to the main view
     *
-    * @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
+    
     */
     public function navigationLanguage()
     {

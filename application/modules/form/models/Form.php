@@ -3,7 +3,6 @@
  * Class Form - Manage actions for the module administration.
  *
  * @package    Form
- * @copyright  Copyright (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
  * @version    $Id:
  */
 
@@ -11,7 +10,6 @@
  * Class Form - Manage db access for the table Form
  *
  * @package    Form
- * @copyright  (c) Cible solutions d'affaires (http://www.ciblesolutions.com)
  * @version    $Id:
  */
 class Form extends Zend_Db_Table
@@ -33,7 +31,7 @@ class Form extends Zend_Db_Table
                     ->from($this->_name)
                     ->setIntegrityCheck(false)
                     ->join('FormIndex', 'Form.F_ID = FormIndex.FI_FormID');
-                    
+
         if ($id)
         {
             $select->where('Form.F_ID = ?', $id);
@@ -57,7 +55,7 @@ class Form extends Zend_Db_Table
      *
      * @param int $id   Id of the form to display
      * @param int $lang Id of the current language displayed
-     * 
+     *
      * @return array $data An array with all the data retrieved from linked tables
      */
     public function getAllData($id, $lang)

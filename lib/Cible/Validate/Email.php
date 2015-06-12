@@ -4,7 +4,7 @@
  *
  * @category   Cible
  * @package    Cible_Validate
- * @copyright  Copyright (c) Cibles solutions d'affaires
+ *
  * @version    $Id: Email.php 694 2011-10-28 18:19:58Z ssoares $
  */
 
@@ -13,7 +13,7 @@
  *
  * @category  Cible
  * @package   Cible_Validate
- * @copyright Copyright (c) Cibles solutions d'affaires
+ *
  * @version   $Id: Email.php 694 2011-10-28 18:19:58Z ssoares $
  */
 class Cible_Validate_Email extends Zend_Validate_Regex

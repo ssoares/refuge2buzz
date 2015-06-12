@@ -1,12 +1,12 @@
 <?php
 
 /**
- * Cible Solutions - EDITH
+* - EDITH
  * Profile and account managament.
  *
  * @category  Cible
  * @package   Cible_Models
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: GenericProfile.php 665 2011-10-19 02:50:52Z ssoares $
  */
 
@@ -15,7 +15,7 @@
  *
  * @category  Cible
  * @package   Cible_Models
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class GenericProfile
 {

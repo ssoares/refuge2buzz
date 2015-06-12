@@ -1,11 +1,11 @@
 <?php
 /**
- * Cible Solutions
+*
  * Parameters management
  *
  * @category  Cible_Models
  * @package   Cible_Modules_Pages
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: ParametersObject.php 1276 2013-10-07 19:19:07Z ssoares $
  */
 
@@ -14,7 +14,7 @@
  *
  * @category  Cible_Models
  * @package   Cible_Modules_Pages
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  */
 class ParametersObject extends DataObject
 {

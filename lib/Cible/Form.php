@@ -5,8 +5,8 @@
  *
  * @category  Cible
  * @package   Cible_Form
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: Form.php 1686 2014-09-10 13:02:41Z ldrapeau $
  */
@@ -16,8 +16,8 @@
  *
  * @category  Cible
  * @package   Cible_Form
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: Form.php 1686 2014-09-10 13:02:41Z ldrapeau $
  */

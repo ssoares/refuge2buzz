@@ -5,8 +5,8 @@
  *
  * @category  Cible
  * @package   Cible_NewsletterProfilesObject
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: NewsletterProfilesObject.php 1633 2014-07-04 17:18:24Z ssoares $id
  */
@@ -16,8 +16,8 @@
  *
  * @category  Cible
  * @package   Cible_NewsletterProfiles
- * @copyright Copyright (c)2010 Cibles solutions d'affaires
- *            http://www.ciblesolutions.com
+ *
+
  * @license   Empty
  * @version   $Id: NewsletterProfilesObject.php 1633 2014-07-04 17:18:24Z ssoares $id
  */

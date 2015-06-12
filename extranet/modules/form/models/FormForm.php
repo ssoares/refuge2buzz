@@ -1,11 +1,11 @@
 <?php
 /**
- * Cible Solutions - Module formulaires
+* - Module formulaires
  *
  *
  * @category  Modules
  * @package   Form
- * @copyright Copyright (c) Cibles solutions d'affaires. (http://www.ciblesolutions.com)
+
  * @version   $Id: FormForm.php 613 2011-09-16 21:12:51Z ssoares $
  */
 

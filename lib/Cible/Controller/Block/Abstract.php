@@ -5,8 +5,6 @@
  * @category   Cible
  * @package    Cible
  * @subpackage Cible
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaires
- *             (http://www.ciblesolutions.com)
  * @version    $Id: Abstract.php 1375 2013-12-28 14:09:33Z ssoares $
  */
 
@@ -14,8 +12,7 @@
  * Manages actions for block settings
  *
  * @category   Cible
- * @copyright  Copyright (c) 2009 Cible Solutions d'affaire
- *             (http://www.ciblesolutions.com)
+*
  */
 abstract class Cible_Controller_Block_Abstract extends Cible_Extranet_Controller_Module_Action
 {

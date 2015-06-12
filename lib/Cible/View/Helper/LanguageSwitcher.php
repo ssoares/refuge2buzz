@@ -5,7 +5,6 @@
  *
  * @category
  * @package
- * @copyright Copyright (c)2013 Cibles solutions d'affaires - http://www.ciblesolutions.com
  * @license   Empty
  */
 
@@ -14,7 +13,6 @@
  *
  * @category
  * @package
- * @copyright Copyright (c)2013 Cibles solutions d'affaires - http://www.ciblesolutions.com
  * @license   Empty
  * @version   $Id$
  */

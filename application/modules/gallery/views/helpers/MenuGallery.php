@@ -10,9 +10,9 @@
 *
 * @category   Views Helpers
 * @package    Default
-* @author     Alexandre Beaudet <alexandre.beaudet@ciblesolutions.com>
-* @copyright  2009 CIBLE Solutions d'Affaires
-* @license    http://www.ciblesolutions.com
+
+
+
 * @version    CVS: <?php $ ?> Id:$
 */
 
