@@ -55,8 +55,8 @@ class Cible_Form extends Zend_Form
         $this->_view = $this->getView();
         $this->_config = Zend_Registry::get('config');
 
-        $this->_view->headLink()->offsetSetStylesheet(99999, $this->_view->locateFile('form.css'), 'all');
-        $this->_view->headLink()->appendStylesheet($this->_view->locateFile('form.css'));
+//        $this->_view->headLink()->offsetSetStylesheet(99999, $this->_view->locateFile('form.css'), 'all');
+//        $this->_view->headLink()->appendStylesheet($this->_view->locateFile('form.css'));
         $this->_imagesFolder .= 'data/images/' . $this->_view->current_module;
         $this->_filesFolder .= 'data/files';
         if (!empty($this->_object) && $this->_object->getAddSubFolder())
@@ -327,6 +327,33 @@ EOS;
         if (count($tmpForm) && $tmpForm instanceof Zend_Form_SubForm){
             $this->_addSubFormAsteriks($tmpForm);
         }
+    }
+
+    public function setRowDecorator($elements, $name, $options = null )
+    {
+        $class = "row";
+        $legend = null;
+        if(isset($options['legend'])){
+            $legend = $options['legend'];
+        }
+        if(isset($options['class'])){
+            $class = $options['class'];
+        }
+        $fieldset = 'Fieldset';
+        if(isset($options['fieldset_class'])){
+            $fielsetclass = $options['fieldset_class'];
+            $fieldset = array('Fieldset', array('class' => $fielsetclass));
+        }
+        $this->addDisplayGroup(
+            $elements, $name,
+            array(
+                'legend' => $legend,
+                'decorators' => array('FormElements', $fieldset,
+                    array('HtmlTag',array('tag'=>'div', 'class' => $class))
+                    )
+            )
+        );
+
     }
 
 }

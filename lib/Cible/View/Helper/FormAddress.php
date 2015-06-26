@@ -443,12 +443,12 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
                 $field->setAttrib('class', 'stdSelect ' . $req);
                 $this->_addRequiredValidator ($field);
             }
-            $config = Zend_Registry::get('config');
-            $defaultStates = $config->address->default->states;
-            $hiddenSrc = new Zend_Form_Element_Hidden('selectedState');
-            $hiddenSrc->setValue($defaultStates);
-            $hiddenSrc->removeDecorator('Label');
-            $this->_form->addElement($hiddenSrc);
+//            $config = Zend_Registry::get('config');
+//            $defaultStates = $config->address->default->states;
+//            $hiddenSrc = new Zend_Form_Element_Hidden('selectedState');
+//            $hiddenSrc->setValue($defaultStates);
+//            $hiddenSrc->removeDecorator('Label');
+//            $this->_form->addElement($hiddenSrc);
             $this->_form->addElement($field);
         }
 
@@ -844,24 +844,22 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
         }
         $langId = Zend_Registry::get('languageID');
 
-        $countries      = Cible_FunctionsGeneral::getCountries();
-        $json_countries = json_encode($countries);
-
+        $onLive = SESSIONNAME == 'application' ? 'on' : 'live';
         $script =<<< EOS
-//        var countries = {$json_countries};
         var langId = {$langId};
         {$tmp}
-        $('#{$idPrefix}{$this->_country}').live('change',function()
+        $('select[id$={$idPrefix}{$this->_country}]').{$onLive}('change',function()
         {
-            var ctl_states = $('#{$idPrefix}{$this->_state}')
-            var ctl_cities = $('#{$idPrefix}{$this->_city}')
+            var ctl_states = $('select[id$={$idPrefix}{$this->_state}]')
+            var ctl_cities = $('select[id$={$idPrefix}{$this->_city}]')
             var states_list = [];
+            ctl_states.empty();
+            ctl_cities.empty();
+
             $.getJSON(
                 '{$this->view->baseUrl()}/default/index/ajax-states/countryId/' + $(this).val() + '/langId/' + langId,
                 function(states_list){
-                    ctl_states.empty();
-                    ctl_cities.empty();
-                    $('<option value="-1" label="">{$this->view->getCibleText('form_label_select_state')}</option>').appendTo(ctl_states);
+                    $('<option value="-1" label="">{$this->view->getCibleText('form_select_default_label')}</option>').appendTo(ctl_states);
                     $.each(states_list, function(i, item){
                         if(selectedState[{$index}] == item.id){
                             $('<option value="'+item.id+'" label="'+item.name+'" selected="selected">'+item.name+'</option>').appendTo(ctl_states);
@@ -873,20 +871,20 @@ class Cible_View_Helper_FormAddress extends Zend_View_Helper_FormElement
 
                     });
 
-                    $('#{$idPrefix}{$this->_state}').trigger('cible.modification');
-                    if ($('#{$idPrefix}{$this->_state} option').length < 2)
+                    ctl_states.trigger('cible.modification');
+                    if ($('select[id$={$idPrefix}{$this->_state}] option').length < 2)
                     {
                         ctl_states.parent('dd').addClass('hidden');
                         ctl_states.attr('disabled', 'disabled');
                         $('label[for={$idPrefix}{$this->_state}]').parent('dt').addClass('hidden');
-                        $('#{$idPrefix}{$this->_stateTxt}').parent('dd').removeClass('hidden');
+                        $('select[id$={$idPrefix}{$this->_stateTxt}]').parent('dd').removeClass('hidden');
                     }
                     else
                     {
                         ctl_states.parent('dd').removeClass('hidden');
                         ctl_states.removeAttr('disabled');
                         $('label[for={$idPrefix}{$this->_state}]').parent('dt').removeClass('hidden');
-                        $('#{$idPrefix}{$this->_stateTxt}').parent('dd').addClass('hidden');
+                        $('select[id$={$idPrefix}{$this->_stateTxt}]').parent('dd').addClass('hidden');
                     }
                 }
             );
@@ -895,9 +893,9 @@ EOS;
         if ($this->_addScriptState)
         {
             $script .=<<<EOS
-            $('#{$idPrefix}{$this->_state}').live('change', function()
+            $('select[id$={$idPrefix}{$this->_state}]').{$onLive}('change', function()
             {
-                var ctl_cities = $('#{$idPrefix}{$this->_city}');
+                var ctl_cities = $('select[id$={$idPrefix}{$this->_city}]');
                 ctl_cities.empty();
                 var stateId = $(this).val();
 
@@ -953,7 +951,7 @@ EOS;
             $this->view->jQuery()->addJavascriptFile("{$this->view->baseUrl()}/js/jquery/jquery.maskedinput.min.js");
 
             $script =<<< EOS
-            $('.zipCode_format').mask('a9a 9a9');
+//            $('.zipCode_format').mask('a9a 9a9');
 //            $('.phoneNum').mask('(999) 999-9999');
 //            $('.faxNum').mask('(999) 999-9999');
 //            $('.phoneFree').mask('1-999-999-9999');
@@ -1169,26 +1167,26 @@ EOS;
             case 'duplicate':
         $script =<<< EOS
         $(window).load(function(){
-                    if ($('input[id$=-{$type}]').is(':checked'))
+            if ($('input[id$=-{$type}]').is(':checked'))
             {
-                        var dl = $('input[id$=-{$type}]').parents('dl:first')
-                dl.children('dd:not(:first)').hide();
-                dl.children('dt').hide();
+                var dl = $('input[id$=-{$type}]').parents('dl:first')
+                dl.children(':not(:first)').hide();
+//                dl.children.hide();
             }
         });
 
-                $('input[id$=-{$type}]').click(function(){
+        $('input[id$=-{$type}]').click(function(){
             if ($(this).is(':checked'))
             {
                 var dl = $(this).parents('dl:first')
-                dl.children('dd:not(:first)').fadeOut();
-                dl.children('dt').fadeOut();
+                dl.children(':not(:first)').fadeOut();
+//                dl.children('dt').fadeOut();
             }
             else
             {
                 var dl = $(this).parents('dl:first')
                 dl.children(':not(dd:first)').fadeIn();
-                dl.children('dt').fadeIn();
+//                dl.children('dt').fadeIn();
             }
         });
 EOS;

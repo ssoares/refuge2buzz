@@ -1417,4 +1417,30 @@ class DataObject
 
         return $list;
     }
+
+    protected function _setAddressData($data, $langId, $id = null)
+    {
+        $addrId = $shipId = 0;
+        if (isset($data[$this->_addrDataField])){
+            $oAdress = new AddressObject();
+            $firstAddr = $data[$this->_addrDataField];
+            if (!empty($data[$this->_addrShipDataField])){
+                $secAddr = $data[$this->_addrShipDataField];
+            }
+            $addrId = $oAdress->save($id, $firstAddr, $langId);
+            if (isset($secAddr['duplicate']) && $secAddr['duplicate'] == 1){
+                $firstAddr['A_Duplicate'] = $addrId;
+                $shipId = $oAdress->save($secAddr[$this->_addrShipField], $firstAddr, $langId);
+            }elseif (!empty($data[$this->_addrShipDataField])){
+                $secAddr['A_Duplicate'] = 0;
+                $shipId = $oAdress->save($secAddr[$this->_addrShipField], $secAddr, $langId);
+            }
+            $data[$this->_addrField] = $addrId;
+            if ($shipId > 0){
+                $data[$this->_addrShipField] = $shipId;
+            }
+        }
+
+        return $data;
+    }
 }

@@ -37,6 +37,12 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
     protected $_cibleAdmin = false;
     protected $_device = null;
     protected $_deviceType = null;
+    protected $_imageSrc = '';
+    protected $_isNewImage;
+    protected $_dataId = null;
+    protected $_imgIndex = 'image';
+    protected $_dataIdField = '';
+    protected $_editMode = false;
 
     public function siteMapAction(array $dataXml = array()) {
         $this->_helper->layout()->disableLayout();
@@ -136,7 +142,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
         $this->_registry = Zend_Registry::getInstance();
 
         $this->view->assign('current_module', $this->_request->getModuleName());
-
+        $this->view->assign('protocol', Zend_Registry::get('protocol'));
         if ($this->_getParam('enableDictionnary')) {
             $this->_registry->set('enableDictionnary', 'true');
             $this->view->assign('enableDictionnary', 'true');
@@ -205,17 +211,21 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
         $this->setShowBlockTitle((bool) $this->_getParam('showHeader'));
         $this->setBlockId($this->_getParam('BlockID'));
 
-        $dataPath = "../../"
-                . $this->_config->document_root
+        $dataPath = SESSIONNAME == 'extranet' ? "../../" : "../";
+        $dataPath .= $this->_config->document_root
                 . '/' . $session->currentSite . "/data/";
 
         $this->_imagesFolder = $dataPath
-                . "images/"
-                . $this->_moduleTitle . "/";
+                . "images/";
+            if (!empty($this->_moduleTitle)){
+            $this->_imagesFolder .= $this->_moduleTitle . "/";
+        }
 
         $this->_rootImgPath = Zend_Registry::get("www_root")
-                . $session->currentSite . "/data/images/"
-                . $this->_moduleTitle . "/";
+                . $session->currentSite . "/data/images/";
+        if (!empty($this->_moduleTitle)){
+            $this->_rootImgPath .= $this->_moduleTitle . "/";
+        }
         $this->_filesFolder = $dataPath
                 . "files/";
 
@@ -227,7 +237,6 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
             $this->_filesFolder .= $this->_currentAction . '/';
             $this->_rootFilesPath .= $this->_currentAction . '/';
         }
-
 
         Zend_Registry::set('imagesFolder', $this->_imagesFolder);
         Zend_Registry::set('rootImgPath', $this->_rootImgPath);
@@ -375,11 +384,17 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 
             $column = 0;
             foreach ($this->fields as $field_name => $field_value) {
-                if (is_array($field_value))
-                    $label = !empty($field_value['label']) ? $field_value['label'] : $this->view->getCibleText("list_column_{$field_name}");
-                else
+                if (is_array($field_value)){
+                    if (!empty($field_value['label'])){
+                        $label = $field_value['label'];
+                    }elseif(!empty($field_value['useFormLabel'])){
+                        $label = $this->view->getCibleText("form_label_{$field_name}");
+                    }else{
+                        $label = $this->view->getCibleText("list_column_{$field_name}");
+                    }
+                }else{
                     $label = $field_value;
-
+                }
                 $objPHPExcel->getActiveSheet()->setCellValueByColumnAndRow($column, 1, $label);
                 $column++;
             }
@@ -718,22 +733,23 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                     return;
                 }
 
-                $profile = new MemberProfile();
-                $user = $profile->findMember(array('email' => $email));
+                $profile = new GenericProfilesObject();
+                $tmp = $profile->findData(array('GP_Email' => $email));
+                $user = !empty($tmp) ? $tmp[0] : array();
+                if ($user) {
                 if (!Zend_Registry::isRegistered('languageSuffix')) {
-                    $langs = Cible_FunctionsGeneral::getLanguageSuffix($user['language']);
+                        $langs = Cible_FunctionsGeneral::getLanguageSuffix($user['GP_Language']);
                     Zend_Registry::set('languageSuffix', $langs);
                 }
-                if ($user) {
 
                     $password = Cible_FunctionsGeneral::generatePassword();
-                    $profile->updateMember($user['member_id'], array('password' => md5($password), 'hash' => ''));
+                    $profile->save($user['GP_MemberID'], array('GP_Password' => $password, 'GP_Hash' => ''), $user['GP_Language']);
 
                     // send the mail
                     $data = array(
                         'email' => $email,
                         'PASSWORD' => $password,
-                        'language' => $user['language'],
+                        'language' => $user['GP_Language'],
                     );
                     $options = array(
                         'send' => true,
@@ -890,8 +906,6 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 
     public function loginAction() {
         $this->setModuleId();
-        $this->view->headLink()->offsetSetStylesheet($this->_moduleID, $this->view->locateFile('profile.css'), 'all');
-        $this->view->headLink()->appendStylesheet($this->view->locateFile('profile.css'), 'all');
         $account = Cible_FunctionsGeneral::getAuthentication();
 
         if (is_null($account)) {
@@ -922,20 +936,20 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                         $this->disableView();
                         $hash = md5(session_id());
                         $duration = $formData['stayOn'] ? time() + (60 * 60 * 24 * 30) : 0;
-//                        $duration = $formData['stayOn'] ? time() + (60 * 60 * 24 * 2) : 0;
                         $cookie = array(
                             'lastName' => $result['lastName'],
                             'firstName' => $result['firstName'],
                             'email' => $result['email'],
                             'language' => $result['language'],
                             'hash' => $hash,
-                            'status' => $result['status']
+                            'status' => $result['status'],
+                            'member_id' => $result['member_id']
                         );
 
                         setcookie("authentication", json_encode($cookie), $duration, $path);
 
-                        $memberProfile = new MemberProfile();
-                        $memberProfile->updateMember($result['member_id'], array('hash' => $hash));
+                        $memberProfile = new GenericProfilesObject();
+                        $memberProfile->save($result['member_id'], array('GP_Hash' => $hash), Zend_Registry::get('languageID'));
 
                         if ($this->_registry->isRegistered('pageID')) {
                             $pageId = $this->_registry->get('pageID');
@@ -1021,133 +1035,113 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
      */
     public function becomeclientAction() {
         $this->setModuleId();
-        $this->view->headLink()->offsetSetStylesheet(28, $this->view->locateFile('profile.css'), 'all');
-        $this->view->headLink()->appendStylesheet($this->view->locateFile('profile.css'), 'all');
         // Test if the user is already connected.
         $account = Zend_Registry::get('user');
         // Set the default status to an account creation and not editing one
         $_edit = false;
         // Instantiate the user profiles
-        $profile = new MemberProfilesObject();
+        $profile = (null !== $this->_obj) ? $this->_obj : new MemberProfilesObject();
+        $this->_dataIdField = $profile->getDataId();
         $profile->setOGeneric();
 //        $newsletterProfile = new NewsletterProfile();
         $memberData = array();
         $accountValidate = true;
-        //Set Default id for states and cities
-        $config = Zend_Registry::get('config');
-        $current_state = $config->address->default->states;
-        $addr = array();
-        $currentCity = '';
-        $addPage = Cible_FunctionsCategories::getPagePerCategoryView(1, 'become_client', $this->_moduleID, null, true);
-        $editPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'modifyclient', $this->_moduleID);
+//        $addPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'becomeclient', $this->_moduleID, null, true);
+//        $editPage = Cible_FunctionsCategories::getPagePerCategoryView(0, 'modifyclient', $this->_moduleID);
+        $agreementError = false;
         // Get users data if he is already logged
         if ($account) {
             if ($account['status'] == 2 || $this->_request->isPost()) {
-                $_edit = true;
-                $memberData = $profile->findData(array('email' => $account['email']));
-//                $newsletterData = $newsletterProfile->findMember(array('email' => $account['email']));
-                if (!empty($memberData['address'])) {
-                    $current_state = $memberData['address']['A_StateId'] . self::SEPARATOR;
-                    $currentCity = $memberData['address']['A_CityId'] . self::SEPARATOR;
+                $this->_editMode = $_edit = true;
+                $agreementError = false;
+                $filters = array('GP_Email' => $account['email']);
+                $obj = $profile->getOGeneric();
+                if ($this->_dataId){
+                    $memberData = $obj->setProfileId($this->_dataId)->populate($id, 1);
+                }else{
+                    $this->_dataId = (int)$account['member_id'];
+                    $tmp = $obj->setProfileId($this->_dataId)
+                        ->findData($filters);
+                    $memberData = $tmp;
                 }
-                Zend_Registry::set('modifTitle', $this->view->getClientText('account_modify_page_title'));
-                if (preg_match('/' . $this->view->selectedPage . '/', $addPage))
-                    $this->_redirect($editPage);
-
-//                $this->view->headTitle($this->view->getClientText('account_modify_page_title'));
-//                $this->view->pageTitle = $this->view->getClientText('account_modify_page_title');
+//                $newsletterData = $newsletterProfile->findMember(array('email' => $account['email']));
+                $this->view->modifTitle = $this->_obj->getModificationTitle();
+                Zend_Registry::set('modifTitle', $this->view->modifTitle);
+                if (preg_match('/' . $this->view->selectedPage . '/', $this->view->addPage)
+                    && !empty($this->view->editPage)){
+                    $this->_redirect($this->view->editPage);
+                }
             }
         }
-
         $this->view->assign('accountValidate', $accountValidate);
-
+        $imageSrc = '';
+        $isNewImage = false;
+        if (!empty($this->_imageSrc))
+        {
+            $imageSource = $this->_setImageSrc($memberData, $this->_imageSrc, $this->_dataId);
+            $imageSrc = $imageSource['imageSrc'];
+            $isNewImage = $imageSource['isNewImage'];
+//            $imgBasePath = $imageSource['imgBasePath'];
+//            $nameSize = $imageSource['nameSize'];
+        }
         $options = $_edit ? array('mode' => 'edit') : array();
-        $_edit ? $this->view->assign('mode', 'edit') : $this->view->assign('mode', 'add');
+        $this->view->mode = $_edit ? 'edit' : 'add';
+
+        if (null !== $this->_obj){
+            $options['object'] = $this->_obj;
+            $options['moduleName'] = $this->_moduleTitle;
+            $options['dataId'] = $this->_dataId;
+            $options['imageSrc'] = $imageSrc;
+            $options['isNewImage'] = $isNewImage;
+        }
+
         // Instantiate the form for account management
         $form = new FormBecomeClient($options);
-        //$_captcha = $form->getElement('captcha');
-        $this->view->assign('selectedCity', $currentCity);
-        $this->view->assign('selectedState', $current_state);
 
-        // Test if the users has ticked the aggreement checkbox
-        $agreementError = isset($_POST['termsAgreement']) && $_POST['termsAgreement'] != 1 ? true : false;
-
-        if ($_edit){
-            $agreementError = false;
-        }
         $this->view->assign('agreementError', $agreementError);
         // Actions when form is submitted
-        if ($this->_request->isPost() && array_key_exists('submit', $_POST)) {
+        if ($this->_request->isPost() && array_key_exists('submitAccount', $_POST)) {
             $formData = $this->_request->getPost();
-            $findEmail = $profile->findMember(array('email' => $formData['identification']['email']));
+            $dataID = isset($formData['identification'])? $formData['identification'] : $formData;
+            // Test if the users has ticked the aggreement checkbox
+            $agreementError = isset($formData['termsAgreement']) && $formData['termsAgreement'] != 1 && !$_edit? true : false;
 //            $nlData = $newsletterProfile->findMember(array('email' => $formData['identification']['email']));
-            // Test if the email already exists and password is the same
-            if ($_edit) {
-                $subFormI = $form->getSubForm('identification');
-                if ($formData['identification']['email'] <> $memberData['email']) {
-                    $findEmail = $profile->findMember(array('email' => $formData['identification']['email']));
-
-                    if ($findEmail) {
-                        $emailNotFoundInDBValidator = new Zend_Validate_Db_NoRecordExists('GenericProfiles', 'GP_Email');
-                        $emailNotFoundInDBValidator->setMessage($this->view->getClientText('validation_message_email_already_exists'), 'recordFound');
-                        $subFormI->getElement('email')->addValidator($emailNotFoundInDBValidator);
-                    }
-                }
-
-                if (empty($formData['identification']['password']) && empty($formData['identification']['passwordConfirmation'])) {
-                    $subFormI->getElement('password')->clearValidators()->setRequired(false);
-                    $subFormI->getElement('passwordConfirmation')->clearValidators()->setRequired(false);
-                }
-            }
-//            elseif (!$_edit && !$findEmail && $nlData)
-            elseif (!$_edit && !$findEmail) {
-                $subFormI = $form->getSubForm('identification');
-                $subFormI->getElement('email')->removeValidator('Zend_Validate_Db_NoRecordExists');
-//                $hasNewsletterProfile = true;
-            }
-
-            $oAddress = new AddressObject();
             // Get the addresses data to insert
             if ($form->isValid($formData) && !$agreementError) {
                 $oNotification = new Cible_Notifications_Email();
-
-                if (!empty($formData['password'])) {
-                    $password = $formData['password'];
-                    $formData['password'] = md5($password);
-                }
-
                 if (!$_edit) {
                     // Do the processing here
-                    $validatedEmail = Cible_FunctionsGeneral::generatePassword();
-
-                    $path = Zend_Registry::get('web_root') . '/';
+                    $path = Zend_Registry::get('web_root');
                     $hash = md5(session_id());
                     $duration = 0;
+
+//                    $validatedEmail = Cible_FunctionsGeneral::generatePassword();
+//                    $formData['validatedEmail'] = $validatedEmail;
+                    $formData['identification']['validatedEmail'] = '';
+                    $formData['identification']['GP_Hash'] = $hash;
+                    $formData['identification']['GP_Status'] = 2;
+                    if (empty($formData['identification']['GP_Language'])){
+                        $formData['identification']['GP_Language'] = Zend_Registry::get('languageID');
+                    }
+                    //Add addresses process and retrive id for memberProfiles
+                    $idMember = $profile->addProfile($formData);
+//                    $this->_processImage($formData, $isNewImage);
+                    $memberData = $formData['identification'];
                     $cookie = array(
-                        'lastName' => $formData['lastName'],
-                        'firstName' => $formData['firstName'],
-                        'email' => $formData['email'],
+                        'member_id' => $idMember,
+                        'lastName' => $dataID['GP_LastName'],
+                        'firstName' => $dataID['GP_FirstName'],
+                        'email' => $dataID['GP_Email'],
                         'hash' => $hash,
                         'status' => 2
                     );
-
-                    $formData['hash'] = $hash;
-                    $formData['validatedEmail'] = $validatedEmail;
-                    $formData['validatedEmail'] = '';
-                    $formData['status'] = 0;
-
-                    //Add addresses process and retrive id for memberProfiles
-                    $idMember = $profile->addProfile($formData);
-                    $memberData = $profile->populate($idMember, 1);
-                    $cookie['member_id'] = $idMember;
-
                     setcookie("authentication", json_encode($cookie), $duration, $path);
 
                     $dataAdm = array(
-                        'firstname' => $memberData['firstName'],
-                        'lastname' => $memberData['lastName'],
-                        'email' => $memberData['email'],
-                        'language' => $memberData['language'],
+                        'firstname' => $dataID['GP_FirstName'],
+                        'lastname' => $dataID['GP_LastName'],
+                        'email' => $dataID['GP_Email'],
+                        'language' => $dataID['GP_Language'],
                         'NEWID' => $idMember
                     );
                     $optionsAdm = array(
@@ -1159,21 +1153,24 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                         'recipient' => 'admin',
                         'data' => $dataAdm
                     );
-
+                    $password = $formData['identification']['GP_Password'];
                     $oNotification->process($optionsAdm);
                     $oNotification = new Cible_Notifications_Email();
+                    $lgId = $this->_lang;
+                    $link = $this->view->protocol . $this->_config->site->domainsName->$lgId;
+                    $link .= '/' . $this->view->page;
                     $data = array(
-                        'firstName' => $memberData['firstName'],
-                        'lastName' => $memberData['lastName'],
-                        'email' => $memberData['email'],
-                        'language' => $formData['language'],
-                        'validatedEmail' => '',
+                        'firstName' => $dataID['GP_FirstName'],
+                        'lastName' => $dataID['GP_LastName'],
+                        'email' => $dataID['GP_Email'],
+                        'language' => $dataID['GP_Language'],
+                        'link' => $link,
                         'password' => $password,
                     );
                     $options = array(
                         'send' => true,
                         'isHtml' => true,
-                        'to' => $formData['email'],
+                        'to' => $dataID['GP_Email'],
                         'moduleId' => $this->_moduleID,
                         'event' => 'newAccount',
                         'type' => 'email',
@@ -1182,32 +1179,29 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                     );
 
                     $oNotification->process($options);
-                    Cible_FunctionsGeneral::authenticate($formData['email'], $password);
+                    Cible_FunctionsGeneral::authenticate($memberData['GP_Email'], $password);
                     $logData = array(
                         'L_ModuleID' => $this->_moduleID,
                         'L_UserID' => $idMember,
                         'L_Action' => 'newAccount',
                         'L_Data' => '',
                     );
-                    $oLog = new Cible_Log(array('userId' => $idMember, 'user' => $cookie));
-                    $oLog->log(array('data' => $logData));
+//                    $oLog = new Cible_Log(array('userId' => $idMember, 'user' => $cookie));
+//                    $oLog->log(array('data' => $logData));
 
-                    $redirectUrl = Cible_View_Helper_LastVisited::getLastVisited(2);
-                    if (!empty($redirectUrl))
-                        $this->_redirect($redirectUrl);
-                    else
+                    if (!empty($this->view->redirectUrl)){
+                        $this->_redirect($this->view->redirectUrl);
+                    }else{
                         $this->renderScript('index/become-client-thank-you.phtml');
-                }
-                else {
-                    if (empty($formData['password']))
-                        unset($formData['password']);
-                    $oAddress->save($addr['A_AddressId'], $address, $formData['language']);
-                    $profile->updateMember($memberData['member_id'], $formData);
-
-                    if ($formData['email'] <> $memberData['email']) {
+                    }
+                }else {
+                    $member = $memberData['identification'];
+                    $obj->save($this->_dataId, $formData, $member['GP_Language']);
+                    $this->_processImage($formData, $isNewImage);
+//                    if ($formData['email'] <> $memberData['email']) {
 //                        $validatedEmail = Cible_FunctionsGeneral::generatePassword();
-                        $formData['validatedEmail'] = '';
-                        $profile->updateMember($memberData['member_id'], $formData);
+//                        $formData['validatedEmail'] = '';
+//                        $profile->updateMember($memberData['member_id'], $formData);
 //
 //                        $confirm_page = Zend_Registry::get('absolute_web_root') . "/"
 //                            . Cible_FunctionsCategories::getPagePerCategoryView(
@@ -1217,44 +1211,48 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 //
 //                        $this->view->assign('needConfirm', true);
 //                        $this->renderScript('index/confirm-email.phtml');
-                        $data = array(
-                            'firstName' => $memberData['firstName'],
-                            'lastName' => $memberData['lastName'],
-                            'email' => $memberData['email'],
-                            'language' => $formData['language'],
-                            'validatedEmail' => '',
-                            'password' => $password,
-                        );
-                        $options = array(
-                            'send' => true,
-                            'isHtml' => true,
-                            'to' => $formData['email'],
-                            'moduleId' => $this->_moduleID,
-                            'event' => 'editResend',
-                            'type' => 'email',
-                            'recipient' => 'client',
-                            'data' => $data
-                        );
+//                        $data = array(
+//                            'firstName' => $memberData['firstName'],
+//                            'lastName' => $memberData['lastName'],
+//                            'email' => $memberData['email'],
+//                            'language' => $formData['language'],
+//                            'validatedEmail' => '',
+//                            'password' => $password,
+//                        );
+//                        $options = array(
+//                            'send' => true,
+//                            'isHtml' => true,
+//                            'to' => $formData['email'],
+//                            'moduleId' => $this->_moduleID,
+//                            'event' => 'editResend',
+//                            'type' => 'email',
+//                            'recipient' => 'client',
+//                            'data' => $data
+//                        );
+//
+//                        $oNotification->process($options);
+//                        $authentication = json_decode($_COOKIE['authentication'], true);
+//                        $path = Zend_Registry::get('web_root');
+//                        $duration = 0;
+//                        $cookie = array(
+//                            'member_id' => $memberData['GP_MemberID'],
+//                            'firstname' => $memberData['GP_FirstName'],
+//                            'lastname' => $memberData['GP_LastName'],
+//                            'email' => $memberData['GP_Email'],
+//                            'language' => $memberData['GP_Language'],
+//                            'hash' => $authentication['hash'],
+//                            'status' => 2
+//                        );
+//                        setcookie("authentication", json_encode($cookie), $duration, $path);
+//                    } else {
 
-                        $oNotification->process($options);
-                    } else {
-
-                        $authentication = json_decode($_COOKIE['authentication'], true);
-                        $path = Zend_Registry::get('web_root') . '/';
-                        $duration = 0;
-                        $cookie = array(
-                            'lastName' => $formData['lastName'],
-                            'firstName' => $formData['firstName'],
-                            'email' => $authentication['email'],
-                            'language' => $formData['language'],
-                            'hash' => $authentication['hash'],
-                            'status' => 2
-                        );
-                        setcookie("authentication", json_encode($cookie), $duration, $path);
 
                         $this->view->assign('messages', array($this->view->getCibleText('form_account_modified_message')));
-                        $this->view->assign('updatedName', $formData['firstName']);
+                        $this->view->assign('updatedName', $member['GP_FirstName']);
+                        $url = $this->view->url();
+                        $this->_redirect($url);
                     }
+
 //                    $data = array(
 //                            'identification' => $memberData,
 //                            'address'=> $addr);
@@ -1263,7 +1261,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 //                        $data);
 //                    $message = $this->view->getClientText('account_modified_admin_notification_message', $formData['language']);
 //                    $titleAdmin = $this->view->getClientText('account_modified_admin_notification_title', $formData['language']);
-                    $form->populate($_POST);
+                    $form->populate($formData);
                     $this->view->assign('form', $form);
                     // Notify admin
 //                    if (count($notifyAdmin) > 0)
@@ -1299,15 +1297,34 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 //                            ));
 //                        $notify->send();
 //                    }
-                }
+//                }
             } else{
                 $form->populate($formData);
             }
-        }elseif ($_edit && empty($this->view->step)){
+        }elseif (($_edit && empty($this->view->step)) || !empty($memberData)){
             $form->populate($memberData);
         }
         $this->view->assign('form', $form);
     }
+
+    private function _processImage($formData = array(), $isNewImage = true)
+    {
+        /* IMAGES */
+        if (!empty($this->_imageSrc) && $this->_dataId > 0
+            && !is_dir($this->_imagesFolder . $this->_dataId))
+        {
+            mkdir($this->_imagesFolder . $this->_dataId)
+                or die("Could not make directory");
+            mkdir($this->_imagesFolder . $this->_dataId . "/tmp")
+                or die("Could not make directory");
+        }
+        if (isset($formData[$this->_imageSrc])
+            && $formData[$this->_imageSrc] <> ''
+            && $isNewImage){
+            $this->_setImage($this->_imageSrc, $formData, $this->_dataId);
+        }
+    }
+
 
     public function thankYouAction() {
         $return = $this->_getParam('return');
@@ -1379,8 +1396,11 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                     $this->_deviceType = self::IS_MOBILE;
                     if ($this->_device->getCapability('is_tablet') == 'true') {
                         $this->_deviceType = self::IS_TABLET;
-                    } else
-                        Zend_Registry::set('isMobile', true);
+                    } else {
+                        //Zend_Registry::set('isMobile', true);
+                        //pête le site présentement parce que les styles n'embarquent pas correctement dans le thème
+                        Zend_Registry::set('isMobile', false);
+                    }
                     break;
             }
         }else {
@@ -1402,6 +1422,213 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                 $this->render($tplView);
             }
         }
+    }
+
+    /**
+     * Test if the image is a new one and return path and status flag.
+     *
+     * @param array $record Data form database.
+     * @param string $source The field to get filename.
+     * @param int $recordID The id of the current record.
+     * @param string $format The size format to fetch parameter from config file.
+     *
+     * @return array
+     */
+    protected function _setImageSrc($record, $source, $recordID, $format = 'thumb')
+    {
+        // image src.
+        $config = $this->_config->toArray();
+        $thumbMaxHeight = $config[$this->_moduleTitle][$this->_imgIndex][$format]['maxHeight'];
+        $thumbMaxWidth = $config[$this->_moduleTitle][$this->_imgIndex][$format]['maxWidth'];
+        $isNewImage = true;
+        $imgBasePath = $this->_rootImgPath;
+        if ($recordID > 0){
+            $imgBasePath .= $recordID . "/";
+}
+        $nameSize = $thumbMaxWidth . 'x' . $thumbMaxHeight . '_';
+
+        if (!empty($record[$source]))
+        {
+            $this->view->assign('imageUrl', $imgBasePath
+                . str_replace(
+                    $record[$source],
+                    $nameSize . $record[$source],
+                    $record[$source])
+                );
+            $isNewImage = false;
+        }
+
+        if ($this->_request->isPost())
+        {
+            $formData = $this->_request->getPost();
+//            array_merge(
+//                $data['productFormLeft'], $data['productFormRight'], $data['productFormBottom']);
+            $postedImg = $this->_getPostedImg($formData, $source, $recordID);
+            if ($postedImg['isset'] && (empty($record[$source]) || $postedImg['value'] <> $record[$source]))
+            {
+                if ($formData[$source] == ""){
+                    $imageSrc = $this->view->baseUrl() . "/icons/image_non_ disponible.jpg";
+                }else{
+                    $imageSrc = $imgBasePath
+                        . "tmp/mcith/mcith_"
+                        . $formData[$source];
+                }
+                $isNewImage = true;
+            }
+            else
+            {
+                if ($record[$source] == ""){
+                    $imageSrc = $this->view->baseUrl() . "/icons/image_non_ disponible.jpg";
+                }else{
+                    $imageSrc = $imgBasePath
+                        . str_replace(
+                            $record[$source],
+                            $nameSize . $record[$source], $record[$source]);
+                }
+                    $isNewImage = false;
+            }
+        }
+        else
+        {
+            if (!empty($recordID)){
+                if (!is_dir($this->_imagesFolder . $recordID)){
+                    mkdir($this->_imagesFolder . $recordID)
+                        or die("Could not make directory");
+                    mkdir($this->_imagesFolder . $recordID . "/tmp")
+                        or die("Could not make directory");
+                }
+            }
+            if (empty($record[$source])){
+                $imageSrc = $this->view->baseUrl() . "/icons/image_non_ disponible.jpg";
+            }else{
+                $imageSrc = $this->_rootImgPath
+                    . $recordID . "/"
+                    . str_replace(
+                        $record[$source],
+                        $nameSize. $record[$source],
+                        $record[$source]);
+            }
+        }
+
+        return array('imageSrc' => $imageSrc, 'imgBasePath' => $imgBasePath, 'nameSize' => $nameSize, 'isNewImage' => $isNewImage);
+    }
+
+    /**
+     * Resizes and saves images file into folder according to modules parameters.
+     *
+     * @param string $source The key to get filename from data array.
+     * @param array $newData The data sent by form.
+     * @param int $recordID  The id of the current record.
+     *
+     * @return void
+     */
+    protected function _setImage($source, $newData, $recordID)
+    {
+        $config = $this->_config->toArray();
+        $dimensions = $config[$this->_moduleTitle][$this->_imgIndex];
+
+        if ($this->_editMode)
+        {
+            $srcImg = $this->_imagesFolder . $recordID . "/tmp/";
+            if ($this->_cleanup){
+                $this->_cleanupFolder($this->_imagesFolder . $recordID . '/');
+            }
+        }else{
+            $srcImg = $this->_imagesFolder . "tmp/";
+        }
+
+        foreach ($dimensions as $size => $dims)
+        {
+            $tmpSrc = $srcImg . "{$size}_" . $newData[$source];
+            copy($srcImg . $newData[$source], $tmpSrc);
+
+            $maxWidth = $dims['maxWidth'];
+            $maxHeight = $dims['maxHeight'];
+
+            $name = str_replace(
+                $newData[$source], $maxWidth
+                . 'x'
+                . $maxHeight
+                . '_'
+                . $newData[$source], $newData[$source]
+            );
+            $options = array(
+                'src' => $tmpSrc,
+                'maxWidth' => $maxWidth,
+                'maxHeight' => $maxHeight);
+            if (isset($dims['forceWidth'])){
+                $options['forceWidth'] = $dims['forceWidth'];
+            }
+            if (isset($dims['forceHeight'])){
+                $options['forceHeight'] = $dims['forceHeight'];
+            }
+            Cible_FunctionsImageResampler::resampled($options);
+
+            if(isset($this->_grayScale) && $this->_grayScale){
+                copy($tmpSrc, $this->_imagesFolder . $recordID . "/" . $name);
+                $options['grayScale']=true;
+                Cible_FunctionsImageResampler::resampled($options);
+                $name = str_replace(
+                    $newData[$source], $maxWidth
+                    . 'x'
+                    . $maxHeight
+                    . '_gray_'
+                    . $newData[$source], $newData[$source]
+                );
+                rename($tmpSrc, $this->_imagesFolder . $recordID . "/" . $name);
+            }else{
+                rename($tmpSrc, $this->_imagesFolder . $recordID . "/" . $name);
+            }
+            if (file_exists($tmpSrc)){
+                unlink($tmpSrc);
+            }
+        }
+        if (file_exists($srcImg . $newData[$source]))
+        {
+            unlink($srcImg . $newData[$source]);
+        }
+
+    }
+
+    protected function _getPostedImg($formData, $source, $recordID)
+    {
+        $isset = false;
+        $id = 0;
+        foreach ($formData as $key => $value)
+        {
+            if (is_array($value))
+            {
+                $tmp = $this->_getPostedImg ($value, $source, $recordID);
+                $isset = $tmp['isset'];
+                $data = $tmp['value'];
+                $id = isset($tmp['id']) ? $tmp['id'] : 0;
+            }
+            else
+            {
+                if (isset($formData[$source]))
+                {
+                    if (!empty($formData[$this->_dataIdField])){
+                        $id = $formData[$this->_dataIdField];
+                    }
+                    $data = $formData[$source];
+                    $isset = true;
+                    break;
+                }else{
+                    $isset = false;
+                }
+            }
+            if ($recordID > 0 && $id == $recordID){
+                break;
+
+            }
+        }
+
+        if ($isset){
+            $return = array('isset' => true, 'value' => $data, 'id' => $id);
+        }else{
+            $return = array('isset' => false, 'value' => null);
+        }
+        return $return;
     }
 
 }

@@ -136,6 +136,11 @@
         margin-bottom: 12px;
         padding: 5px 15px;
         width: 100%;
+        .required &{
+            background-image:data-uri('../images/backgrounds/required-field-background.png');
+            background-repeat:repeat-y;
+            background-position:left top;
+        }
     }
     .stdTextInput{
         max-width: 300px;
@@ -168,4 +173,6 @@
             }
         }
     }
+    .form-captcha input{display:inline-block; max-width: 50%}
 }
+.clear-left{clear:left;}

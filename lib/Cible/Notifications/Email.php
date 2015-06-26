@@ -49,8 +49,12 @@ class Cible_Notifications_Email extends Cible_Notifications
                 && $this->_recipient == 'client'
                 && !empty($this->_data['email']) )
                 $this->addTo($this->_data['email']);
+            $cfg = Zend_Registry::get('config');
+            $logoPath = rtrim(Zend_Registry::get('absolute_web_root'), '/') .
+                $this->_view->locateFile($cfg->clientLogo->src,
+                    '/'.$this->_view->locale, 'front');
+            $this->_emailRenderData['emailHeader'] = $this->_view->image($logoPath);
 
-            $this->_emailRenderData['emailHeader'] = $this->_view->clientImage('logo.png', null, true);
             $footer = $this->_view->getClientText("email_notification_footer", $this->_data['language']);
             $this->_emailRenderData['footer'] = str_replace('##SITE-NAME##', $this->_siteName, $footer);
 

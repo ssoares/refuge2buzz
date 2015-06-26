@@ -20,6 +20,8 @@ td.checkbox-alignment {
     <div class="block">
         <?php echo($this->getClientText('quoteRequest_account_introduction_text')); ?>
     </div>
+<?php else: ?>
+    <?php echo $this->pageTitle($this->modifTitle, 'SET'); ?>
 <?php endif; ?>
 
 <div class="block form">
@@ -32,8 +34,6 @@ td.checkbox-alignment {
             </p>
         </div>
     <?php endif; ?>
-    <input id="selectedState" name="selectedState" type="hidden" value="<?php echo($this->selectedState); ?>"/>
-
     <?php if(!$this->accountValidate): ?>
         <p>
         <?php echo $this->getClientText('cart_need_confirm_email_text');?>
@@ -43,7 +43,6 @@ td.checkbox-alignment {
     <?php  echo $this->form; ?>
 
     <?php if( $this->agreementError ): ?>
-
         <?php $this->jQuery()->onLoadCaptureStart() ?>
             var divTermsAgreement = '<div class="errors" style="margin-top:2px; margin-left:5px; font-size: 11px;"><?php echo $this->getClientText('terms_agreement_error_message') ?></div>';
             $('dd#dd-terms-agreement').append(divTermsAgreement);
@@ -62,13 +61,4 @@ td.checkbox-alignment {
     <?php endif; ?>
 </div>
 <?php echo $this->partial("partials/autocomplete.phtml");  ?>
-<script type="text/javascript">
-//<![CDATA[
-$(document).ready(function(){
-    $('#sendMyForm').click(function(e){
-        e.preventDefault();
-        $('form').submit();
-    })
-});
-//]]>
-</script>
+

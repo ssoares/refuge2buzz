@@ -13,10 +13,15 @@ class Order_IndexController extends Cible_Controller_Action
     protected $_name          = 'index';
     protected $_paramId       = '';
     protected $_emailRenderData = array();
+    protected $_lang;
+    protected $_obj;
 
     public function init()
     {
         parent::init();
+        $this->_lang = $this->_defaultEditLanguage;
+        // Sets the called action name. This will be dispatched to the method
+        $this->_obj = new OrderObject();
     }
 
     public function ajaxAction()
@@ -146,10 +151,10 @@ class Order_IndexController extends Cible_Controller_Action
                 if(isset($session->customer['addressShipping']['duplicate']) && $session->customer['addressShipping']['duplicate'])
                 {
                     unset($session->customer['addressShipping']);
-                    $session->customer['addressShipping'] = $session->customer['addressFact'];
+                    $session->customer['addressShipping'] = $session->customer['address'];
                 }
 
-                $dataBill = $this->getAddrData($session->customer['addressFact'], 'addressFact', $session);
+                $dataBill = $this->getAddrData($session->customer['address'], 'address', $session);
                 $dataShip = $this->getAddrData($session->customer['addressShipping'], 'addressShipping', $session);
 
                 $salut = Cible_FunctionsGeneral::getSalutations(
@@ -295,6 +300,11 @@ class Order_IndexController extends Cible_Controller_Action
 
     }
 
+    public function becomeclientAction()
+    {
+        parent::becomeclientAction();
+    }
+
     /**
      * Saves quote request data and send email to client and manager.
      *
@@ -318,10 +328,10 @@ class Order_IndexController extends Cible_Controller_Action
             'O_Salutation' => $session->customer['identification']['salutation'],
             'O_Language'   => $language
         );
-         if(!empty($session->customer['addressFact']['A_CityId']))
-             $cityBill = $session->customer['addressFact']['A_CityId'];
+         if(!empty($session->customer['address']['A_CityId']))
+             $cityBill = $session->customer['address']['A_CityId'];
          else
-             $cityBill = $session->customer['addressFact']['A_CityTextValue'];
+             $cityBill = $session->customer['address']['A_CityTextValue'];
 
          if(!empty($session->customer['addressShipping']['A_CityId']))
              $cityShip = $session->customer['addressShipping']['A_CityId'];
@@ -329,14 +339,14 @@ class Order_IndexController extends Cible_Controller_Action
              $cityShip = $session->customer['addressShipping']['A_CityTextValue'];
 
          $addressBilling = array(
-            'O_FirstBillingTel'   => $session->customer['addressFact']['AI_FirstTel'],
-            'O_SecondBillingTel'  => $session->customer['addressFact']['AI_SecondTel'],
-            'O_FirstBillingAddr'  => $session->customer['addressFact']['AI_FirstAddress'],
-            'O_SecondBillingAddr' => $session->customer['addressFact']['AI_SecondAddress'],
+            'O_FirstBillingTel'   => $session->customer['address']['AI_FirstTel'],
+            'O_SecondBillingTel'  => $session->customer['address']['AI_SecondTel'],
+            'O_FirstBillingAddr'  => $session->customer['address']['AI_FirstAddress'],
+            'O_SecondBillingAddr' => $session->customer['address']['AI_SecondAddress'],
             'O_BillingCity'       => $cityBill,
-            'O_BillingState'      => $session->customer['addressFact']['A_StateId'],
-            'O_BillingCountry'    => $session->customer['addressFact']['A_CountryId'],
-            'O_ZipCode'           => $session->customer['addressFact']['A_ZipCode']
+            'O_BillingState'      => $session->customer['address']['A_StateId'],
+            'O_BillingCountry'    => $session->customer['address']['A_CountryId'],
+            'O_ZipCode'           => $session->customer['address']['A_ZipCode']
         );
 
          $addressShipping = array(

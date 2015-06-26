@@ -10,7 +10,7 @@ $(document).ready(function(){
 
     $('input[id$=A_CityTextValue]').keyup(function(){
         var url    = baseUrl + "/default/index/ajax/actionAjax/citiesList";
-        var select = $(this).parents('fieldset:first').find('select[id$=A_StateId]');
+        var select = $(this).parents('fieldset:last').find('select[id$=A_StateId]');
         var selectId = select.attr('id');
         if ($('#' + selectId + ':not(:disabled)'))
             url += "/state/" + select.val();

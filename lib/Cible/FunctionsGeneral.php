@@ -787,11 +787,11 @@ abstract class Cible_FunctionsGeneral
             $authentication = json_decode($_COOKIE['authentication'], true);
             $path = Zend_Registry::get('web_root') . '/';
 
-            $memberProfile = new MemberProfile();
-            $foundUser = $memberProfile->findMember(array(
-                        'email' => $authentication['email'],
-                        'hash' => $authentication['hash'],
-                        'status' => $authentication['status']
+            $memberProfile = new GenericProfilesObject();
+            $foundUser = $memberProfile->findData(array(
+                        'GP_Email' => $authentication['email'],
+                        'GP_Hash' => $authentication['hash'],
+                        'GP_Status' => $authentication['status']
                     ));
 
             if (!$foundUser)

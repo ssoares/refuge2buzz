@@ -248,9 +248,10 @@ class Bootstrap_Multidb extends Zend_Application_Bootstrap_Bootstrap {
             $www_root .= $tmpPath;
         }
         $protocol = 'http://';
-        if ($isHttpsOn)
+        if ($isHttpsOn){
             $protocol = 'https://';
-
+        }
+        Zend_Registry::set('protocol', $protocol);
         $absolute_web_root = $protocol . $this->config->domainName . $www_root;
 
         if (preg_match(self::FO_NAME, FRONTEND)) {
