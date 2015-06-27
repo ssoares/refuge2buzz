@@ -8,15 +8,21 @@
     <?php endif;?>
     </div>
     <?php ; ?>
+    <?php if (!$this->user): ?>
     <div class="col-lg-6">
         <?php echo $this->getClientText('create_new_account'); ?>
         <br />
-        <?php echo $this->link('/' . Cible_FunctionsCategories::getPagePerCategoryView(1,
-                'become_client', 17, null, true), $this->getCibleText('form_select_option_view_order_become_client')); ?>
+        <?php
+        echo $this->link('/' . Cible_FunctionsCategories::getPagePerCategoryView(1,
+            'become_client', 17, null, true),
+            $this->getCibleText('form_select_option_view_order_become_client'),
+            array('class' => 'link-button'));
+ ?>
     </div>
     <div class="login col-lg-6">
-        <?php echo $this->action('login', 'index', 'order');?>
+    <?php echo $this->action('login', 'index', 'order'); ?>
     </div>
+    <?php endif; ?>
     <?php echo $this->form;?>
     <?php echo $this->partial('partials/cartNavigationLinks.phtml', 'cart',
             array(

@@ -1,5 +1,5 @@
 <?php
-    
+
     class FormLogin extends Cible_Form
     {
         public function __construct($options = null)
@@ -54,7 +54,7 @@
             // Submit button
             $submit = new Zend_Form_Element_Submit('submit_login');
             $submit->setLabel($this->getView()->getCibleText('button_submit'))
-                   ->setAttrib('class', 'button');
+                   ->setAttrib('class', 'link-button');
             $submit->setDecorators(array(
                 'ViewHelper',
                 array(array('row' => 'HtmlTag'), array('tag' => 'dd'))

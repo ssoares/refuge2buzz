@@ -31,9 +31,9 @@ class Profile_IndexController extends Cible_Extranet_Controller_Module_Action
 //
 //        $select = $selectRetailer->joinRight(
 //                $member->getTable(),
-//                'GP_MemberID = MP_GenericProfileMemberID',
+//                'GP_MemberID = MP_GenericProfileId',
 //                array(
-//                    'member_id' => 'MP_GenericProfileMemberID',
+//                    'member_id' => 'MP_GenericProfileId',
 //                    'MP_Status' => 'MP_Status')
 //        );
 

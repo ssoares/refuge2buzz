@@ -875,14 +875,14 @@ ENGINE = MyISAM DEFAULT CHARSET=utf8 CHECKSUM=1 DELAY_KEY_WRITE=1 ROW_FORMAT=DYN
 --
 
 CREATE TABLE IF NOT EXISTS `MemberProfiles` (
-  `MP_GenericProfileMemberID` int(11) NOT NULL,
+  `MP_GenericProfileId` int(11) NOT NULL,
   `MP_CompanyName` varchar(30) default NULL,
   `MP_AddressId` int(11) NOT NULL,
   `MP_Hash` VARCHAR(50) NULL ,
   `MP_Password` VARCHAR(50) NULL ,
   `MP_ValidateEmail` VARCHAR(30) NULL ,
   `MP_Status` INT(1) NOT NULL ,
-  PRIMARY KEY  (`MP_GenericProfileMemberID`)
+  PRIMARY KEY  (`MP_GenericProfileId`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------

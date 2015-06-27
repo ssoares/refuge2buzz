@@ -108,9 +108,9 @@ class RetailersObject extends DataObject
 
         $select->join(
             $this->_table,
-            'MP_GenericProfileMemberID=R_GenericProfileId',
+            'MP_GenericProfileId=R_GenericProfileId',
             array(
-                'RetailerId'  => 'MP_GenericProfileMemberID',
+                'RetailerId'  => 'MP_GenericProfileId',
                 'CompanyName' => 'MP_CompanyName')
             );
         $select->join(
@@ -190,7 +190,7 @@ class RetailersObject extends DataObject
             ->order($this->_orderField);
 
         if($retailerId)
-            $select->where ('MP_GenericProfileMemberID = ?', $retailerId);
+            $select->where ('MP_GenericProfileId = ?', $retailerId);
 
         $retailers = $this->_db->fetchAll($select);
 

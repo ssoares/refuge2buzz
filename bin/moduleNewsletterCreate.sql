@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `NewsletterFilter_ProfilesTables` (
 INSERT INTO NewsletterFilter_ProfilesTables (NFPT_Name, NFPT_JoinOn) VALUES
 ('GenericProfiles', ''),
 ('NewsletterProfiles', 'NP_GenericProfileMemberID = GP_MemberID'),
-('MemberProfiles', 'MP_GenericProfileMemberID = GP_MemberID');
+('MemberProfiles', 'MP_GenericProfileId = GP_MemberID');
 
 
 -- --------------------------------------------------------

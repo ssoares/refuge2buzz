@@ -786,7 +786,6 @@ abstract class Cible_FunctionsGeneral
         {
             $authentication = json_decode($_COOKIE['authentication'], true);
             $path = Zend_Registry::get('web_root') . '/';
-
             $memberProfile = new GenericProfilesObject();
             $foundUser = $memberProfile->findData(array(
                         'GP_Email' => $authentication['email'],
@@ -815,22 +814,35 @@ abstract class Cible_FunctionsGeneral
     {
         $db = Zend_Registry::get("db");
         $password = md5($password);
-        $profile = new MemberProfile();
-
-        $foundUser = $profile->authenticateMember(array('email' => $email, 'password' => $password));
-
-        if (isset($foundUser['member_id']))
-            return array(
-                'success' => 'true',
-                'member_id' => $foundUser['member_id'],
-                'email' => $foundUser['email'],
-                'lastName' => $foundUser['lastName'],
-                'firstName' => $foundUser['firstName'],
-                'status' => $foundUser['status']
-
-            );
-        else
-            return array('success' => 'false');
+        $profile = new MemberProfilesObject();
+        $filter = array('GP_Email' => $email, 'GP_Password' => $password);
+        $foundUser = $profile->findData($filter);
+        if (isset($foundUser[$profile->getDataId()])){
+            if (isset($foundUser['identification'])){
+                $tmp = $foundUser['identification'];
+                $data = array(
+                    'success' => true,
+                    'member_id' => $foundUser[$profile->getDataId()],
+                    'email' => $tmp['GP_Email'],
+                    'lastName' => $tmp['GP_LastName'],
+                    'firstName' => $tmp['GP_FirstName'],
+                    'language' => $tmp['GP_Language'],
+                    'status' => $tmp['GP_Status']
+                );
+            }else{
+                $data = array(
+                    'success' => true,
+                    'member_id' => $foundUser[$profile->getDataId()],
+                    'email' => $foundUser['GP_Email'],
+                    'lastName' => $foundUser['GP_LastName'],
+                    'firstName' => $foundUser['GP_FirstName'],
+                    'status' => $foundUser['GP_Status']
+                );
+            }
+        }else{
+            $data = array('success' => false);
+        }
+        return $data;
     }
 
     /**

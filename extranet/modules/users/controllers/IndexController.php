@@ -214,7 +214,7 @@ class Users_IndexController extends Cible_Extranet_Controller_Module_Action
 //            $this->_disableExportToExcel = true;
             $this->_constraint = '';
             $this->_colTitle = array(
-                'MP_GenericProfileMemberID'  => array('width' => '150px'),
+                'MP_GenericProfileId'  => array('width' => '150px'),
                 'MP_Company' => array('width' => '150px')
                 );
 
@@ -272,7 +272,7 @@ class Users_IndexController extends Cible_Extranet_Controller_Module_Action
 //            $this->_oMember = new MemberProfilesObject();
             if($this->_isXmlHttpRequest && $this->_request->isPost())
             {
-                $_POST['MP_GenericProfileMemberID'] = $this->_genericId;
+                $_POST['MP_GenericProfileId'] = $this->_genericId;
                 if ($this->_actionKey == 'add')
                     $_POST['MP_Status'] = -1;
             }
@@ -456,7 +456,7 @@ class Users_IndexController extends Cible_Extranet_Controller_Module_Action
                 {
                     $formData = $this->_mergeFormData($formData);
 //                    if (isset ($formData['MP_Status']))
-//                        $oData->save($formData['MP_GenericProfileMemberID'], $formData, $langId);
+//                        $oData->save($formData['MP_GenericProfileId'], $formData, $langId);
 //                    else
                         $recordID = $oData->insert($formData, $langId);
                     $data = array(
@@ -473,7 +473,7 @@ class Users_IndexController extends Cible_Extranet_Controller_Module_Action
                     {
                         $formData = $this->_mergeFormData($formData);
                         $recordID = $oData->insert($formData, $langId);
-                        $formData['MP_GenericProfileMemberID'] = $recordID;
+                        $formData['MP_GenericProfileId'] = $recordID;
                         $formData['MP_Status'] = -2;
 //                        $this->_oMember->insert($formData, $langId);
                     }

@@ -238,10 +238,13 @@ class Order_IndexController extends Cible_Controller_Action
             default:
                 $options = array();
                 if (!is_null($authentication)){
-                    $options['MP_HasAccount'] = $memberInfos['MP_HasAccount'];
-                    $this->view->assign('accountValidate', $memberInfos['validatedEmail']);
+                    $this->view->assign('accountValidate', $memberInfos['MP_ValidateEmail']);
+                    $options['mode'] = 'edit';
+                }else{
+                    $options['mode'] = 'add';
+                    $options['from'] = 'order';
                 }
-                $form = new FormOrderAddr($options);
+                $form = new FormBecomeClient($options);
 
                 if ($this->_request->isPost()){
                     $data = $this->_request->getPost();

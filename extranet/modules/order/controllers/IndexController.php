@@ -34,9 +34,9 @@ class Order_IndexController extends Cible_Extranet_Controller_Import_Action impl
 
             $select = $selectRetailer->joinRight(
                     $member->getTable(),
-                    'GP_MemberID = MP_GenericProfileMemberID',
+                    'GP_MemberID = MP_GenericProfileId',
                     array(
-                        'member_id' => 'MP_GenericProfileMemberID',
+                        'member_id' => 'MP_GenericProfileId',
                         'company'   => 'MP_CompanyName',
                         'MP_Status' => 'MP_Status')
                     );
@@ -187,7 +187,7 @@ class Order_IndexController extends Cible_Extranet_Controller_Import_Action impl
 //                    )
 //                ->joinInner(
 //                    'MemberProfiles',
-//                    'DS_ClientProfileID = MP_GenericProfileMemberID',
+//                    'DS_ClientProfileID = MP_GenericProfileId',
 //                    array('MP_Entreprise_1', 'MP_Entreprise_2')
 //                    )
 

@@ -237,7 +237,7 @@ class GenericProfile
         $where = "GP_MemberID = $memberID";
         $this->_db->delete($this->_genericTable, $where);
 
-        $where = "MP_GenericProfileMemberID = $memberID";
+        $where = "MP_GenericProfileId = $memberID";
         $this->_db->delete('MemberProfiles', $where);
 
         $where = "NP_GenericProfileMemberID = $memberID";

@@ -917,22 +917,17 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 
             $form = new FormLogin();
             $noSubmitOther = true;
-            if (isset($_POST['submit']))
+            if (isset($_POST['submit']) || isset($_POST['unsubscribe'])
+                || isset($_POST['subscribe'])
+                || isset($_POST['submitFind'])){
                 $noSubmitOther = false;
-            elseif (isset($_POST['unsubscribe']))
-                $noSubmitOther = false;
-            elseif (isset($_POST['subscribe']))
-                $noSubmitOther = false;
-            elseif (isset($_POST['submitFind']))
-                $noSubmitOther = false;
-
+            }
             if ($this->_request->isPost() && $noSubmitOther) {
                 $formData = $this->_request->getPost();
 
                 if ($form->isValid($formData)) {
                     $result = Cible_FunctionsGeneral::authenticate($formData['emailLogin'], $formData['password']);
-
-                    if ($result['success'] == 'true' && empty($result['validatedEmail']) && $result['status'] == 2) {
+                    if ($result['success'] && empty($result['validatedEmail']) && $result['status'] == 2) {
                         $this->disableView();
                         $hash = md5(session_id());
                         $duration = $formData['stayOn'] ? time() + (60 * 60 * 24 * 30) : 0;
@@ -950,12 +945,12 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 
                         $memberProfile = new GenericProfilesObject();
                         $memberProfile->save($result['member_id'], array('GP_Hash' => $hash), Zend_Registry::get('languageID'));
-
                         if ($this->_registry->isRegistered('pageID')) {
                             $pageId = $this->_registry->get('pageID');
                             $redirectUrl = $this->_request->getPathInfo();
                             if ($cookie['language'] != Zend_Registry::get('languageID')) {
-                                $redirectUrl = Cible_FunctionsPages::getPageNameByID($pageId, $cookie['language']);
+                                $page = Cible_FunctionsPages::getPageNameByID($pageId, $cookie['language']);
+                                $redirectUrl = $this->view->url(array('controller' => $page));
                                 Zend_Registry::set('languageID', $cookie['language']);
                             }
                         }

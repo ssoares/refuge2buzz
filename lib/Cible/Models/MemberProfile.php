@@ -94,7 +94,7 @@ class MemberProfile extends GenericProfile
     {
         $select = $this->_db->select();
         $select->from($this->_genericTable, $this->_genericFields)
-            ->join($this->_table, 'GP_MemberID = MP_GenericProfileMemberID', $this->_fields)
+            ->join($this->_table, 'GP_MemberID = MP_GenericProfileId', $this->_fields)
             ->where('GP_MemberID = ?', $memberID);
 
         return $this->_db->fetchRow($select);
@@ -111,7 +111,7 @@ class MemberProfile extends GenericProfile
     {
         $select = $this->_db->select();
         $select->from($this->_genericTable, $this->_genericFields)
-            ->join($this->_table, 'GP_MemberID = MP_GenericProfileMemberID', $this->_fields);
+            ->join($this->_table, 'GP_MemberID = MP_GenericProfileId', $this->_fields);
 
         $columns = array_merge($this->_genericFields, $this->_fields);
         foreach ($authenticationColumns as $key => $value)
@@ -134,7 +134,7 @@ class MemberProfile extends GenericProfile
 
         $select = $this->_db->select();
         $select->from($this->_genericTable, $this->_genericFields)
-            ->join($this->_table, 'GP_MemberID = MP_GenericProfileMemberID', $this->_fields);
+            ->join($this->_table, 'GP_MemberID = MP_GenericProfileId', $this->_fields);
 
         $columns = array_merge($this->_genericFields, $this->_fields);
         foreach ($filters as $key => $value)
@@ -156,7 +156,7 @@ class MemberProfile extends GenericProfile
 
         $select = $this->_db->select();
         $select->from($this->_genericTable, $this->_genericFields)
-            ->join($this->_table, 'GP_MemberID = MP_GenericProfileMemberID', $this->_fields);
+            ->join($this->_table, 'GP_MemberID = MP_GenericProfileId', $this->_fields);
 
         $columns = array_merge($this->_genericFields, $this->_fields);
         foreach ($filters as $key => $value)
@@ -177,7 +177,7 @@ class MemberProfile extends GenericProfile
     {
         $select = $this->_db->select();
         $select->from($this->_genericTable, $this->_genericFields)
-            ->join($this->_table, 'GP_MemberID = MP_GenericProfileMemberID', $this->_fields);
+            ->join($this->_table, 'GP_MemberID = MP_GenericProfileId', $this->_fields);
 
         return $select;
     }
@@ -205,7 +205,7 @@ class MemberProfile extends GenericProfile
             }
         }
 
-        $columns['MP_GenericProfileMemberID'] = $id;
+        $columns['MP_GenericProfileId'] = $id;
 
         return $this->_db->insert($this->_table, $columns);
     }
@@ -239,12 +239,12 @@ class MemberProfile extends GenericProfile
                 'member_id' => $memberId
             )))
         {
-            $columns['MP_GenericProfileMemberID'] = $memberId;
+            $columns['MP_GenericProfileId'] = $memberId;
             $this->_db->insert($this->_table, $columns);
         }
         else
         {
-            $where = $this->_db->quoteInto('MP_GenericProfileMemberID = ?', $memberId);
+            $where = $this->_db->quoteInto('MP_GenericProfileId = ?', $memberId);
             $this->_db->update($this->_table, $columns, $where);
         }
     }
@@ -259,7 +259,7 @@ class MemberProfile extends GenericProfile
     {
         //parent::delete($memberID);
 
-        $where = "MP_GenericProfileMemberID = $memberID";
+        $where = "MP_GenericProfileId = $memberID";
         $this->_db->delete($this->_table, $where);
     }
 
