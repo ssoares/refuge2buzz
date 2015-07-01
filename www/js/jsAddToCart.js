@@ -197,7 +197,8 @@ var cartActions = {
     {
         var form = $('#sendToPaypal');
         $('input.rowToSend').remove();
-        $('#subTotalValue span').text(cartActions.total('sumLine'));
+        var subTotSpan = $('#subTotalValue span');
+        subTotSpan.text(cartActions.total('sumLine'));
         var subTot = parseFloat($('#subTotalValue span').text());
 
         if (subTot > defaultProperties.limitShip && defaultProperties.limitShip >= 0)
@@ -235,11 +236,16 @@ var cartActions = {
         {
             // for each item line, test if the item has tax else not added.
             $('.taxFed').each(function(){
-
-                if(parseInt($(this).val()))
+                if(parseInt($(this).val())){
                     subTps += parseFloat($(this).parent().nextAll('div[id^=sumLine]').children('span').text());
+                }
             });
             value = subTps + transport;
+            if (defaultProperties.taxInc){
+                value = defaultProperties.getTotalNoTaxes(value);
+                $('#tpsValue').removeClass('number').addClass('text-info');
+                $('#tpsValue').prev().addClass('text-info');
+            }
             $('#tpsValue span').text(defaultProperties.getTpsValue(value));
         }
 
@@ -250,6 +256,11 @@ var cartActions = {
                     subTvq += parseFloat($(this).parent().nextAll('div[id^=sumLine]').children('span').text());
             });
             value = subTvq + transport;
+            if (defaultProperties.taxInc){
+                value = defaultProperties.getTotalNoTaxes(value);
+                $('#tvqValue').removeClass('number').addClass('text-info');
+                $('#tvqValue').prev().addClass('text-info');
+            }
             $('#tvqValue span').text(defaultProperties.getTvqValue(value));
         }
 
@@ -282,10 +293,11 @@ var cartActions = {
             var totBonus = subTot * defaultProperties.nbPoint;
             $('#totBonus').text(Math.round(totBonus));
         }
-
+        if (defaultProperties.taxInc){
+            var text = defaultProperties.getTotalNoTaxes(subTot + transport);
+            $('#subTotalValue-infoTax span').html(text);
+        }
         $('#totalValue').text(cartActions.total('number', 'class') + ' $');
-
-
     }
 
 }
@@ -311,6 +323,7 @@ var defaultProperties = {
     limitOrder: 25,
     format: true,
     cartUrl: '',
+    taxInc: false,
     init: function(
         baseUrl,
         currentElem,
@@ -394,6 +407,14 @@ var defaultProperties = {
     {
         defaultProperties.tvq = tax;
     },
+    setTaxInc: function(included)
+    {
+        if (included == 1){
+            defaultProperties.taxInc = true;
+        }else{
+            defaultProperties.taxInc = false;
+        }
+    },
     setShipFee: function(val)
     {
         defaultProperties.shipFee = val;
@@ -414,7 +435,7 @@ var defaultProperties = {
     {
         var tvq     = this.tvq/100;
         this.format = false;
-        var val     = (sum + this.getTpsValue(sum)) * tvq;
+        var val     = sum * tvq;
 
         val = Math.round(val*100)/100
         val = val.toFixed(2)
@@ -429,6 +450,15 @@ var defaultProperties = {
             val = val.toFixed(2);
 
         return val;
+    },
+    getTotalNoTaxes: function(sum)
+    {
+        var tps = this.tps / 100;
+        var tvq = this.tvq / 100;
+        var val = sum / (1 + tps + tvq);
+        val = val.toFixed(2);
+
+        return parseFloat(val);
     }
 }
 

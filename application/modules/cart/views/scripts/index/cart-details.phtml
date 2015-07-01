@@ -110,7 +110,7 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                 <p class="infoLimitOrder infoTpsFees">
                     <?php echo $this->getClientText('cart_label_order_limit', null, array('##TP_ORDER_LIMIT##' => $this->parameters['limitOrder'])); ?>
                 </p>
-                <?php if ($this->parameters['includeTaxs'] == 1): ?>
+                <?php if ((bool)$this->parameters['includeTaxs']): ?>
                 <p class="infoTaxesIncluded">
                 <?php echo $this->getCibleText('cart_label_taxes_included'); ?>
                 </p>
@@ -130,8 +130,14 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                     <?php echo $this->getClientText('cart_transport_label'); ?>
                 </p>
                 <p id="transportValue" class="col-lg-3 number">
-                    <span><?php echo $this->parameters['tpsFee']; ?></span> $
+                <span><?php echo $this->parameters['tpsFee']; ?></span> $
                 </p>
+                <?php if ($this->parameters['includeTaxs']): ?>
+                <p id="subTotalLbl-infoNoTax" class="col-lg-9 text-info">
+                    <em><?php echo $this->getCibleText('cart_summary_subtotal_before_tax'); ?></em>
+                </p>
+                <p id="subTotalValue-infoTax" class="col-lg-3 text-info"><span>0</span> $</p>
+                <?php endif; ?>
                 <p id="tvqLbl" class="col-lg-9">
                     <?php if ($taxFed > 0): ?>
                         <?php echo $this->getClientText('cart_tvq_label'); ?>
@@ -232,7 +238,8 @@ $(document).ready(function(){
     var langId    = '<?php echo Zend_Registry::get('languageID')?>';
     var taxProv   = '<?php echo $this->parameters['taxeProv']; ?>';
 
-    var taxFed    = '<?php echo !$this->parameters['includeTaxs'] ? $taxFed : 0; ?>';
+    var taxInc    = '<?php echo $this->parameters['includeTaxs']; ?>';
+    var taxFed    = '<?php echo $taxFed; ?>';
     var nbPoint   = '<?php echo $this->parameters['nbPoint']; ?>';
     var shipFee   = '<?php echo $this->parameters['tpsFee']; ?>';
     var limitOrder   = '<?php echo $this->parameters['limitOrder']; ?>';
@@ -240,6 +247,7 @@ $(document).ready(function(){
 
     defaultProperties.setTps(taxFed);
     defaultProperties.setTvq(taxProv);
+    defaultProperties.setTaxInc(taxInc);
     defaultProperties.setLimitOrder(limitOrder);
     defaultProperties.setNbPoint(nbPoint);
     defaultProperties.setShipFee(shipFee);
