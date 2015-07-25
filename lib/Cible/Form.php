@@ -181,6 +181,9 @@ class Cible_Form extends Zend_Form
             if ($_element->isRequired()){
                 $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
             }
+//            if ($this->_resume){
+//                $_element->setAttrib('disabled', 'disabled');
+//            }
         }
 
         foreach($this->getSubForms() as $key => $subform)
@@ -200,6 +203,9 @@ class Cible_Form extends Zend_Form
                     }
                     if ($_element->isRequired()){
                         $_element->setAttrib('class',  $_element->getAttrib('class') . ' required-field');
+                    }
+                    if ($this->_resume){
+                        $_element->setAttrib('disabled', 'disabled');
                     }
                 }
             }

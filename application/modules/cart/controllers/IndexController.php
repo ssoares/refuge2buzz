@@ -234,7 +234,6 @@ class Cart_IndexController extends Cible_Controller_Action
                  . ltrim($this->getRequest()->getPathInfo(), '/');
 
             $exclude = preg_match('/resume-order/', $url);
-
             if(!$exclude)
                 Cible_View_Helper_LastVisited::saveThis($url);
 
@@ -263,9 +262,11 @@ class Cart_IndexController extends Cible_Controller_Action
 //            $orderPageId = Cible_FunctionsCategories::getPagePerCategoryView(0, 'order', 17);
             $resume      = false;
 
-            if ($this->_registry->pageID == $this->_orderPageId)
+            if ($exclude){
                 $resume = true;
+            }
             $index = 1;
+            $rows = array();
             foreach ($allIds as $key => $id)
             {
                 $itemId = $cartData['itemId'][$key];
@@ -275,10 +276,14 @@ class Cart_IndexController extends Cible_Controller_Action
 
                 $cartDetails = $cart->getItem($id, $itemId);
                 $cartDetails['index'] = $index;
-                if($resume)
+                if($resume){
                     $renderItem  = $cart->renderResume ($cartDetails, $itemId);
-                else
+                    $label = $productData[$id]['data']['PI_Name'] . ' | '
+                        . $productData[$id]['items']['II_Name'];
+                    $rows[$index] = array($label, $cartDetails['Quantity'], sprintf ('%.2f', $cartDetails['Total']));
+                }else{
                     $renderItem  = $cart->renderCartLine($cartDetails, $itemId);
+                }
 
                 $productData[$id]['items']['render'] = $renderItem;
                 if (isset($cartDetails['Disable'])){
@@ -288,6 +293,7 @@ class Cart_IndexController extends Cible_Controller_Action
                 $index++;
             }
 
+            Zend_Registry::set('payPalRows', $rows);
             $hasBonus    = $oProduct->getBonus();
             $orderParams = Cible_FunctionsGeneral::getParameters ();
             $params = array(
@@ -299,8 +305,9 @@ class Cart_IndexController extends Cible_Controller_Action
                 'includeTaxs' => $orderParams['CP_IncludeTaxes']
             );
             if($account){
-                $profile = new MemberProfile();
-                $memberData = $profile->findMember(array('email' => $account['email']));
+                $profile = new MemberProfilesObject();
+                $memberData = $profile->setProfileId($account['member_id'])
+                    ->findData(array('GP_Email' => $account['email']));
                 $memberData = $profile->addTaxRate($memberData);
     //            if ($memberData['validatedEmail'] == '')
     //                $this->view->assign('valide', true);
@@ -309,14 +316,32 @@ class Cart_IndexController extends Cible_Controller_Action
                 $tmp = array(
                     'taxeProv'    => $memberData['taxProv'],
                     'taxeCode'    => $memberData['taxCode'],
-                    'noProvTax'   => $memberData['noProvTax'],
-                    'noFedTax'    => $memberData['noFedTax'],
+//                    'noProvTax'   => $memberData['noProvTax'],
+//                    'noFedTax'    => $memberData['noFedTax'],
                 );
+                if (!empty($memberData['addressShipping'])){
+                    $country = $memberData['addressShipping']['A_CountryId'];
+                    switch($country)
+                    {
+                        case 52:
+                            if ($orderParams['CP_ShipFeeUSA'] > 0){
+                                $tmp['tpsFee'] = $orderParams['CP_ShipFeeUSA'];
+                            }
+                            break;
+                        case !in_array($country, array(7,52)):
+                            if ($orderParams['CP_ShipFeeOther'] > 0){
+                                $tmp['tpsFee'] = $orderParams['CP_ShipFeeOther'];
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 if($memberData['taxCode'] == 'QC')
-                    $parameters['taxeFed'] = $orderParams['CP_TauxTaxeFed'];
+                    $tmp['taxeFed'] = $orderParams['CP_TauxTaxeFed'];
             }else{
                 $oTaxes = new TaxesObject();
-                $stateId = '11';
+                $stateId = 11;
                 $taxRate = $oTaxes->getTaxData($stateId);
                 $tmp = array(
                     'taxeProv'    => $taxRate['TP_Rate'],
@@ -339,11 +364,11 @@ class Cart_IndexController extends Cible_Controller_Action
             $this->view->assign('step', 1);
             $this->view->assign('hasBonus', $oProduct->getBonus());
             $this->view->assign('parameters', $parameters);
-
-            if ($this->_registry->pageID == $this->_orderPageId)
+            if ($exclude){
                 $this->renderScript('index/cart-summary.phtml');
-            else
+            }else{
                 $this->renderScript('index/cart-details.phtml');
+            }
         }
     }
 }

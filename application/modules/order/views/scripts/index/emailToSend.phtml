@@ -4,8 +4,7 @@ if($this->displayCODFees)
     $displayCOD = $this->displayCODFees;
 // Display the message and the freight charges
 $display = $this->display;
-    
-
+$codeColor = '#0C5419';
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <html>
@@ -25,6 +24,12 @@ $display = $this->display;
         td.zipCode{
             text-transform: uppercase;
         }
+        .text-info{
+            font-size: 14.4px;
+            font-style: italic;
+            margin-bottom: 0;
+            color: #31708f;
+        }
     </style>
     <body bgcolor="#FFFFFF" alink="#FFFFFF" vlink="#FFFFFF" link="#FFFFFF" text="#5D5D5C" topmargin="0" leftmargin="0" style="margin:0px;padding:0px;">
         <div class="block form" align="center">
@@ -35,7 +40,7 @@ $display = $this->display;
                     </td>
                 </tr>
                 <tr>
-                    <td colspan="2" align="center" height="40" bgcolor="#BCBE00" style="color:#FFFFFF; text-transform: uppercase; font-weight: bold" class="entete">
+                    <td colspan="2" align="center" height="40" bgcolor="<?php echo $codeColor; ?>" style="color:#FFFFFF; text-transform: uppercase; font-weight: bold" class="entete">
                         <?php echo $this->getClientText('email_information_shipping'); ?>
                     </td>
                 </tr>
@@ -44,7 +49,7 @@ $display = $this->display;
                 </tr>
                 <tr>
                     <td rowspan="8" valign="top" style="text-transform: uppercase; font-weight: bold">
-                        <?php echo $this->getClientText('email_billing_information'); ?>
+                        <?php echo $this->getCibleText('fieldset_address'); ?>
                     </td>
                     <td><?php echo $this->custAccount['O_FirstName']?> <?php echo $this->custAccount['O_LastName']; ?></td>
                 <tr>
@@ -53,7 +58,7 @@ $display = $this->display;
                 <tr>
                     <td>
                         <?php echo $this->addressBilling['O_FirstBillingAddr']; ?> <br />
-                        <?php echo $this->addressBilling['O_SecondBillingAddr']; ?>
+                        <?php // echo $this->addressBilling['O_SecondBillingAddr']; ?>
                     </td>
                 </tr>
                 <tr>
@@ -69,10 +74,10 @@ $display = $this->display;
                     <td><?php echo $this->addressBilling['O_BillingCountry']; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $this->getClientText('phone_short_label'); ?> : <?php echo $this->addressBilling['O_FirstBillingTel']; ?></td>
+                    <td><?php echo $this->getCibleText('form_label_firstTel'); ?> : <?php echo $this->addressBilling['O_FirstBillingTel']; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $this->getClientText('phone_short_label'); ?> : <?php echo $this->addressBilling['O_SecondBillingTel']; ?></td>
+                    <td><?php echo $this->getCibleText('form_label_secondTel'); ?> : <?php echo $this->addressBilling['O_SecondBillingTel']; ?></td>
                 </tr>
                 <tr>
                     <td colspan="2" align="center" height="25"></td>
@@ -82,7 +87,7 @@ $display = $this->display;
                 </tr>
                 <tr>
                     <td rowspan="8" valign="top" style="text-transform: uppercase; font-weight: bold">
-                        <?php echo $this->getClientText('email_delivery_address'); ?>
+                        <?php echo $this->getCibleText('fieldset_addressShipping'); ?>
                     </td>
                     <td>
                         <?php echo $this->custAccount['O_FirstName']; ?> <?php echo $this->custAccount['O_LastName']; ?>
@@ -106,57 +111,18 @@ $display = $this->display;
                     <td><?php echo $this->addressShipping['O_ShippingCountry']; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $this->getClientText('phone_short_label'); ?> : <?php echo $this->addressShipping['O_FirstShippingTel']; ?></td>
+                    <td><?php echo $this->getCibleText('form_label_firstTel'); ?> : <?php echo $this->addressShipping['O_FirstShippingTel']; ?></td>
                 </tr>
                 <tr>
-                    <td><?php echo $this->getClientText('phone_short_label'); ?> : <?php echo $this->addressShipping['O_SecondShippingTel']; ?></td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                </tr>
-            <?php
-            if ($this->paid == true)
-            { ?>
-                <tr>
-                    <td colspan="2" align="center" height="40" bgcolor="#BCBE00" style="color:#FFFFFF;text-transform: uppercase; font-weight: bold" class="entete">
-                        <?php echo $this->getClientText('email_payment_information'); ?>
-                    </td>
+                    <td><?php echo $this->getCibleText('form_label_secondTel'); ?> : <?php echo $this->addressShipping['O_SecondShippingTel']; ?></td>
                 </tr>
                 <tr>
                     <td>&nbsp;</td>
                 </tr>
                 <tr>
-                    <td align="left">
-                        <?php echo $this->getClientText('email_card_type'); ?>
-                    </td>
-                    <td><?php echo $this->cardType; ?></td>
-                </tr>
-                <tr>
-                    <td align="left">
-                        <?php echo $this->getClientText('email_card_holder'); ?>
-                    </td>
-                    <td><?php echo $this->cardHolder; ?></td>
-                </tr>
-                <tr>
-                    <td align="left">
-                        <?php echo $this->getClientText('email_card_number'); ?>
-                    </td>
-                    <td><?php echo $this->cardNumber; ?></td>
-                </tr>
-                <tr>
-                    <td align="left">
-                        <?php echo $this->getClientText('email_card_exp'); ?>
-                    </td>
-                    <td><?php echo $this->cardexpiryDate; ?></td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                </tr>
-            <?php } ?>
-
-                <tr>
-                    <td colspan="2" align="center" height="40" bgcolor="#BCBE00" style="color:#FFFFFF;text-transform: uppercase; font-weight: bold" class="entete">
-                        <?php echo $this->getClientText('email_order_detail'); ?>: n° <?php echo $this->orderNumber; ?>
+                    <td colspan="2" align="center" height="40" bgcolor="<?php echo $codeColor; ?>" style="color:#FFFFFF;text-transform: uppercase; font-weight: bold" class="entete">
+                        <?php echo $this->getClientText('product_label'); ?>
+                        <?php // echo $this->orderNumber; ?>
                     </td>
                 </tr>
                 <tr>
@@ -167,23 +133,23 @@ $display = $this->display;
                         <table>
                             <tr style="text-transform: uppercase; border-bottom: 2px dotted #c4c4c4">
                                 <th width="150">
-                                    <?php echo $this->getClientText('email_item_numero'); ?>
+                                    <?php echo $this->getCibleText('form_product_code_label'); ?>
                                 </th>
                                 <th width="225">
-                                    <?php echo $this->getClientText('email_item_description'); ?>
+                                    <?php echo $this->getCibleText('form_label_description'); ?>
                                 </th>
                                 <th width="75" align="center">
-                                    <?php echo $this->getClientText('email_item_quantity'); ?>
+                                    <?php echo $this->getClientText('form_item_qty_label'); ?>
                                 </th>
                                 <th width="75"  align="center">
-                                    <?php echo $this->getClientText('email_item_prix'); ?>
+                                    <?php echo $this->getClientText('unit_price_label'); ?>
                                 </th>
                                 <th width="75" align="right">
-                                    <?php echo $this->getClientText('email_item_total'); ?>
+                                    <?php echo $this->getClientText('cart_item_total_label'); ?>
                                 </th>
                             </tr>
 
-                        <?php $oProduct = new ProductsCollection(); ?>
+                        <?php $oProduct = new CatalogCollection(); ?>
                         <?php $oItems   = new ItemsObject(); ?>
                         <?php
                         $tmpData = "";
@@ -226,7 +192,7 @@ $display = $this->display;
                             </tr>
                             <tr>
                                 <td colspan="4" align="right">
-                                    <?php echo $this->getClientText('email_shipping_handling'); ?>
+                                    <?php echo $this->getClientText('cart_transport_label'); ?>
                                 </td>
                                 <td width="100" align="right">
                                     <?php echo sprintf('%.2f',$this->shipFee); ?>
@@ -242,31 +208,45 @@ $display = $this->display;
                                 </td>
                             </tr>
                             <?php endif; ?>
+                            <?php
+                            $classInfo = '';
+                            if ((bool)$this->sessionOrder['includeTaxs']):
+                                $classInfo = 'text-info';
 
+                            ?>
+                            <tr>
+                                <td colspan="4" align="right" class="<?php echo $classInfo; ?>">
+                                <?php echo $this->getCibleText('cart_summary_subtotal_before_tax'); ?>
+                                </td>
+                                <td width="100" align="right" class="<?php echo $classInfo; ?>">
+                                    <?php echo sprintf('%.2f',$this->sessionOrder['subTotProv']); ?>
+                                </td>
+                            </tr>
+                            <?php endif; ?>
                             <?php if ($this->taxeTPS > 0): ?>
                             <tr>
-                                <td colspan="4" align="right">
-                                        <?php echo $this->getClientText('email_taxe_tps'); ?>
+                                <td colspan="4" align="right" class="<?php echo $classInfo; ?>">
+                                        <?php echo $this->getClientText('cart_tps_label'); ?>
                                 </td>
-                                <td width="100" align="right">
+                                <td width="100" align="right" class="<?php echo $classInfo; ?>">
                                     <?php echo sprintf('%.2f',$this->taxeTPS); ?>
                                 </td>
                             </tr>
                             <?php endif; ?>
                             <tr>
-                                <td colspan="4" align="right">
+                                <td colspan="4" align="right" class="<?php echo $classInfo; ?>">
                                     <?php if ($this->taxeTPS > 0): ?>
-                                        <?php echo $this->getClientText('email_taxe_tvq'); ?>
+                                        <?php echo $this->getClientText('cart_tvq_label'); ?>
                                     <?php else: ?>
                                         <?php echo $this->getClientText('email_taxe_label'); ?>
                                     <?php endif; ?>
                                 </td>
-                                <td width="100" align="right">
+                                <td width="100" align="right" class="<?php echo $classInfo; ?>">
                                     <?php echo sprintf('%.2f',$this->taxeTVQ); ?>
                                 </td>
                             </tr>
                             <tr><td colspan="4" align="right">
-                                    <?php echo $this->getClientText('email_taxe_total'); ?>
+                                    <?php echo $this->getClientText('cart_total_label'); ?>
                                 </td>
                                 <td width="100" align="right">
                                     <?php echo sprintf('%.2f', $this->chargeTotal); ?>
@@ -285,20 +265,20 @@ $display = $this->display;
                         <?php endif; ?>
                     </td>
                 </tr>
-                <tr>
+<!--                <tr>
                     <td>&nbsp;</td>
-                </tr>
-                <tr>
+                </tr>-->
+<!--                <tr>
                     <td colspan="2" align="center" style="color: #BCBE00">
                         <?php echo $this->getClientText('email_message_de_fin'); ?>
                     </td>
-                </tr>
+                </tr>-->
                 <tr>
                     <td>&nbsp;</td>
                 </tr>
                 <?php if (!$this->online): ?>
                  <tr>
-                    <td colspan="2" bgcolor="#BCBE00" height="35" align="center" valign="middle">
+                    <td colspan="2" bgcolor="<?php echo $codeColor; ?>" height="35" align="center" valign="middle">
                         <?php echo $this->template['footer']; ?>
                     </td>
                 </tr>

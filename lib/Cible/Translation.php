@@ -32,8 +32,18 @@ abstract class Cible_Translation
     const TRANSLATION_TYPE_CIBLE = 1;
     const TRANSLATION_TYPE_CLIENT = 2;
 
-
-    public static function __($key, $type, $lang = null, $replace = array()){
+    /**
+     * Get static text from key.
+     *
+     * @param string $key Identifier to look for
+     * @param string $type Type of record Cible (=1) or Client (=2)
+     * @param int $lang Optional. Language id. Current language by default.
+     * @param array $options Possible value : 'replace' => array('search' => 'replace')
+     *                          Or 'default' => 'default to display'.
+     * @return string The text found for the key. If no default value in options
+     * and not found into DB then a pre-formatted string error.
+     */
+    public static function __($key, $type, $lang = null, $options = array()){
 
         $registry = Zend_Registry::getInstance();
         $cache = $registry->get('cache');
@@ -58,8 +68,12 @@ abstract class Cible_Translation
                 $cache->save($data, $identifier, $tags);
             } else {
                 $data = $identifier . ' not found in database';
+                if(isset($options['default'])){
+                    $data = $options['default'];
+                }
             }
         }
+        $replace = isset($options['replace']) ? $options['replace'] : array();
         if (!empty($replace)){
             foreach ($replace as $key => $value){
                 $search[] = $key;
@@ -67,7 +81,8 @@ abstract class Cible_Translation
             }
             $data = str_replace($search, $replaceValues, $data);
         }
-        if( Zend_Registry::get('enableDictionnary') == 'true' ){
+        if(Zend_Registry::isRegistered('enableDictionnary')
+            && Zend_Registry::get('enableDictionnary') == 'true' ){
             $template = "<span id='$key'>%TEXT%</span><a href=\"javascript:dictionnary_edit('$key', '$type','$lang');\">[e]</a>";
             return str_replace('%TEXT%', $data, $template);
         } else {
@@ -110,14 +125,14 @@ abstract class Cible_Translation
 
     }
 
-    public static function getClientText($key, $lang = null)
+    public static function getClientText($key, $lang = null, $options = array())
     {
-        return self::__($key, self::TRANSLATION_TYPE_CLIENT, $lang);
+        return self::__($key, self::TRANSLATION_TYPE_CLIENT, $lang, $options);
     }
 
-    public static function getCibleText($key, $lang = null)
+    public static function getCibleText($key, $lang = null, $options = array())
     {
-        return self::__($key, self::TRANSLATION_TYPE_CIBLE, $lang);
+        return self::__($key, self::TRANSLATION_TYPE_CIBLE, $lang, $options);
     }
 
 }

@@ -1,7 +1,12 @@
 <div id="cart" class="block">
 <?php echo $this->partial('partials/stepTopLine.phtml', 'cart', array('step' => $this->step)); ?>
     <p id="confirmation">
-        <?php echo $this->getClientText('order_confirmation_text'); ?>
+        <?php
+        $page = Cible_FunctionsCategories::getPagePerCategoryView(0, 'forms_contact', 11, null, true);
+        $url = $this->absolute_web_root . $page;
+        $link = $this->link($url, $page);
+        ?>
+        <?php echo $this->getClientText('order_error_confirmation_text', null,array('replace' => array('##JOINUS##' => $link))); ?>
     </p>
     <?php echo $this->html; ?>
     <p id="linkHome">

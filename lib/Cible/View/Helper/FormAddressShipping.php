@@ -46,8 +46,9 @@ class Cible_View_Helper_FormAddressShipping extends Zend_View_Helper_FormElement
         }
         if (isset($options['requiredValidator'])){
             $this->_requiredValidator = $options['requiredValidator'];
+            unset($options['requiredValidator']);
         }
-        $address = new Cible_Form_SubForm();
+        $address = new Cible_Form_SubForm($options);
         $address->setName('addressShipping')
             ->setLegend(Cible_Translation::getCibleText('fieldset_addressShipping'))
             ->setAttrib('class', 'identificationClass subFormClass')

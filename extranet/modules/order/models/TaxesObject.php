@@ -46,9 +46,9 @@ class TaxesObject extends DataObject
                     array('TZ_GroupName')
                     )
             ->where('TP_StateId = ?', $stateId);
-
-        $value = $this->_db->fetchRow($select);
         
+        $value = $this->_db->fetchRow($select);
+
         return $value;
     }
 

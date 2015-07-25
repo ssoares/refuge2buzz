@@ -15,6 +15,7 @@ class Order_IndexController extends Cible_Controller_Action
     protected $_emailRenderData = array();
     protected $_lang;
     protected $_obj;
+    protected $_results;
 
     public function init()
     {
@@ -76,8 +77,7 @@ class Order_IndexController extends Cible_Controller_Action
 
         $authentication = Cible_FunctionsGeneral::getAuthentication();
 
-        $page = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list_collections', 14);
-
+        $page = Cible_FunctionsCategories::getPagePerCategoryView(1, 'list', 14, null, true);
         // If authentication is not present or if cart is empty, redirect to the cart page
         if (!is_null($authentication))
         {
@@ -124,14 +124,15 @@ class Order_IndexController extends Cible_Controller_Action
         switch ($stepAction)
         {
             case 'resume-order':
-                if(empty($session->customer))
+                if(empty($session->customer)){
                     $this->_redirect(Cible_FunctionsPages::getPageNameByID (1));
+                }
                 $this->view->headLink()->offsetSetStylesheet($this->_moduleID, $this->view->locateFile('cart.css'), 'all');
-        $this->view->headLink()->appendStylesheet($this->view->locateFile('cart.css'), 'all');
-                // Create this form to fill with values used for the read-only rendering
-                $formOrder = new FormOrder(array('resume' => true));
+                $this->view->headLink()->appendStylesheet($this->view->locateFile('cart.css'), 'all');
                 // Store the state id in the session to allow tax calculation
-                $session->stateId = $billAddr['A_StateId'];
+                if (is_numeric($session->customer['address']['A_StateId'])){
+                    $session->stateId = $session->customer['address']['A_StateId'];
+                }
                 // Calculate totals to display and for the bill.
                 $totals = $this->calculateTotal($memberInfos);
 
@@ -139,12 +140,23 @@ class Order_IndexController extends Cible_Controller_Action
                 $session->order['subTotal']     = $totals['subTot'];
                 $session->order['taxFed']       = $totals['taxFed'];
                 $session->order['taxProv']      = $totals['taxProv'];
+                $session->order['subTotProv']   = $totals['subTotProv'];
                 $session->order['nbPoint']      = $totals['nbPoint'];
                 $session->order['shipFee']      = $orderParams['CP_ShippingFees'];
                 $session->order['limitShip']    = $orderParams['CP_ShippingFeesLimit'];
+                $session->order['limitOrder']   = $orderParams['CP_OrderMiniAmount'];
                 $session->order['CODFees']      = $orderParams['CP_MontantFraisCOD'];
+                $session->order['includeTaxs']  = $orderParams['CP_IncludeTaxes'];
                 $session->order['rateFed']      = 0;
-
+                // Create this form to fill with values used for the read-only rendering
+                $urlReturn = Zend_Registry::get('absolute_web_root');
+                $urlReturn .= $stepValues[$stepAction]['next'];
+                $options = array('resume' => true, 'mode' => 'resume',
+                    'urlReturn'=> $urlReturn);
+                if (isset($totals['shipFee'])){
+                    $options['shipFee'] = $totals['shipFee'];
+                }
+                $formOrder = new FormBecomeClient($options);
                 if($session->stateId == 11)
                     $session->order['rateFed'] = $orderParams['CP_TauxTaxeFed'];
 
@@ -154,44 +166,30 @@ class Order_IndexController extends Cible_Controller_Action
                     $session->customer['addressShipping'] = $session->customer['address'];
                 }
 
-                $dataBill = $this->getAddrData($session->customer['address'], 'address', $session);
-                $dataShip = $this->getAddrData($session->customer['addressShipping'], 'addressShipping', $session);
-
+                $this->getAddrData($session->customer['address'], 'address', $session);
+                $this->getAddrData($session->customer['addressShipping'], 'addressShipping', $session);
+                $idS =  $session->customer['identification']['GP_Salutation'];
                 $salut = Cible_FunctionsGeneral::getSalutations(
-                    $memberInfos['salutation'],
+                     $idS,
                     Zend_Registry::get('languageID')
                 );
 
-                if (isset($salut[$memberInfos['salutation']]))
-                    $session->customer['identification']['salutation'] = $salut[$memberInfos['salutation']];
-                else
+                if (isset($salut[$idS])){
+                    $session->customer['identification']['salutation'] = $salut[$idS];
+                }else{
                     $session->customer['identification']['salutation'] = "-";
-
+                }
                 $formOrder->populate($session->customer);
 
                 $formOrder->getSubForm('addressShipping')->removeElement('duplicate');
                 $formOrder->getSubForm('identification')->removeElement('password');
                 $formOrder->getSubForm('identification')->removeElement('passwordConfirmation');
-                $formOrder->getSubForm('identification')->removeElement('noFedTax');
-                $formOrder->getSubForm('identification')->removeElement('noProvTax');
+                $formOrder->getSubForm('identification')->removeElement('MP_NoFedTax');
+                $formOrder->getSubForm('identification')->removeElement('MP_NoProvTax');
                 $formOrder->getSubForm('identification')->removeElement('AI_FirstTel');
                 $formOrder->getSubForm('identification')->removeElement('AI_SecondTel');
                 $formOrder->getSubForm('identification')->removeElement('AI_WebSite');
                 $formOrder->getSubForm('identification')->removeElement('A_Fax');
-
-                $readOnly = new Cible_View_Helper_FormReadOnly();
-                $readOnly->setAddSeparator(true);
-                $readOnly->setSeparatorClass('dotLine');
-                $readOnly->setListOpened(false);
-                $readOnly->setSeparatorPositon(array(1));
-                $readOnlyForm = $readOnly->subFormRender($formOrder);
-
-                $formPayment = new FormOrderPayment(
-                    array(
-                        'readOnlyForm' => $readOnlyForm,
-                        'payMean'      => $session->customer['paymentMeans'])
-                    );
-//                    $formPayment->populate($session->order);
 
                 if ($this->_request->isPost() && array_key_exists('submit', $_POST))
                 {
@@ -203,47 +201,43 @@ class Order_IndexController extends Cible_Controller_Action
                 }
 
                 $session->customer['charge_total'] = sprintf('%.2f', $totals['total']);
-                $formPayment->populate($session->customer);
+//                $formPayment->populate($session->customer);
                 $this->view->assign('CODFees',$orderParams['CP_MontantFraisCOD']);
                 $this->view->assign('memberInfos', $memberInfos);
-                $this->view->assign('formOrder', $formPayment);
+                $this->view->assign('formOrder', $formOrder);
                 $this->renderScript('index/order-summary.phtml');
 
                 break;
 
             case 'send-order':
-                if ($this->_request->isPost())
-                {
-//                        if ($this->_request->getParam('response_code') > 50)
-                    if ($this->_request->getParam('response_code') < 50 &&
-                        $this->_request->getParam('response_code') != 'null')
-                    {
-                        $session->order['confirmation'] = $_POST;
-                    }
-                    else
-                    {
-                        $this->view->assign('errorValidation', $this->view->getClientText('card_payment_error_message'));
-                        $session->customer['message'] = $this->view->getClientText('card_payment_error_message');
-                        $this->_redirect($pageOrderName .'/'.$stepValues['resume-order']['prev'] . '/errorValidation/1');
-                    }
+                $tx = $this->_request->getParam('tx');
+                $st = $this->_request->getParam('st');
+                if (!empty($tx) && $st == 'Completed' ){
+                    $this->_curlCall(array('tx' => $tx,
+                        'at' => $this->_config->payment->token,
+                        'cmd' => '_notify-synch'));
+                }
+                $this->view->orderStatus = $this->_results[0];
+                if ($this->_results[0] == 'SUCCESS'){
+                    $this->sendOrder();
+                    $urlBack = $this->view->BaseUrl() . $page;
+                    $this->view->assign('backHomeLink', $urlBack);
+                    $this->renderScript('index/order-sent.phtml');
+                }else{
+                    $this->renderScript('index/order-error.phtml');
                 }
 
-                $this->sendOrder();
-                $urlBack = $this->view->BaseUrl() . '/' . $page;
-                $this->view->assign('backHomeLink', $urlBack    );
-                $this->renderScript('index/order-sent.phtml');
-
                 break;
-
             default:
                 $options = array();
                 if (!is_null($authentication)){
                     $this->view->assign('accountValidate', $memberInfos['MP_ValidateEmail']);
                     $options['mode'] = 'edit';
+                    $options['isLogged'] = true;
                 }else{
                     $options['mode'] = 'add';
-                    $options['from'] = 'order';
                 }
+                $options['from'] = 'order';
                 $form = new FormBecomeClient($options);
 
                 if ($this->_request->isPost()){
@@ -256,7 +250,7 @@ class Order_IndexController extends Cible_Controller_Action
                     $memberInfos['selectedCity']  = $session->customer['selectedCity'];
                 }
 
-                if ($this->_request->isPost() && array_key_exists('submit', $_POST))
+                if ($this->_request->isPost() && array_key_exists('submitAccount', $_POST))
                 {
                     $formData = $this->_request->getPost();
                     $formData['selectedState'] = $current_state;
@@ -268,22 +262,22 @@ class Order_IndexController extends Cible_Controller_Action
                             $formData['addressShipping'] = $formData['address'];
                         }
                     }
-                    var_dump($form->isValid($formData));
-                    exit;
                     if($form->isValid($formData)){
 //                            if($formData['paymentMeans'] == 'cod')
 //                                $session->order['cod'] = $formData['paymentMeans'];
 //                            elseif(isset($session->order['cod']))
 //                                unset($session->order['cod']);
-
-                        $session->customer['identification'] = $memberInfos;
+                        $identification = isset($memberInfos['identification']) ?
+                            $memberInfos['identification'] : $memberInfos;
+                        $session->customer['identification'] = $identification;
                         $this->_redirect($stepValues[$stepAction]['next']);
                     }else{
                         $form->populate($formData);
                     }
                 }else{
                     if($session->customer){
-                        $form->populate($session->customer);
+//                        $form->populate($session->customer);
+                        $form->populate($memberInfos);
                         $errorValidation = $this->_getParam('errorValidation');
                         if(isset($session->customer['message']) && !empty($errorValidation))
                             $this->view->assign('message', $session->customer['message']);
@@ -303,6 +297,36 @@ class Order_IndexController extends Cible_Controller_Action
 
     }
 
+    protected function _curlCall($params)
+    {
+        $this->_results = array();
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $this->_config->payment->url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $jsonResult = curl_exec($ch);
+        curl_close($ch);
+        if ($jsonResult === false) {
+            unset($jsonResult);
+            echo 'Curl error: ' . curl_error($ch);
+        }
+
+        if (!empty($jsonResult)){
+            $this->_results = explode(PHP_EOL,$jsonResult);
+            foreach($this->_results as $key => $data){
+                if (strstr($data, '=')){
+                    $tmp = explode('=', $data);
+                    $this->_results[$tmp[0]] = urldecode($tmp[1]);
+                    unset($this->_results[$key]);
+                }
+            }
+        }
+
+        return $this->_results;
+
+    }
+
     public function becomeclientAction()
     {
         parent::becomeclientAction();
@@ -316,227 +340,200 @@ class Order_IndexController extends Cible_Controller_Action
     public function sendOrder()
     {
         $session = new Zend_Session_Namespace('order');
-        $page = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list_collections', 14);
-        if (!count($session->customer))
+        $page = Cible_FunctionsCategories::getPagePerCategoryView(1, 'list', 14,
+                null, true);
+        if(!count($session->customer))
             $this->_redirect($page);
 
         $oCart = new Cart();
         // Créer les tableaux pour sauvegarder les données de la commande
-        $language = Cible_FunctionsGeneral::getLanguageTitle($session->customer['identification']['language']);
+        $language = Cible_FunctionsGeneral::getLanguageTitle($session->customer['identification']['GP_Language']);
         $custAccount = array(
-            'O_LastName'   => $session->customer['identification']['lastName'],
-            'O_FirstName'  => $session->customer['identification']['firstName'],
-            'O_Email'      => $session->customer['identification']['email'],
-            'O_AcombaId'   => $session->customer['identification']['acombaNum'],
+            'O_LastName' => $session->customer['identification']['GP_LastName'],
+            'O_FirstName' => $session->customer['identification']['GP_FirstName'],
+            'O_Email' => $session->customer['identification']['GP_Email'],
             'O_Salutation' => $session->customer['identification']['salutation'],
-            'O_Language'   => $language
+            'O_Language' => $language
         );
-         if(!empty($session->customer['address']['A_CityId']))
-             $cityBill = $session->customer['address']['A_CityId'];
-         else
-             $cityBill = $session->customer['address']['A_CityTextValue'];
+        if(!empty($session->customer['address']['A_CityId']))
+            $cityBill = $session->customer['address']['A_CityId'];
+        else
+            $cityBill = $session->customer['address']['A_CityTextValue'];
 
-         if(!empty($session->customer['addressShipping']['A_CityId']))
-             $cityShip = $session->customer['addressShipping']['A_CityId'];
-         else
-             $cityShip = $session->customer['addressShipping']['A_CityTextValue'];
+        if(!empty($session->customer['addressShipping']['A_CityId']))
+            $cityShip = $session->customer['addressShipping']['A_CityId'];
+        else
+            $cityShip = $session->customer['addressShipping']['A_CityTextValue'];
 
-         $addressBilling = array(
-            'O_FirstBillingTel'   => $session->customer['address']['AI_FirstTel'],
-            'O_SecondBillingTel'  => $session->customer['address']['AI_SecondTel'],
-            'O_FirstBillingAddr'  => $session->customer['address']['AI_FirstAddress'],
-            'O_SecondBillingAddr' => $session->customer['address']['AI_SecondAddress'],
-            'O_BillingCity'       => $cityBill,
-            'O_BillingState'      => $session->customer['address']['A_StateId'],
-            'O_BillingCountry'    => $session->customer['address']['A_CountryId'],
-            'O_ZipCode'           => $session->customer['address']['A_ZipCode']
-        );
-
-         $addressShipping = array(
-            'O_FirstShippingTel'   => $session->customer['addressShipping']['AI_FirstTel'],
-            'O_SecondShippingTel'  => $session->customer['addressShipping']['AI_FirstTel'],
-            'O_FirstShippingAddr'  => $session->customer['addressShipping']['AI_FirstAddress'],
-            'O_SecondShippingAddr' => $session->customer['addressShipping']['AI_SecondAddress'],
-            'O_ShippingCity'       => $cityShip,
-            'O_ShippingState'      => $session->customer['addressShipping']['A_StateId'],
-            'O_ShippingCountry'    => $session->customer['addressShipping']['A_CountryId'],
-            'O_ShippingZipCode'    => $session->customer['addressShipping']['A_ZipCode']
+        $addressBilling = array(
+            'O_FirstBillingTel' => $session->customer['address']['AI_FirstTel'],
+            'O_SecondBillingTel' => $session->customer['address']['AI_SecondTel'],
+            'O_FirstBillingAddr' => $session->customer['address']['AI_FirstAddress'],
+            //            'O_SecondBillingAddr' => $session->customer['address']['AI_SecondAddress'],
+            'O_BillingCity' => $cityBill,
+            'O_BillingState' => $session->customer['address']['A_StateId'],
+            'O_BillingCountry' => $session->customer['address']['A_CountryId'],
+            'O_ZipCode' => $session->customer['address']['A_ZipCode']
         );
 
+        $addressShipping = array(
+            'O_FirstShippingTel' => $session->customer['addressShipping']['AI_FirstTel'],
+            'O_SecondShippingTel' => $session->customer['addressShipping']['AI_FirstTel'],
+            'O_FirstShippingAddr' => $session->customer['addressShipping']['AI_FirstAddress'],
+//            'O_SecondShippingAddr' => $session->customer['addressShipping']['AI_SecondAddress'],
+            'O_ShippingCity' => $cityShip,
+            'O_ShippingState' => $session->customer['addressShipping']['A_StateId'],
+            'O_ShippingCountry' => $session->customer['addressShipping']['A_CountryId'],
+            'O_ShippingZipCode' => $session->customer['addressShipping']['A_ZipCode']
+        );
 
-         $paid = false;
-         $responseId  = 0;
-         $datePayed   = 0;
-         $bankTransId = 0;
-         $cardHolder  = '';
-         $cardNumber  = '';
-         $cardType    = '';
-         $chargeTotal = $session->order['charge_total'];
 
-         $cardexpiryDate = 0;
+        $paid = false;
+        $datePayed = 0;
+        $bankTransId = 0;
+        $cardHolder = '';
+        $cardNumber = '';
+        $cardType = '';
+        $chargeTotal = $session->order['charge_total'];
 
-         if (isset($session->order['confirmation']))
-         {
+        $cardexpiryDate = 0;
+        $responseId = $this->_results['txn_id'];
+        if ($this->_results[0] == 'SUCCESS'){
+            $paid = true;
+            $datePayed = $this->_results['payment_date'];
 
-             $paid = true;
-             $responseId  = $session->order['confirmation']['response_order_id'];
-             $datePayed   = $session->order['confirmation']['date_stamp'] . ' ' . $session->order['confirmation']['time_stamp'];
-             $bankTransId = $session->order['confirmation']['bank_transaction_id'];
-             $cardHolder  = $session->order['confirmation']['cardholder'];
-             $cardNumber  = $session->order['confirmation']['f4l4'];
-
-             switch ($session->order['confirmation']['card'])
-             {
-                 case 'V':
-                    $cardType = 'INTERNET';
-                     break;
-                 case 'M':
-                    $cardType = 'INTERNET';
-                     break;
-
-                 default:
-                     break;
-             }
-
-             if ($session->customer['paymentMeans'] == 'visa' || $session->customer['paymentMeans'] == 'mastercard')
-                 $cardType = 'INTERNET';
-
-             $cardexpiryDate = $session->order['confirmation']['expiry_date'];
-             $chargeTotal    = $session->order['confirmation']['charge_total'];
-         }
-         $transFees = $session->order['shipFee'];
-         $display   = true;
-         if (Cible_FunctionsGeneral::compareFloats($session->order['subTotal'], ">=", $session->order['limitShip']))
-         {
-            $display   = false;
+        }
+        $transFees = $session->order['shipFee'];
+        $display = true;
+        if(Cible_FunctionsGeneral::compareFloats($session->order['subTotal'],
+                ">=", $session->order['limitShip']))
+        {
+            $display = false;
             $transFees = 0;
-         }
+        }
 
-         $nbPoints = 0;
+        $nbPoints = 0;
 
-         if ($session->customer['identification']['cumulPoint'])
-             $nbPoints = $session->order['nbPoint'];
+//        if($session->customer['identification']['cumulPoint'])
+//            $nbPoints = $session->order['nbPoint'];
 
-         $orderData = array(
-            'O_ResponseOrderID'   => $responseId,
-            'O_ClientProfileId'   => $session->customer['identification']['member_id'],
-            'O_Comments'          => $session->customer['O_Comments'],
-            'O_CreateDate'        => date('Y-m-d H:i:s', time()),
-            'O_ApprobDate'        => date('Y-m-d H:i:s', time()),
-            'O_SubTotal'          => $session->order['subTotal'],
-            'O_TotTaxProv'        => $session->order['taxProv'],
-            'O_TotTaxFed'         => $session->order['taxFed'],
-            'O_RateTaxProv'       => sprintf('%.2f',$session->order['rateProv']['TP_Rate']),
-            'O_RateTaxFed'        => $session->order['rateFed'],
-            'O_TaxProvId'         => $session->stateId,
-            'O_TransFees'         => $transFees,
-            'O_Total'             => $session->order['charge_total'],
-            'O_PaymentMode'       => $session->customer['paymentMeans'],
-            'O_Paid'              => $paid,
-            'O_DatePayed'         => $datePayed,
+        $orderData = array(
+            'O_ResponseOrderId' => $responseId,
+            'O_ClientProfileId' => $session->customer['identification']['GP_MemberID'],
+//            'O_Comments'          => $session->customer['O_Comments'],
+            'O_CreateDate' => date('Y-m-d H:i:s', time()),
+            'O_ApprobDate' => date('Y-m-d H:i:s', time()),
+            'O_SubTotal' => $session->order['subTotal'],
+            'O_TotTaxProv' => $session->order['taxProv'],
+            'O_TotTaxFed' => $session->order['taxFed'],
+            'O_RateTaxProv' => sprintf('%.2f',
+                $session->order['rateProv']['TP_Rate']),
+            'O_RateTaxFed' => $session->order['rateFed'],
+            'O_TaxProvId' => $session->stateId,
+            'O_TransFees' => $transFees,
+            'O_Total' => $session->order['charge_total'],
+            'O_PaymentMode' => 'paypal',
+            'O_Paid' => $paid,
+            'O_DatePayed' => $datePayed,
             'O_BankTransactionId' => $bankTransId,
-            'O_CardHolder'        => $cardHolder,
-            'O_CardNum'           => $cardNumber,
-            'O_CardType'          => $cardType,
-            'O_CardExpiryDate'    => $cardexpiryDate,
-            'O_TotalPaid'         => $chargeTotal,
-            'O_BonusPoint'        => $session->order['nbPoint']
+            'O_CardHolder' => $cardHolder,
+            'O_CardNum' => $cardNumber,
+            'O_CardType' => $cardType,
+            'O_CardExpiryDate' => $cardexpiryDate,
+            'O_TotalPaid' => $chargeTotal,
+            'O_BonusPoint' => $session->order['nbPoint']
         );
 
         $order = array_merge(
-            $orderData,
-            $addressBilling,
-            $addressShipping,
-            $custAccount);
+            $orderData, $addressBilling, $addressShipping, $custAccount);
         //Enregistrer la commades dans la db
-            //Recuprer l'id pour inserer le numéro de commande
-        $oOrder  = new OrderObject();
+        //Recuprer l'id pour inserer le numéro de commande
+        $oOrder = new OrderObject();
         $orderId = $oOrder->insert($order, 1);
 
         //Créer le numéro de commade
-        $OrderNumber = 'I' . $orderId;
+        $OrderNumber = $orderId;
         //Mettre à jour la cde avec son numéro
         $oOrder->save($orderId, array('O_OrderNumber' => $OrderNumber), 1);
         $memberInfos = $session->customer['identification'];
         //Créer les données pour les lignes de commades
-        $oOrderLine= new OrderLinesObject();
+        $oOrderLine = new OrderLinesObject();
 
-        $oCart    = new Cart();
-        $allIds   = $oCart->getAllIds();
-        $oProduct = new ProductsCollection();
-        $oItems   = new ItemsObject();
+        $oCart = new Cart();
+        $allIds = $oCart->getAllIds();
+        $oProduct = new CatalogCollection();
+        $oItems = new ItemsObject();
 
-        $productData  = array();
+        $productData = array();
         $productItems = array();
 
-        foreach ($allIds['cartId'] as $key => $id)
+        foreach($allIds['cartId'] as $key => $id)
         {
             $itemId = $allIds['itemId'][$key];
             $prodId = $allIds['prodId'][$key];
             // Récupérer la ligne du cart
             $cartDetails = $oCart->getItem($id, $itemId);
-
-            if(!$cartDetails['Disable'])
-            {
-                // Récupérer les produits
-                $productData = $oProduct->getDetails($prodId, $itemId);
-                // Recupérer les items
-                $itemDetails = $oItems->getAll(null, true, $itemId);
-                //Calcul des taxes et des montants
-                $price    = $cartDetails['Quantity'] * $itemDetails[0]['I_PriceVol1'];
-                $discount = abs($price - $cartDetails['Total']);
-                $itemPrice = $cartDetails['Total'] / $cartDetails['Quantity'];
-                $codeProd = $itemDetails[0]['I_ProductCode'];
-                $taxProv  = Cible_FunctionsGeneral::provinceTax($cartDetails['Total']);
-                $taxFed   = 0;
-                if($session->stateId == 11)
+            // Récupérer les produits
+            $productData = $oProduct->getDetails($prodId, $itemId);
+            // Recupérer les items
+            $itemDetails = $oItems->getAll(null, true, $itemId);
+            //Calcul des taxes et des montants
+//            $price = $cartDetails['Quantity'] * $itemDetails[0]['I_PriceVol1'];
+//            $discount = abs($price - $cartDetails['Total']);
+            $itemPrice = $cartDetails['Total'] / $cartDetails['Quantity'];
+            $codeProd = $itemDetails[0]['I_Number'];
+            // Tableau pour la liste des données
+            $lineData = array(
+                'OL_ProductId' => $prodId,
+                'OL_OrderId' => $orderId,
+                'OL_ItemId' => $itemId,
+                'OL_Type' => 'LigneItem',
+                'OL_Quantity' => $cartDetails['Quantity'],
+                'OL_ProductCode' => $codeProd,
+                'OL_Price' => $itemPrice,
+//                'OL_Discount' => $discount,
+                'OL_FinalPrice' => $cartDetails['Total'],
+//                'OL_FirstTax' => $itemDetails[0]['I_TaxFed'],
+//                'OL_SecondTax' => $itemDetails[0]['I_TaxProv'],
+                'OL_Description' => $productData['data']['PI_Name'] . ' - ' . $itemDetails[0]['II_Name']
+            );
+            if (!(bool)$session->order['includeTaxs']){
+                $taxProv = Cible_FunctionsGeneral::provinceTax($cartDetails['Total']);
+                $taxFed = 0;
+                if($session->stateId == 11){
                     $taxFed = Cible_FunctionsGeneral::federalTax($cartDetails['Total']);
-
-                // Tableau pour la liste des données
-                $lineData = array(
-                    'OL_ProductId'    => $prodId,
-                    'OL_OrderId'      => $orderId,
-                    'OL_ItemId'       => $itemId,
-                    'OL_Type'         => 'LigneItem',
-                    'OL_Quantity'     => $cartDetails['Quantity'],
-                    'OL_ProductCode'  => $codeProd,
-                    'OL_Price'        => $itemPrice,
-                    'OL_Discount'     => $discount,
-                    'OL_FinalPrice'   => $cartDetails['Total'],
-                    'OL_FirstTax'     => $itemDetails[0]['I_TaxFed'],
-                    'OL_SecondTax'    => $itemDetails[0]['I_TaxProv'],
-                    'OL_TotFirstTax'  => $taxFed,
-                    'OL_TotSecondTax' => $taxProv,
-                    'OL_Description'  => $productData['data']['PI_Name'] . ' - ' . $itemDetails[0]['II_Name']
-                );
-                //Enregistrer les lignes
-                if($cartDetails['PromoId'] > 0)
-                {
-                    $lineDataTxt = array(
-                        'OL_ProductId'   => $prodId,
-                        'OL_OrderId'     => $orderId,
-                        'OL_ItemId'      => $itemId,
-                        'OL_Type'        => 'LigneTexte',
-                        'OL_Description' => Cible_Translation::getClientText('alert_special_offer_item'));
-
-                    $oOrderLine->insert($lineDataTxt, 1);
-
-                    $lineData['OL_Price'] = $cartDetails['Total'] / $cartDetails['Quantity'];
-                    array_push($productItems, $lineDataTxt);
                 }
-
-                $oOrderLine->insert($lineData, 1);
-                array_push($productItems, $lineData);
+                $lineData['OL_TotFirstTax'] = $taxFed;
+                $lineData['OL_TotSecondTax'] = $taxProv;
             }
+            //Enregistrer les lignes
+            if($cartDetails['PromoId'] > 0)
+            {
+                $lineDataTxt = array(
+                    'OL_ProductId' => $prodId,
+                    'OL_OrderId' => $orderId,
+                    'OL_ItemId' => $itemId,
+                    'OL_Type' => 'LigneTexte',
+                    'OL_Description' => Cible_Translation::getClientText('alert_special_offer_item'));
+
+                $oOrderLine->insert($lineDataTxt, 1);
+
+                $lineData['OL_Price'] = $cartDetails['Total'] / $cartDetails['Quantity'];
+                array_push($productItems, $lineDataTxt);
+            }
+
+            $oOrderLine->insert($lineData, 1);
+            array_push($productItems, $lineData);
         }
 
         // send a notification to the client
         // Set data to the view
-         $this->_emailRenderData['emailHeader'] = "<img src='"
-                . Zend_Registry::get('absolute_web_root')
-                . "/themes/default/images/common"
-                . "/logoEmail.jpg' alt='' border='0'>";
-        $this->_emailRenderData['footer'] = $this->view->getClientText("email_notification_footer");
+        $this->_emailRenderData['emailHeader'] = "<img src='"
+            . Zend_Registry::get('absolute_web_root')
+            . "/themes/default/images/common"
+            . "/logo.png' alt='' border='0'>";
+        $lang = $this->view->languageId;
+        $this->_emailRenderData['footer'] = $this->view->getClientText("email_notification_footer", null, array('replace' => array('##SITE-NAME##' => $this->_config->site->title->$lang)));
         $this->view->assign('template', $this->_emailRenderData);
         $this->view->assign('subTotal', $session->order['subTotal']);
         $this->view->assign('orderNumber', $OrderNumber);
@@ -555,9 +552,10 @@ class Order_IndexController extends Cible_Controller_Action
         $this->view->assign('shipFee', $session->order['shipFee']);
         $this->view->assign('limitShip', $session->order['limitShip']);
         $this->view->assign('CODFees', $session->order['CODFees']);
-        $this->view->assign('comments', $session->customer['O_Comments']);
+//        $this->view->assign('comments', $session->customer['O_Comments']);
+        $this->view->assign('comments', '');
         $this->view->assign('display', $display);
-
+        $this->view->assign('sessionOrder', $session->order);
         if(isset($session->order['cod']))
             $this->view->assign('displayCODFees', true);
 
@@ -570,7 +568,7 @@ class Order_IndexController extends Cible_Controller_Action
         $adminEmail = Cible_FunctionsGeneral::getParameters('CP_AdminOrdersEmail');
         $notification = new Cible_Notify();
         $notification->isHtml(1);
-        $notification->addTo($memberInfos['email']);
+        $notification->addTo($memberInfos['GP_Email']);
         $notification->setFrom($adminEmail);
         $notification->setTitle($this->view->getClientText('email_to_customer_title') . ': n° ' . $OrderNumber);
         $notification->setMessage($html);
@@ -578,14 +576,14 @@ class Order_IndexController extends Cible_Controller_Action
         $notifyAdmin = new Cible_Notify();
         $notifyAdmin->isHtml(1);
         $notifyAdmin->addTo($adminEmail);
-        $notifyAdmin->setFrom($memberInfos['email']);
-        $notifyAdmin->setTitle($this->view->getClientText('email_to_company_title') . $OrderNumber);
+        $notifyAdmin->setFrom($memberInfos['GP_Email']);
+        $notifyAdmin->setTitle($this->view->getClientText('email_to_company_title') . ' ' . $OrderNumber);
         $notifyAdmin->setMessage($html);
         //Send emails
         $notifyAdmin->send();
         $notification->send();
         //Create the csv file to export orders - Set status to exported
-        $this->writeFile();
+//        $this->writeFile();
         //Display message on the site.
         $view->assign('online', true);
         $html = $view->render('index/emailToSend.phtml');
@@ -682,8 +680,6 @@ class Order_IndexController extends Cible_Controller_Action
 
         $profile = new MemberProfile();
         $user = $profile->findMember(array('email' => $email));
-        var_dump($user);
-        exit;
         $cart = new Cart();
         if ($cart->getTotalItem() >= 1)
         {
@@ -868,7 +864,7 @@ class Order_IndexController extends Cible_Controller_Action
         $data  = array();
         $oCart = new Cart();
         $oItem = new ItemsObject();
-        $oProd = new ProductsCollection();
+        $oProd = new CatalogCollection();
 
         $subTotProv = 0;
         $subTotFed  = 0;
@@ -882,51 +878,6 @@ class Order_IndexController extends Cible_Controller_Action
         $cartData    = $oCart->getAllIds();
         $orderParams = Cible_FunctionsGeneral::getParameters ();
 
-        if(!$memberInfos['noFedTax'] && $session->stateId == 11)
-        {
-            foreach ($cartData['cartId'] as $key => $id)
-            {
-                $itemId = $cartData['itemId'][$key];
-                $prodId = $cartData['prodId'][$key];
-
-                $itemDetails = $oItem->getAll(null, true, $itemId);
-                $cartDetails = $oCart->getItem($id, $itemId, true);
-                if($itemDetails[0]['I_TaxFed'])
-                    $subTotFed += $cartDetails['Total'];
-            }
-
-            $addShipFee = Cible_FunctionsGeneral::compareFloats($subTotFed, '<', $orderParams['CP_ShippingFeesLimit'], 2);
-            if($addShipFee)
-                $subTotFed += $orderParams['CP_ShippingFees'];
-            if(isset($session->order['cod']))
-                $subTotFed += $orderParams['CP_MontantFraisCOD'];
-
-            $taxFed = Cible_FunctionsGeneral::federalTax($subTotFed);
-
-        }
-
-        if(!$memberInfos['noProvTax'])
-        {
-            foreach ($cartData['cartId'] as $key => $id)
-            {
-                $itemId = $cartData['itemId'][$key];
-                $prodId = $cartData['prodId'][$key];
-
-                $itemDetails = $oItem->getAll(null, true, $itemId);
-                $cartDetails = $oCart->getItem($id, $itemId, true);
-                if($itemDetails[0]['I_TaxProv'])
-                    $subTotProv += $cartDetails['Total'];
-            }
-
-            $addShipFee = Cible_FunctionsGeneral::compareFloats($subTotProv, '<', $orderParams['CP_ShippingFeesLimit'], 2);
-            if($addShipFee)
-                $subTotProv += $orderParams['CP_ShippingFees'];
-            if(isset($session->order['cod']))
-                $subTotProv += $orderParams['CP_MontantFraisCOD'];
-
-            $taxProv = Cible_FunctionsGeneral::provinceTax($subTotProv);
-        }
-
         foreach ($cartData['cartId'] as $key => $id)
         {
             $itemId = $cartData['itemId'][$key];
@@ -934,21 +885,82 @@ class Order_IndexController extends Cible_Controller_Action
 
             $productData = $oProd->getDetails($prodId);
             $cartDetails = $oCart->getItem($id, $itemId, true);
+            $itemDetails = $oItem->getAll(null, true, $itemId);
             $subTot += $cartDetails['Total'];
             if ($oProd->getBonus())
                 $nbPoint += ceil($cartDetails['Total'] * $orderParams['CP_BonusPointDollar']);
         }
+        $addShipFee = true;
+        $lt = Cible_FunctionsGeneral::compareFloats($subTot, '<', $orderParams['CP_ShippingFeesLimit'], 2);
+        if ($orderParams['CP_ShippingFeesLimit'] >= 0){
+            $addShipFee = $lt ? true : false;
+        }
 
-        $addShipFee = Cible_FunctionsGeneral::compareFloats($subTot, '<', $orderParams['CP_ShippingFeesLimit'], 2);
+        if(isset($memberInfos['MP_NoFedTax']) && !$memberInfos['MP_NoFedTax'] && $session->stateId == 11)
+        {
+            foreach ($cartData['cartId'] as $key => $id)
+            {
+                $itemId = $cartData['itemId'][$key];
+                $prodId = $cartData['prodId'][$key];
+
+                $itemDetails = $oItem->getAll(null, true, $itemId);
+                $cartDetails = $oCart->getItem($id, $itemId, true);
+//                if(isset($itemDetails[0]['I_TaxFed'])
+//                    && (bool)$itemDetails[0]['I_TaxFed']){
+                    $subTotFed += $cartDetails['Total'];
+//                }
+            }
+
+            if($addShipFee){
+                $subTotFed += $orderParams['CP_ShippingFees'];
+            }
+            if(isset($session->order['cod'])){
+                $subTotFed += $orderParams['CP_MontantFraisCOD'];
+            }
+            if ((bool)$orderParams['CP_IncludeTaxes']){
+                $subTotFed = Cible_FunctionsGeneral::totalBeforeTax($subTotFed);
+            }
+            $taxFed = Cible_FunctionsGeneral::federalTax($subTotFed);
+
+        }
+
+        if(isset($memberInfos['MP_NoProvTax']) && !$memberInfos['MP_NoProvTax'])
+        {
+            foreach ($cartData['cartId'] as $key => $id)
+            {
+                $itemId = $cartData['itemId'][$key];
+                $prodId = $cartData['prodId'][$key];
+
+                $itemDetails = $oItem->getAll(null, true, $itemId);
+                $cartDetails = $oCart->getItem($id, $itemId, true);
+//                if(isset($itemDetails[0]['I_TaxProv'])
+//                    && (bool)$itemDetails[0]['I_TaxProv']){
+                    $subTotProv += $cartDetails['Total'];
+//                }
+            }
+            if($addShipFee){
+                $subTotProv += $orderParams['CP_ShippingFees'];
+            }
+            if(isset($session->order['cod'])){
+                $subTotProv += $orderParams['CP_MontantFraisCOD'];
+            }
+            if ((bool)$orderParams['CP_IncludeTaxes']){
+                $subTotProv = Cible_FunctionsGeneral::totalBeforeTax($subTotProv);
+            }
+
+            $taxProv = Cible_FunctionsGeneral::provinceTax($subTotProv);
+        }
 
         if($addShipFee)
             $tmpSum += $orderParams['CP_ShippingFees'];
 
         if(isset($session->order['cod']))
             $tmpSum += $orderParams['CP_MontantFraisCOD'];
-
-        $total = $subTot + $tmpSum + round($taxFed,2) + round($taxProv,2);
-
+        if ((bool)$orderParams['CP_IncludeTaxes']){
+            $total = $subTot + $tmpSum;
+        }else{
+            $total = $subTot + $tmpSum + round($taxFed,2) + round($taxProv,2);
+        }
         $data = array(
             'subTotProv' => $subTotProv,
             'subTotFed'  => $subTotFed,
@@ -958,7 +970,9 @@ class Order_IndexController extends Cible_Controller_Action
             'nbPoint'    => $nbPoint,
             'taxFed'     => $taxFed
             );
-
+        if($addShipFee){
+            $data['shipFee'] = $orderParams['CP_ShippingFees'];
+        }
         return $data;
     }
 

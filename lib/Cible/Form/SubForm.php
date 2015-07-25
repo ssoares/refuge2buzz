@@ -3,9 +3,14 @@
 class Cible_Form_SubForm extends Zend_Form_SubForm
 {
     protected $_addRequiredAsterisks = true;
+    protected $_resume = false;
 
     public function __construct($options = null)
     {
+        if (!empty($options['resume'])){
+            $this->_resume = $options['resume'];
+            unset($options['resume']);
+        }
 //        $this->_disabledDefaultActions = true;
         parent::__construct($options);
     }
@@ -33,6 +38,9 @@ class Cible_Form_SubForm extends Zend_Form_SubForm
             if ($_element->isRequired() && $this->_addRequiredAsterisks)
             {
                 $_element->setLabel("{$_element->getLabel()} <span class='field_required'>*</span>");
+            }
+            if ($this->_resume){
+                $_element->setAttrib('disabled', 'disabled');
             }
         }
 

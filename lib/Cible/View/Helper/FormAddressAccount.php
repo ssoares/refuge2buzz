@@ -46,8 +46,9 @@ class Cible_View_Helper_FormAddressAccount extends Zend_View_Helper_FormElement
         }
         if (isset($options['requiredValidator'])){
             $this->_requiredValidator = $options['requiredValidator'];
+            unset($options['requiredValidator']);
         }
-        $accountAddress = new Cible_Form_SubForm();
+        $accountAddress = new Cible_Form_SubForm($options);
         $accountAddress->setName('address')
             ->setLegend(Cible_Translation::getCibleText('fieldset_address'))
             ->setAttrib('class', 'identificationClass subFormClass')

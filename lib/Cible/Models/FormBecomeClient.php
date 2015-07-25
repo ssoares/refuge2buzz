@@ -5,6 +5,9 @@ class FormBecomeClient extends Cible_Form
 {
     protected $_mode = 'add';
     private $_requiredValidator = null;
+    protected $_resume = false;
+    protected $_urlReturn = '';
+    protected $_shipFee = '';
 
     public function __construct($options = null)
     {
@@ -15,16 +18,23 @@ class FormBecomeClient extends Cible_Form
             unset($options['object']);
         }
         $this->_mode = 'add';
-        if (!empty($options['mode']) && $options['mode'] == 'edit'){
-            $this->_mode = 'edit';
+        if (!empty($options['mode'])){
+            $this->_mode = $options['mode'];
         }
         unset($options['mode']);
+        if (!empty($options['resume'])){
+            $this->_resume = $options['resume'];
+            $this->_shipFee = $options['shipFee'];
+            $this->_urlReturn = ltrim($options['urlReturn'], '/');
+        }
+        unset($options['shipFee']);
+        unset($options['resume']);
         $this->_disabledDefaultActions = true;
 
         parent::__construct($options);
 
         $this->setAttrib('id', 'accountManagement');
-        $profile= new Cible_Form_SubForm();
+        $profile= new Cible_Form_SubForm(array('resume' => $this->_resume));
         $profile->setName('identification')
             ->setLegend(Cible_Translation::getCibleText('fieldset_profile'))
             ->setAttrib('class', 'identificationClass subFormClass col-xs-12 col-md-6')
@@ -122,37 +132,46 @@ class FormBecomeClient extends Cible_Form
             $lastNameMain->getName()), 'one-2');
         $profile->addElement($emailMain);
         $profile->setRowDecorator(array($emailMain->getName()), 'two');
-        $profile->addElement($password);
-        $profile->addElement($passwordConfirmation);
-        $profile->setRowDecorator(array($password->getName(), $passwordConfirmation->getName()), 'three');
+        if ((isset($options['from']) && $options['from'] != 'order')){
+            $profile->addElement($password);
+            $profile->addElement($passwordConfirmation);
+            $profile->setRowDecorator(array($password->getName(), $passwordConfirmation->getName()), 'three');
+        }
         $profile->setDecorators(array('FormElements', 'Fieldset'));
         $this->addSubForm($profile, 'identification');
 
         $this->getView()->FormAddressAccount($this, array(
             'requiredValidator' => $this->_requiredValidator,
-            'mode' => $this->_mode));
+            'mode' => $this->_mode,
+            'resume' => $this->_resume
+            ));
         $this->getView()->FormAddressShipping($this, array(
             'requiredValidator' => $this->_requiredValidator,
-            'mode' => $this->_mode));
+            'mode' => $this->_mode,
+            'resume' => $this->_resume));
         if ($this->_mode == 'add') {
 //            $this->getView()->formAddCaptcha($this);
         }
         // Submit button
-        $submit = new Zend_Form_Element_Submit('submitAccount');
+        $submit = new Zend_Form_Element_Submit('submitAccount',
+            array('decorators' => array('ViewHelper')));
         $submitLabel = $this->getView()->getCibleText('form_account_button_submit');
         if ($this->_mode == 'edit')
             $submitLabel = $this->getView()->getCibleText('button_submit');
 
         $submit->setLabel($submitLabel)
             ->setAttrib('class', 'link-button');
-
         $this->addElement($submit);
-        $this->addDisplayGroup(array('captcha', 'refresh_captcha',
-            'CAT_CampaignId','submitAccount'), 'columnBottom');
-        $this->getDisplayGroup('columnBottom')->setLegend(null)
-            ->setOrder(50)
-            ->setAttrib('class', 'col-xs-12 col-md-7')
-            ->removeDecorator('DtDdWrapper');
+        if (isset($options['from']) && $options['from'] != 'order'){
+            $this->addDisplayGroup(array('captcha', 'refresh_captcha',
+                'CAT_CampaignId','submitAccount'), 'columnBottom');
+            $this->getDisplayGroup('columnBottom')->setLegend(null)
+                ->setOrder(50)
+                ->setAttrib('class', 'col-xs-12 col-md-7')
+                ->removeDecorator('DtDdWrapper');
+        }else{
+            $submit->setAttrib('class', 'hidden');
+        }
     }
 
     public function isValid($data)
@@ -164,7 +183,8 @@ class FormBecomeClient extends Cible_Form
             }
         }
         if ($this->_mode == 'edit'){
-            if (empty($data['identification']['GP_Password'])
+            if ($this->getSubForm('identification')->getElement('GP_Password')
+                && empty($data['identification']['GP_Password'])
                 && empty($data['identification']['passwordConfirmation'])) {
                 $this->getSubForm('identification')->getElement('GP_Password')
                     ->clearValidators()->setRequired(false);
@@ -180,6 +200,88 @@ class FormBecomeClient extends Cible_Form
     public function render(Zend_View_Interface $view = null)
     {
         $this->setDecorators(array('FormElements', 'Form'));
+        if ($this->_resume){
+            $this->getSubForm('address')->getElement('A_CountryId')->helper = 'formText';
+            $this->getSubForm('address')->getElement('A_StateId')->helper = 'formText';
+            $this->getSubForm('addressShipping')->getElement('A_CountryId')->helper = 'formText';
+            $this->getSubForm('addressShipping')->getElement('A_StateId')->helper = 'formText';
+
+            $catalogPage = Cible_FunctionsCategories::getPagePerCategoryView(1, 'list', 14, null, true);
+            $url = Zend_Registry::get('absolute_web_root') . $catalogPage;
+            $config = Zend_Registry::get('config');
+            $this->setAction($config->payment->url);
+            $payPalCmd = new Zend_Form_Element_Hidden('cmd',
+                array('value' => $config->payment->cmd, 'decorators' => array('viewHelper')));
+            $payPalUpload = new Zend_Form_Element_Hidden('upload',
+                array('value' => $config->payment->upload, 'decorators' => array('viewHelper')));
+            $payPalBusiness = new Zend_Form_Element_Hidden('business',
+                array('value' => $config->payment->business, 'decorators' => array('viewHelper')));
+            $payPalCharset = new Zend_Form_Element_Hidden('charset',
+                array('value' => $config->payment->charset, 'decorators' => array('viewHelper')));
+            $payPalCurrency = new Zend_Form_Element_Hidden('currency_code',
+                array('value' => $config->payment->currency_code, 'decorators' => array('viewHelper')));
+            $this->addElements(array($payPalCmd, $payPalUpload, $payPalBusiness, $payPalCharset, $payPalCurrency));
+
+            $payPalRows = Zend_Registry::get('payPalRows');
+            if ($this->_shipFee){
+                $payPalRows[] = array('Shipping fees', 1, $this->_shipFee);
+            }
+            foreach($payPalRows as $key => $data)
+            {
+                $payPalName = new Zend_Form_Element_Hidden('item_name_' . $key,
+                    array('value' => $data[0], 'decorators' => array('viewHelper')));
+                $payPalQty = new Zend_Form_Element_Hidden('quantity_' . $key,
+                    array('value' => $data[1], 'decorators' => array('viewHelper')));
+                $payPalAmount = new Zend_Form_Element_Hidden('amount_' . $key,
+                    array('value' => ($data[2]/$data[1]), 'decorators' => array('viewHelper')));
+                $this->addElements(array($payPalName, $payPalQty, $payPalAmount));
+            }
+
+            $elemsToAdd = array();
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('return',
+                array('value' => $this->_urlReturn, 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('shopping_url',
+                array('value' => $url, 'decorators' => array('viewHelper')));
+
+            $subId = $this->getSubForm('identification');
+            $subAddr = $this->getSubForm('address');
+            $lgId = $subId->getElement('GP_Language')->getValue();
+            $lang = Cible_FunctionsGeneral::getLocalForLanguage($lgId);
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('lc',
+                array('value' => $lang, 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('first_name',
+                array('value' => $subId->getElement('GP_FirstName')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('last_name',
+                array('value' => $subId->getElement('GP_LastName')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('address1',
+                array('value' => $subAddr->getElement('AI_FirstAddress')->getValue(), 'decorators' => array('viewHelper')));
+//            $elemsToAdd[] = new Zend_Form_Element_Hidden('address2',
+//                array('value' => $subAddr->getElement('AI_SecondAddress')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('city',
+                array('value' => $subAddr->getElement('A_CityTextValue')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('state',
+                array('value' => $subAddr->getElement('A_StateId')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('zip',
+                array('value' => $subAddr->getElement('A_ZipCode')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('country',
+                array('value' => $subAddr->getElement('A_CountryId')->getValue(), 'decorators' => array('viewHelper')));
+            $phone = explode(' ', $subAddr->getElement('AI_FirstTel')->getValue());
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('night_phone_a',
+                array('value' => $phone[0], 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('night_phone_b',
+                array('value' => $phone[1], 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('night_phone_c',
+                array('value' => $phone[2], 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('login_email',
+                array('value' => $subId->getElement('GP_Email')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('email',
+                array('value' => $subId->getElement('GP_Email')->getValue(), 'decorators' => array('viewHelper')));
+            $elemsToAdd[] = new Zend_Form_Element_Hidden('at',
+                array('value' => $config->payment->token, 'decorators' => array('viewHelper')));
+
+
+            $this->addElements($elemsToAdd);
+        }
         return parent::render($view);
     }
 

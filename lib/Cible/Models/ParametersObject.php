@@ -80,4 +80,11 @@ class ParametersObject extends DataObject
 
         return $parameters;
     }
+
+    public function getValueByName($field)
+    {
+        $params = $this->getAll();
+        
+        return $params[0][$field];
+    }
 }

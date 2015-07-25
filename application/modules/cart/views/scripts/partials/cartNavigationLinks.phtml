@@ -33,7 +33,7 @@ if (isset($this->moreClass))
 
         <?php if (!empty($this->customNext)): ?>
             <li class="module-navigation-arrow module-navigation-next">
-                <a id="stepTopNext" href="#" class="<?php echo $this->customNext ?>"><?php echo $this->getCibleText($customSubmitLabel) ?></a>
+                <a id="stepTopNext" href="#" class="<?php echo $this->customNext ?>"><?php echo $this->getClientText($customSubmitLabel) ?></a>
             </li>
         <?php endif; ?>
         <?php if (!empty($this->customSubmit)): ?>
@@ -50,7 +50,8 @@ if (isset($this->moreClass))
     $(document).ready(function() {
         $('#stepTopNext').click(function(e){
             e.preventDefault();
-            $('#submit').click();
+            $('#submitAccount').click();
+            $('#submitPayment').click();
         });
     });
 

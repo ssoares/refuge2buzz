@@ -1,137 +1,166 @@
 <?php
-    $cartTotalCount = $this->cartTotal;
-    $session = Zend_Session::namespaceGet('order');
+$cartTotalCount = $this->cartTotal;
+$session = Zend_Session::namespaceGet('order');
 
 ?>
-<div id="cart" class="block">
-    <div id="headerProductList">
-        <p class="left greenText"><?php echo $this->getClientText('product_label'); ?></p>
-        <p class="center greenText"><?php echo $this->getCibleText('form_item_qty_label'); ?></p>
-        <p class="middle greenText"><?php echo $this->getClientText('unit_price_label'); ?></p>
-        <p class="right greenText"><?php echo $this->getClientText('cart_item_total_label'); ?></p>
-    </div>
+<section class="block cart-details summary">
+    <?php echo $this->partial('partials/paypalinfo.phtml', 'catalog'); ?>
+        <div id="product-list" class="">
+            <div class="headerProductList row">
+                <div class="col-lg-8">
+                    <p class="col-lg-2">&nbsp;</p>
+                    <p class="col-lg-10"><?php echo $this->getClientText('product_label'); ?></p>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <p class="col-lg-4"><?php echo $this->getClientText('form_item_qty_label'); ?></p>
+                    <p class="col-lg-4"><?php echo $this->getClientText('unit_price_label'); ?></p>
+                    <p class="col-lg-4 text-right"><?php echo $this->getClientText('cart_item_total_label'); ?></p>
+                </div>
+            </div>
     <?php if(!empty($this->productData)): ?>
-        <div id="product-list">&nbsp;
         <?php foreach ($this->productData as $cartId => $product):?>
         <?php
             $currProd  = $product['data'];
             $currItem  = $product['items'];
             $productId = $currProd['P_ID'];
-            $itemId    = $currItem['I_ID'];
-            $disable   = $product['cart']['disable'];
+            $disable   = isset($product['cart']['disable'])?$product['cart']['disable']:array();
             $promo     = $product['cart']['promoId'];
-            $labelPromo = "";
-
-
+            $itemId    = $currItem['I_ID'];
             if (!$disable):
-
-                if($promo > 0)
-                    $labelPromo = $this->getClientText('alert_special_offer_item');
+                $labelPromo = $promo > 0 ?$this->getClientText('alert_special_offer_item') : '';
         ?>
-            <div class="product">
-                <div id="dataLeftCol">
-                    <div id="image">
+            <article class="row">
+                <div class="col-md-8">
+                    <div class="col-lg-2">
                         <?php
-                        echo $this->moduleImage(
-                            'catalog',
+                        echo $this->moduleImage('catalog',
                             'products/' . $productId,
-                            $currProd['P_Photo'],
-                            'thumb',
+                            $currProd['P_Photo'], 'thumb',
                             array(
-                                'class'   => 'smallThumb',
-                                'alt'     => '',
+                                'class'   => 'smallThumb img-responsive',
+                                'alt' => $currProd['P_Photo'],
                                 'useSize' => false,
                                 'prettyPhoto'=>array(
                                     'size'  => 'original',
-                                    'image' => $currProd['P_Photo']
+                                    'image' => $currProd['P_Photo'])
                                     )
-                                )
                             );
                         ?>
                     </div>
-                    <div class="product-description">
+                    <div class="product-description col-lg-10">
                         <p class="">
-                        <?php echo $currProd['PI_Name'] . ' | ' . $currItem['II_Name'] ?>
+                            <span class="product-item-label"><?php echo $currProd['PI_Name'] . ' | ' . $currItem['II_Name'] ?></span>
                             <br /><span class="alertSpecial"><?php echo $labelPromo ; ?></span>
                         </p>
                     </div>
                 </div>
-                <div id="dataRightCol">
+                <div class="col-lg-4">
                     <?php echo $currItem['render']; ?>
                 </div>
-                <div class="clear_both"><?php echo $this->clientImage('pix.gif', array('alt'=>'')); ?></div>
-            </div>
+            </article>
         <?php endif; ?>
-            <div class="clear_both"><?php echo $this->clientImage('pix.gif', array('alt'=>'')); ?></div>
         <?php endforeach;?>
         </div>
-        <div id="totalSummary">
-            <div id="pointBoni">
-            <?php if(isset($session['order']['nbPoint'])): ?>
-                <?php echo str_replace('XX', $session['order']['nbPoint'], $this->getClientText('cart_label_bonus_points')); ?>
+        <div class="totalSummary row">
+            <div class="info-data col-lg-7">
+            <?php if(!empty($session['order']['nbPoint'])): ?>
+                <?php echo $this->getClientText('cart_label_bonus_points', null,
+                    array('replace' =>
+                        array('XX' => $session['order']['nbPoint'])));
+                ?>
+            <?php endif; ?>
+            <?php if ($this->parameters['limitTpsFee'] >= 0): ?>
+                <p class="infoTpsFees">
+                <?php echo $this->getClientText('cart_label_tpFees_limit', null,
+                    array('replace' =>
+                    array('##TP_FEES_LIMIT##' => $this->parameters['limitTpsFee']))); ?>
+                </p>
+            <?php endif; ?>
+            <?php if (empty($this->parameters['tpsFee'])): ?>
+                <p class="tps-included">
+                    <?php echo $this->getCibleText('cart_label_tpFees_included'); ?>
+                </p>
+            <?php endif; ?>
+            <?php if ($session['order']['limitOrder'] > 0
+                    && $session['order']['subTotal'] > $session['order']['limitOrder']): ?>
+                <p class="infoLimitOrder infoTpsFees">
+                    <?php
+                    echo $this->getClientText('cart_label_order_limit', null,
+                        array('replace' =>
+                            array('##TP_ORDER_LIMIT##' => $this->parameters['limitOrder']))
+                        );
+                    ?>
+                </p>
+            <?php endif; ?>
+            <?php if ($this->parameters['includeTaxs'] == 1): ?>
+                <p class="infoTaxesIncluded">
+                <?php echo $this->getCibleText('cart_label_taxes_included'); ?>
+                </p>
             <?php endif; ?>
             </div>
-            <div id="summaryContent">
-                <p id="zoneTitle" class="blueTxt">
-                    <span>
+            <div class="col-lg-5 text-right">
+                <p id="zoneTitle" class="col-lg-12 force-right">
+                    <span class="bold-secondary">
                     <?php echo $this->getClientText('cart_summary_title'); ?>
                     </span>
                 </p>
-                <p id="subTotalLbl" class="leftCol">
+                <p id="subTotalLbl" class="col-lg-9">
                     <?php echo $this->getClientText('cart_summary_subtotal'); ?>
                 </p>
-                <p id="subTotalValue" class="rightCol number">
+                <p id="subTotalValue" class="col-lg-3 number">
                     <span><?php echo sprintf('%.2f', $session['order']['subTotal']); ?></span> $
                 </p>
-                <p id="transportLbl" class="leftCol">
+                <p id="transportLbl" class="col-lg-9">
                     <?php echo $this->getClientText('cart_transport_label'); ?>
                 </p>
-                <p id="transportValue" class="rightCol number">
+                <p id="transportValue" class="col-lg-3 number">
                     <?php if(Cible_FunctionsGeneral::compareFloats(
                         $session['order']['subTotal'], '<', $session['order']['limitShip'], 2)
-                        ): ?>
+                        || $session['order']['limitShip'] < 0) : ?>
                     <span><?php echo sprintf('%.2f', $session['order']['shipFee']) ?></span> $
                     <?php else: ?>
                     <span>0.00</span> $
                     <?php endif; ?>
                 </p>
-                <?php if(isset($session['order']['cod'])): ?>
-                <p id="CodLbl" class="leftCol">
-                    <?php echo $this->getClientText('cart_cod_label'); ?>
+                <?php
+                $classInfo = '';
+                if ((bool)$session['order']['includeTaxs']):
+                    $classInfo = 'text-info';
+                ?>
+                <p id="subTotalLbl" class="col-lg-9 <?php echo $classInfo; ?>">
+                    <?php echo $this->getCibleText('cart_summary_subtotal_before_tax'); ?>
                 </p>
-                <p id="transportValue" class="rightCol number">
-                    <span><?php echo sprintf('%.2f', $session['order']['CODFees']) ?></span> $
+                <p id="subTotalValue" class="col-lg-3 number <?php echo $classInfo; ?>">
+                    <span><?php echo sprintf('%.2f', $session['order']['subTotProv']); ?></span> $
                 </p>
                 <?php endif; ?>
-                <p id="tvqLbl" class="leftCol">
-                    <?php if ($session['order']['taxFed'] > 0): ?>
+                <p id="tvqLbl" class="col-lg-9 <?php echo $classInfo; ?>">
+                    <?php if ($this->parameters['taxeFed'] > 0): ?>
                         <?php echo $this->getClientText('cart_tvq_label'); ?>
                     <?php else: ?>
-                        <?php echo $session['order']['rateProv']['TP_Code'];?>
+                        <?php echo$this->parameters['taxeCode'];?>
                     <?php endif; ?>
                 </p>
-                <p id="tvqValue"class="rightCol number">
+                <p id="tvqValue"class="col-lg-3 number <?php echo $classInfo; ?>">
                     <span><?php echo sprintf('%.2f', $session['order']['taxProv']); ?></span> $
                 </p>
                 <?php if ($session['order']['taxFed'] > 0): ?>
-                <p id="tpsLbl" class="leftCol">
+                <p id="tpsLbl" class="col-lg-9 <?php echo $classInfo; ?>">
                     <?php echo $this->getClientText('cart_tps_label'); ?>
                 </p>
-                <p id="tpsValue" class="rightCol number">
+                <p id="tpsValue" class="col-lg-3 number <?php echo $classInfo; ?>">
                     <span><?php echo sprintf('%.2f', $session['order']['taxFed']); ?></span> $
                 </p>
                 <?php endif; ?>
-                <p id="totalLbl" class="leftCol blueTxt">
+                <p id="totalLbl" class="col-lg-9 bold-secondary">
                     <?php echo $this->getClientText('cart_total_label'); ?>
                 </p>
-                <p id="totalValue" class="rightCol blueTxt">
+                <p id="totalValue" class="col-lg-3 number bold-secondary">
                     <?php echo sprintf('%.2f', $session['order']['charge_total']) ?> $
                 </p>
             </div>
         </div>
-        <div class="clear_both"><?php echo $this->clientImage('pix.gif', array('alt'=>'')); ?></div>
-
     <?php else : ?>
         <div id="no-item"><?php echo $this->getClientText('cart_no_item') ?></div>
     <?php endif; ?>
-</div>
+</section>

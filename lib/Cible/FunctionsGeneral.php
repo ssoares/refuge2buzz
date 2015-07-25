@@ -862,8 +862,6 @@ abstract class Cible_FunctionsGeneral
         $profile = new MemberProfile();
         $foundUser = $profile->findMembers(array('member_id' => $memberId, 'email' => $email));
 
-        print_r($foundUser);
-
         return $foundUser;
     }
 
@@ -1487,11 +1485,8 @@ abstract class Cible_FunctionsGeneral
             $oTaxe = new TaxesObject();
             $taxes = $oTaxe->getTaxData($session['stateId']);
             $rate   = $taxes['TP_Rate']/100;
-            if($taxes['TP_Code'] == "QC")
-                $taxValue = ($amount + self::federalTax($amount)) * $rate;
-            else
-                $taxValue = $amount * $rate;
-
+            $year = date('Y', time());
+            $taxValue = $amount * $rate;
 
             $taxValue = (float) $taxValue;
             $session  = new Zend_Session_Namespace('order');
@@ -1504,7 +1499,7 @@ abstract class Cible_FunctionsGeneral
     public static function federalTax($amount = 0)
     {
 
-        $oOrderParams = new ParametersObject();
+        $oOrderParams = new OrderParametersObject();
 
         $tps = $oOrderParams->getValueByName('CP_TauxTaxeFed');
         $tps = $tps / 100;
@@ -1518,6 +1513,23 @@ abstract class Cible_FunctionsGeneral
             $session->tps = $taxValue;
         }
         return $taxValue;
+    }
+    public static function totalBeforeTax($amount = 0)
+    {
+        $session = new Zend_Session_Namespace('order');
+
+        $oOrderParams = new OrderParametersObject();
+
+        $tps = $oOrderParams->getValueByName('CP_TauxTaxeFed');
+        $tps = $tps / 100;
+        $oTaxe = new TaxesObject();
+        $taxes = $oTaxe->getTaxData($session->stateId);
+        $tvq   = $taxes['TP_Rate']/100;
+
+        $total = $amount / (1 + $tps + $tvq);
+        $total = (float) $total;
+
+        return $total;
     }
 
     /**

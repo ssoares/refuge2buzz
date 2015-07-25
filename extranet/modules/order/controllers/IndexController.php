@@ -172,9 +172,9 @@ class Order_IndexController extends Cible_Extranet_Controller_Import_Action impl
             $select->from(
                     'Orders',
                     array(
-                        'O_ID'          => 'O_ID',
                         'O_OrderNumber' => 'O_OrderNumber',
-                        'Name'          => 'concat(O_LastName, " " ,O_FirstName, " <br />Num Acomba: ",O_AccountId)',
+                        'O_ResponseOrderId' => 'O_ResponseOrderId',
+                        'Name'          => 'concat(O_LastName, " " ,O_FirstName)',
                         'O_Total'       => 'O_Total',
                         'O_PaymentMode' => 'O_PaymentMode',
                         'O_Paid'        => 'O_Paid')
@@ -194,6 +194,7 @@ class Order_IndexController extends Cible_Extranet_Controller_Import_Action impl
             $tables = array(
                  'Orders' => array(
                     'O_OrderNumber' => 'O_OrderNumber',
+                    'O_ResponseOrderId' => 'O_ResponseOrderId',
                     'O_LastName'    => 'O_LastName',
                     'O_FirstName'   => 'O_LastName',
                     'O_AcombaId'    => 'O_AccountId',
@@ -206,6 +207,7 @@ class Order_IndexController extends Cible_Extranet_Controller_Import_Action impl
 
             $field_list = array(
                     'O_OrderNumber'     => array('width' => '150px'),
+                    'O_ResponseOrderId'  => array('width' => '150px'),
                     'Name'  => array('width' => '150px'),
                     'O_Total' => array('width' => '80px'),
                     'O_PaymentMode' => array('width' => '80px'),
