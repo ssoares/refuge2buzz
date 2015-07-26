@@ -17,6 +17,8 @@ if ($imageFirstALT == "") {
         $imageFirstALT = $config->site->title->$lang;
     }
 }
+$user = Zend_Registry::get('user');
+$lnkAccount = $this->baseUrl() . '/' . Cible_FunctionsCategories::getPagePerCategoryView(1, 'become_client', 17, null, true);
 ?>
 <div class="site-header-container container">
     <div class="site-name col-xs-1 col-md-4">
@@ -42,7 +44,7 @@ if ($imageFirstALT == "") {
     <nav class="site-menu-principal navbar navbar-default navbar-collapse collapse col-xs-12 col-md-7 pull-right" role="navigation">
         <?php
         echo $this->menu(
-                'header', array(
+            'header', array(
             'class' => 'site-menu-icons nav navbar-nav',
             'id' => 'menu-secondaire',
             'isDropdownMenu' => true,
@@ -55,7 +57,7 @@ if ($imageFirstALT == "") {
         <br>
         <?php
         echo $this->menu(
-                'principal', array(
+            'principal', array(
             'class' => 'nav navbar-nav',
             'id' => 'menu-principal',
             'maxLevel' => 3,
@@ -75,4 +77,13 @@ if ($imageFirstALT == "") {
                 <li><input type="hidden" id="search-url" value="<? echo ($this->baseUrl()."/".Cible_FunctionsCategories::getPagePerCategoryView(0,'index',10)."/words");?>"/><input type="text" id="search-box-terme" name="search-box-terme" value="" /><a id="searchLink" href="#"><?php echo $this->clientImage('btn-search-' . Zend_Registry::get("languageSuffix") . '.png') ?></a></li>
             </ul>-->
     </nav>
+    <div class="sign-in col-xs-12 col-md-2">
+        <?php if ($user): ?>
+        <?php echo $user['firstName'] . ' ' . $user['lastName']; ?><br>
+        <?php echo $this->link($lnkAccount, 'Mon compte'); ?><br>
+        <?php echo $this->link('javascript:logout();', $this->getClientText('account_logout_link'),array('class' => 'logout-btn')); ?>
+        <?php else: ?>
+        <?php echo $this->link('#', $this->getCibleText('button_authenticate'), array('class' => 'login-btn')); ?>
+    <?php endif; ?>
+    </div>
 </div>

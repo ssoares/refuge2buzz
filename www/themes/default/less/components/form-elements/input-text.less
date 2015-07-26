@@ -1,4 +1,5 @@
 //input normaux
+input[type=password],
 input[type=text], input[type=search] {
     .form-control();
     line-height:@input-height-base - @input-padding  !important;
@@ -12,14 +13,14 @@ input[type=text], input[type=search] {
         border-color:@brand-grey-light;
     }
      & when (@device-type = 'desktop') {
-        padding:@input-padding / 2 22px;
+        padding:@input-padding / 2 10px;
         margin-bottom:12px;
         .responsive-font(@font-size-base + 1);
-    }    
+    }
      & when (@device-type = 'mobile') {
         padding:@input-padding / 2 12px * @mobile-divider-text;
         margin-bottom:12px * @mobile-divider-text;
         .responsive-font((@font-size-base + 8) * @mobile-divider-text);
         .box-sizing(border-box);
-    }    
+    }
 }

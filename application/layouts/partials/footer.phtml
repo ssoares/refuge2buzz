@@ -4,9 +4,9 @@ $lang = $this->view->languageId;
 $baseUrl = Zend_Registry::get('web_root');
 $config = Zend_Registry::get('config');
 $edith_logo = $this->link('#', $this->clientImage('logo.png', array('alt' => "Edith", 'title' => "Edith")));
-$array_replace = array('<p>' => '', '<P>' => '', '</p>' => '', '</P>' => '',
+$array_replace = array('replace' => array('<p>' => '', '<P>' => '', '</p>' => '', '</P>' => '',
     '%%%GET_DATE_YEAR%%%' => date('Y'),
-    '%%%SITE_NAME%%%' => $config->site->title->$lang);
+    '%%%SITE_NAME%%%' => $config->site->title->$lang));
 $copyrightText = $this->getClientText('footer_copyright', null, $array_replace);
 $footerTopTxt = $this->getClientText('footer_nous_joindre_button');
 ?>
@@ -113,7 +113,7 @@ if ($config->searchbox->embeded)
         })
         //ajoute une classe empty lorsqu'un champ est vide
         setInterval(function() {
-            $('input[type=text], textarea').each(function() {
+            $('input[type=password], input[type=text], textarea').each(function() {
                 $this = $(this);
                 $this.toggleClass('empty', ($this.val() == ""));
             });
@@ -125,4 +125,17 @@ if ($config->searchbox->embeded)
             $header.toggleClass('clinched', (pos > h));
         }).scroll();
     });
+    function createCookie(name,value,days) {
+        path = "<?php echo $this->registryGet('web_root') ?>";
+        document.cookie = name+"="+value+"; path=" + path;
+        window.location.reload();
+    }
+
+    function eraseCookie(name) {
+        createCookie(name);
+    }
+
+    function logout(){
+        createCookie("authentication",'',-1);
+    }
 </script>

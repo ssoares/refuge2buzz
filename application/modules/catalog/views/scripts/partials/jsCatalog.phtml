@@ -1,4 +1,4 @@
-<?php $newAccountUrl = Cible_FunctionsCategories::getPagePerCategoryView(0, 'become_client', 17, null, false); ?>
+<?php $newAccountUrl = Cible_FunctionsCategories::getPagePerCategoryView(1, 'login', 17, null, false); ?>
 <?php $cartUrl = $this->baseUrl() . '/' . 'cart/index/ajax/'; ?>
 <?php // $loginUrl = $this->baseUrl() . '/' . 'catalog/index/login/'; ?>
 <?php // $dispCartUrl = $this->baseUrl() . '/' . 'cart/index/cart/'; ?>
@@ -9,6 +9,29 @@
 <?php $hiddenLogin = $isLogIn ? 'hidden' : ''; ?>
 <?php $hiddenCart = $isLogIn ? '' : 'hidden'; ?>
 <?php // $link = $this->link($baseUrl . $newAccountUrl, $this->getCibleText('form_account_button_submit'), array('class' => 'button-submit')); ?>
+<div class="modal fade " id="login-cart">
+    <div class="modal-dialog <?php echo ($isLogIn) ? '' : 'modal-lg' ?> ">
+        <div class="modal-content">
+            <input type="hidden" id="isLogIn" value="<?php echo $isLogIn; ?>">
+            <div class="modal-body row <?php echo $hiddenLogin; ?>">
+                <div class="modal-form content col-md-6">
+                    <h5><?php // echo $this->getClientText('login_form_login_title'); ?></h5>
+                    <?php echo $this->action('login', 'index', 'catalog', array()); ?>
+                </div>
+                <div class="modal-register-text content col-md-6">
+                    <h5><?php echo $this->getClientText('quoteRequest_account_introduction_text'); ?></h5>
+                    <br />
+        <?php
+        echo $this->link('/' . Cible_FunctionsCategories::getPagePerCategoryView(1,
+            'become_client', 17, null, true),
+            $this->getCibleText('form_select_option_view_order_become_client'),
+            array('class' => 'link-button'));
+ ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -21,7 +44,15 @@
             updateCart('<?php echo $cartUrl; ?>', 'refresh');
 //        }
         var link = {};
-
+        var isProductLoading = false;
+        var link = {};
+        $('.login-btn').click(function(e) {
+            e.preventDefault();
+            if (!isProductLoading) {
+                isProductLoading = true;
+                $('#login-cart').appendTo('body').modal('show');
+            }
+        });
         $('.add-to-cart').click(function(e) {
             e.preventDefault();
             link = $(this);

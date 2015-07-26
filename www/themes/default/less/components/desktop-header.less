@@ -57,6 +57,7 @@
 }
 .site-header-container {
     padding:0;
+    position: relative;
 }
 .site-name {
     .make-lg-column(2);
@@ -149,5 +150,16 @@
         &.col-xs-1{
             right: 64px;
         }
+    }
+}
+.sign-in{
+    line-height: @font-size-base;
+    position: absolute;
+    right: -100px;
+    top: 60px;
+    padding-top: 5px;
+    @media @mq-phone{
+        position: static;
+        text-align:center;
     }
 }

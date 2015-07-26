@@ -117,8 +117,9 @@
 }
 
 //required field
-.required-field {
-    &, input[type=text]& {
+input[type=text], input[type=password]{
+    .required + &,
+    &.required-field {
         background-image:data-uri('../images/backgrounds/required-field-background.png');
     }
     background-repeat:repeat-y;
