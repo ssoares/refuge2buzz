@@ -265,13 +265,18 @@ class FormBecomeClient extends Cible_Form
                 array('value' => $subAddr->getElement('A_ZipCode')->getValue(), 'decorators' => array('viewHelper')));
             $elemsToAdd[] = new Zend_Form_Element_Hidden('country',
                 array('value' => $subAddr->getElement('A_CountryId')->getValue(), 'decorators' => array('viewHelper')));
-            $phone = explode(' ', $subAddr->getElement('AI_FirstTel')->getValue());
+
+            $phone = explode(' ',str_replace(
+                array('(',')','-'), array('','',' '),
+                $subAddr->getElement('AI_FirstTel')->getValue()));
             $elemsToAdd[] = new Zend_Form_Element_Hidden('night_phone_a',
                 array('value' => $phone[0], 'decorators' => array('viewHelper')));
+            $tmp1 = !empty($phone[1])? $phone[1] : '';
             $elemsToAdd[] = new Zend_Form_Element_Hidden('night_phone_b',
-                array('value' => $phone[1], 'decorators' => array('viewHelper')));
+                array('value' => $tmp1, 'decorators' => array('viewHelper')));
+            $tmp2 = !empty($phone[2])? $phone[2] : '';
             $elemsToAdd[] = new Zend_Form_Element_Hidden('night_phone_c',
-                array('value' => $phone[2], 'decorators' => array('viewHelper')));
+                array('value' => $tmp2, 'decorators' => array('viewHelper')));
             $elemsToAdd[] = new Zend_Form_Element_Hidden('login_email',
                 array('value' => $subId->getElement('GP_Email')->getValue(), 'decorators' => array('viewHelper')));
             $elemsToAdd[] = new Zend_Form_Element_Hidden('email',

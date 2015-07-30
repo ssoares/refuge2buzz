@@ -940,11 +940,16 @@ abstract class Cible_FunctionsGeneral
 
         $select = $db->select();
 
-        $select->from('Countries', array())
+        $select->from('Countries')
                 ->joinLeft('CountriesIndex', 'Countries.C_ID = CountriesIndex.CI_CountryID', array('name' => 'CI_Name'))
-                ->where('CountriesIndex.PI_LanguageID = ?', $lang)
-                ->where('Countries.P_Identifier = ?', $code);
-
+                ->where('CountriesIndex.CI_LanguageID = ?', $lang);
+        if (!is_null($code)){
+            if (strlen($code) > 3){
+                $select->where('CountriesIndex.CI_Name = ?', $code);
+            }else{
+                $select->where('Countries.C_Identifier = ?', $code);
+            }
+        }
         return $db->fetchOne($select);
     }
 

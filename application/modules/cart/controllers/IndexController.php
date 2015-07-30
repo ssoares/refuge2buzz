@@ -304,10 +304,19 @@ class Cart_IndexController extends Cible_Controller_Action
                 'CODFees'     => $orderParams['CP_MontantFraisCOD'],
                 'includeTaxs' => $orderParams['CP_IncludeTaxes']
             );
+            $memberData = array();
+            $profile = new MemberProfilesObject();
             if($account){
-                $profile = new MemberProfilesObject();
                 $memberData = $profile->setProfileId($account['member_id'])
                     ->findData(array('GP_Email' => $account['email']));
+            }
+            $session = new Zend_Session_Namespace('order');
+            if(empty($memberData) && !empty($session->customer)){
+                $memberData = $session->customer;
+            }
+            if(!empty($memberData)){
+                $states = explode('||', $session->customer['selectedState']);
+                $memberData['address']['A_StateId'] = $states[0];
                 $memberData = $profile->addTaxRate($memberData);
     //            if ($memberData['validatedEmail'] == '')
     //                $this->view->assign('valide', true);
@@ -352,7 +361,7 @@ class Cart_IndexController extends Cible_Controller_Action
                     $tmp['taxeProv'] = 0;
                 }
             }
-
+            
             $parameters = $params + $tmp;
 
             if($hasBonus)

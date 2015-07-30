@@ -174,7 +174,7 @@ class MemberProfilesObject extends DataObject
         $oAddres = new AddressObject();
         $oTaxes = new TaxesObject();
 
-        $stateId = $oAddres->getStateId($addrId);
+        $stateId = !empty($addrId)?$oAddres->getStateId($addrId):$memberData[$this->_addrDataField]['A_StateId'];
         $taxRate = $oTaxes->getTaxData($stateId);
 
         $memberData['taxProv'] = $taxRate['TP_Rate'];

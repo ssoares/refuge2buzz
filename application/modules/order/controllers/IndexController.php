@@ -86,6 +86,9 @@ class Order_IndexController extends Cible_Controller_Action
             ));
             $memberInfos = $profile->addTaxRate($memberInfos);
             $this->view->user = $authentication;
+        }elseif ($this->_request->isPost()){
+            $tmpInfos = $this->_request->getPost();
+            $memberInfos = $profile->addTaxRate($tmpInfos);
         }
 
         $return = $this->_getParam('return');
@@ -126,6 +129,11 @@ class Order_IndexController extends Cible_Controller_Action
             case 'resume-order':
                 if(empty($session->customer)){
                     $this->_redirect(Cible_FunctionsPages::getPageNameByID (1));
+                }
+                if (empty($memberInfos)){
+                    $memberInfos = $session->customer;
+                    $memberInfos['MP_NoProvTax'] = 0;
+                    $memberInfos['MP_NoFedTax'] = 0;
                 }
                 $this->view->headLink()->offsetSetStylesheet($this->_moduleID, $this->view->locateFile('cart.css'), 'all');
                 $this->view->headLink()->appendStylesheet($this->view->locateFile('cart.css'), 'all');
@@ -276,6 +284,12 @@ class Order_IndexController extends Cible_Controller_Action
                     }
                 }else{
                     if($session->customer){
+                        $states = explode('||', $session->customer['selectedState']);
+                        $session->customer['address']['A_StateId'] = $states[0];
+                        $session->customer['address']['A_CountryId'] = Cible_FunctionsGeneral::getCountryByCode($session->customer['address']['A_CountryId']);
+                        $session->customer['addressShipping']['A_StateId'] = $states[1];
+                        $session->customer['addressShipping']['A_CountryId'] = Cible_FunctionsGeneral::getCountryByCode($session->customer['addressShipping']['A_CountryId']);
+                        $memberInfos = $session->customer;
 //                        $form->populate($session->customer);
                         $form->populate($memberInfos);
                         $errorValidation = $this->_getParam('errorValidation');

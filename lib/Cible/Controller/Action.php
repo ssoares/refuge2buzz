@@ -918,6 +918,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
             $form = new FormLogin();
             $noSubmitOther = true;
             if (isset($_POST['submit']) || isset($_POST['unsubscribe'])
+                || isset($_POST['submitAccount'])
                 || isset($_POST['subscribe'])
                 || isset($_POST['submitFind'])){
                 $noSubmitOther = false;
