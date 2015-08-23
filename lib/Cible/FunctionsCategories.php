@@ -79,7 +79,7 @@ abstract class Cible_FunctionsCategories
 
         return $views;
     }
- 
+
     public static function getPagePerCategoryView($category_id, $view_name, $module=0, $lang = null, $pageOnly = false){
 
         if( is_null($lang) )

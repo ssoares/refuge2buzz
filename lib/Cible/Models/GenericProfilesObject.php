@@ -177,7 +177,8 @@ class GenericProfilesObject extends DataObject
 
     public function delete($id)
     {
-        $this->save($id, array($this->_delField => 1), 1);
+        parent::delete($id);
+//        $this->save($id, array($this->_delField => 1), 1);
     }
 
 
@@ -224,6 +225,20 @@ class GenericProfilesObject extends DataObject
         }
 
         return $data;
+    }
+
+    public function getAll($langId = null, $array = true, $id = null)
+    {
+        parent::getAll($langId, false, $id);
+        $this->_query->where($this->_delField . ' = ?', 0);
+
+        if ($array){
+            $typeData = $this->_oData->fetchAll($this->_query)->toArray();
+        }else{
+            $typeData = $this->_query;
+        }
+
+        return $typeData;
     }
 
 }

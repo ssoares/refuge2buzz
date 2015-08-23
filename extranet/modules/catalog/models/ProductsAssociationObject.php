@@ -36,7 +36,7 @@ class ProductsAssociationObject extends DataObject
     protected $_seq             = 0;
     protected $_query;
 
-    public function setQuery( Zend_Db_Select $query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
         $this->_query = $query;
     }

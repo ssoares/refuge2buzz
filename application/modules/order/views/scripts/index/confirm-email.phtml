@@ -2,21 +2,20 @@
         <?php if($this->needConfirm) : ?>
             <?php echo $this->getClientText('need_confirm_email_text');?>
         <?php elseif($this->alreadyValide) : ?>
-            <?php
-            echo $this->getClientText('already_confirm_email_text');
-            ?>
+            <?php echo $this->getCibleText('already_confirm_email_text');?>
+        <?php elseif($this->valid) : ?>
+            <?php echo $this->getCibleText('confirmed_email_text');?>
         <?php else : ?>
-            <?php
-            echo $this->getClientText('error_confirm_email_text');
-            ?>
+            <?php echo $this->getCibleText('error_confirm_email_text');?>
+            <br />
             <br />
             <?php
-            $url = $this->BaseUrl() . '/' 
+            $url = $this->BaseUrl() . '/'
                     . Cible_FunctionsCategories::getPagePerCategoryView(0, 'return_confirm_email', 17)
                     . '/email/' . $this->email;
                 echo $this->link(
                     $url,
-                    $this->getCibleText('form_select_option_view_quoteRequest_return_confirm_email'),
+                    $this->getCibleText('link_return_confirm_email'),
                     array('class' => '')
                 ); ?>
         <?php endif; ?>

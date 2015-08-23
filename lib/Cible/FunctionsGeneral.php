@@ -782,7 +782,7 @@ abstract class Cible_FunctionsGeneral
     {
         $authentication = null;
 
-        if (isset($_COOKIE['authentication']))
+        if (!empty($_COOKIE['authentication']))
         {
             $authentication = json_decode($_COOKIE['authentication'], true);
             $path = Zend_Registry::get('web_root') . '/';
@@ -792,7 +792,7 @@ abstract class Cible_FunctionsGeneral
                         'GP_Hash' => $authentication['hash'],
                         'GP_Status' => $authentication['status']
                     ));
-
+            
             if (!$foundUser)
             {
                 $authentication = null;

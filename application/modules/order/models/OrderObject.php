@@ -86,7 +86,7 @@ class OrderObject extends DataObject
             $data = array_merge($data, $tmp);
         }
         $id = $this->_oGeneric->addProfile($data, $langId);
-        $this->_oGeneric->save($id, $data, $langId);
+//        $this->_oGeneric->save($id, $data, $langId);
 
         return $id;
     }

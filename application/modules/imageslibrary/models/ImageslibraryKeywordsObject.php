@@ -44,7 +44,7 @@ class ImageslibraryKeywordsObject extends DataObject
             $this->_clause .=  ' = ' . $clause[0];
     }
 
-    public function setQuery( Zend_Db_Select $query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
         $this->_query = $query;
     }

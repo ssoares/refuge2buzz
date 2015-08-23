@@ -25,46 +25,6 @@ class Order_IndexController extends Cible_Controller_Action
         $this->_obj = new OrderObject();
     }
 
-    public function ajaxAction()
-    {
-        $this->getHelper('viewRenderer')->setNoRender();
-        $action = $this->_getParam('actionAjax');
-
-        if ($action == 'updateSessionVar')
-        {
-            $quoteRequestOrderVar['shippingShipperName'] = $this->_getParam('shippingShipperName');
-            $quoteRequestOrderVar['shippingMethod'] = $this->_getParam('shippingMethod');
-            $quoteRequestOrderVar['shippingAccountNumber'] = $this->_getParam('shippingAccountNumber');
-            $quoteRequestOrderVar['shippingComment'] = $this->_getParam('shippingComment');
-
-            $quoteRequestOrderVar['shippingShipToADifferentAddress'] = $this->_getParam('shippingShipToADifferentAddress');
-            $quoteRequestOrderVar['lastName'] = $this->_getParam('lastName');
-            $quoteRequestOrderVar['firstName'] = $this->_getParam('firstName');
-            $quoteRequestOrderVar['company'] = $this->_getParam('company');
-            $quoteRequestOrderVar['address'] = $this->_getParam('address');
-            $quoteRequestOrderVar['city'] = $this->_getParam('city');
-            $quoteRequestOrderVar['state'] = $this->_getParam('state');
-            $quoteRequestOrderVar['country'] = $this->_getParam('country');
-            $quoteRequestOrderVar['zipCode'] = $this->_getParam('zipCode');
-            $quoteRequestOrderVar['phone'] = $this->_getParam('phone');
-
-            $quoteRequestOrderVar['poNumber'] = $this->_getParam('poNumber');
-            $quoteRequestOrderVar['projectName'] = $this->_getParam('projectName');
-            $quoteRequestOrderVar['contactMe'] = $this->_getParam('contactMe');
-            $quoteRequestOrderVar['newsletterSubscription'] = $this->_getParam('newsletterSubscription');
-            $quoteRequestOrderVar['termsAgreement'] = $this->_getParam('termsAgreement');
-
-            //echo($quoteRequestOrderVar['lastName']);
-            $quoteRequestOrder = new Zend_Session_Namespace('quoteRequestOrderVar');
-            foreach ($quoteRequestOrderVar as $key => $value)
-            {
-                $quoteRequestOrder->$key = $value;
-            }
-
-            echo json_encode((array('result' => '')));
-        }
-    }
-
     public function orderAction()
     {
         $session = new Zend_Session_Namespace('order');
@@ -82,11 +42,11 @@ class Order_IndexController extends Cible_Controller_Action
         if (!is_null($authentication))
         {
             $memberInfos = $profile->findData(array(
-                'email' => $authentication['email']
+                'GP_Email' => $authentication['email']
             ));
             $memberInfos = $profile->addTaxRate($memberInfos);
             $this->view->user = $authentication;
-        }elseif ($this->_request->isPost()){
+        }elseif ($this->_request->isPost() && array_key_exists('submitAccount', $_POST)){
             $tmpInfos = $this->_request->getPost();
             $memberInfos = $profile->addTaxRate($tmpInfos);
         }
@@ -127,7 +87,7 @@ class Order_IndexController extends Cible_Controller_Action
         switch ($stepAction)
         {
             case 'resume-order':
-                if(empty($session->customer)){
+                if(empty($session->customer)||empty($authentication)){
                     $this->_redirect(Cible_FunctionsPages::getPageNameByID (1));
                 }
                 if (empty($memberInfos)){
@@ -150,7 +110,7 @@ class Order_IndexController extends Cible_Controller_Action
                 $session->order['taxProv']      = $totals['taxProv'];
                 $session->order['subTotProv']   = $totals['subTotProv'];
                 $session->order['nbPoint']      = $totals['nbPoint'];
-                $session->order['shipFee']      = $orderParams['CP_ShippingFees'];
+                $session->order['shipFee']      = $totals['shipFee'];
                 $session->order['limitShip']    = $orderParams['CP_ShippingFeesLimit'];
                 $session->order['limitOrder']   = $orderParams['CP_OrderMiniAmount'];
                 $session->order['CODFees']      = $orderParams['CP_MontantFraisCOD'];
@@ -248,7 +208,8 @@ class Order_IndexController extends Cible_Controller_Action
                 $options['from'] = 'order';
                 $form = new FormBecomeClient($options);
 
-                if ($this->_request->isPost()){
+                if ($this->_request->isPost() && array_key_exists('submitAccount', $_POST))
+                {
                     $data = $this->_request->getPost();
                     $currentCity  = 0;
                     $current_state  = $data['address']['A_StateId'] . '||';
@@ -256,10 +217,6 @@ class Order_IndexController extends Cible_Controller_Action
 
                     $memberInfos['selectedState'] = $session->customer['selectedState'];
                     $memberInfos['selectedCity']  = $session->customer['selectedCity'];
-                }
-
-                if ($this->_request->isPost() && array_key_exists('submitAccount', $_POST))
-                {
                     $formData = $this->_request->getPost();
                     $formData['selectedState'] = $current_state;
                     $formData['selectedCity']  = $currentCity;
@@ -286,9 +243,9 @@ class Order_IndexController extends Cible_Controller_Action
                     if($session->customer){
                         $states = explode('||', $session->customer['selectedState']);
                         $session->customer['address']['A_StateId'] = $states[0];
-                        $session->customer['address']['A_CountryId'] = Cible_FunctionsGeneral::getCountryByCode($session->customer['address']['A_CountryId']);
+                        $session->customer['address']['A_CountryId'] = Cible_FunctionsGeneral::getCountryByStateID($session->customer['address']['A_StateId']);
                         $session->customer['addressShipping']['A_StateId'] = $states[1];
-                        $session->customer['addressShipping']['A_CountryId'] = Cible_FunctionsGeneral::getCountryByCode($session->customer['addressShipping']['A_CountryId']);
+                        $session->customer['addressShipping']['A_CountryId'] = Cible_FunctionsGeneral::getCountryByStateID($session->customer['addressShipping']['A_StateId']);
                         $memberInfos = $session->customer;
 //                        $form->populate($session->customer);
                         $form->populate($memberInfos);
@@ -643,33 +600,33 @@ class Order_IndexController extends Cible_Controller_Action
     {
         $email = $this->_getParam('email');
         if (!empty($email))
-            $account['email'] = $email;
+            $account['GP_Email'] = $email;
         else
-        $account = Cible_FunctionsGeneral::getAuthentication();
+            $account = Cible_FunctionsGeneral::getAuthentication();
 
         if (!is_null($account))
         {
-            $profile = new MemberProfile();
-            $user = $profile->findMember(array('email' => $account['email']));
+            $profile = new MemberProfilesObject();
+            $user = $profile->findData(array('GP_Email' => $account['GP_Email']));
             if ($user)
             {
-                if ($user['validatedEmail'] == '')
+                if ($user['MP_ValidateEmail'] == '')
                 {
                     $this->view->assign('alreadyValide', true);
                 }
                 else
                 {
                     $data = array(
-                        'firstName' => $user['firstName'],
-                        'lastName' => $user['lastName'],
-                        'email' => $user['email'],
-                        'language' => $user['language'],
-                        'validatedEmail' => $user['validatedEmail']
+                        'firstName' => $user['identification']['GP_FirstName'],
+                        'lastName' => $user['identification']['GP_LastName'],
+                        'email' => $user['identification']['GP_Email'],
+                        'language' => $user['identification']['GP_Language'],
+                        'validatedEmail' => $user['MP_ValidateEmail']
                         );
                     $options = array(
                         'send' => true,
                         'isHtml' => true,
-                        'to' => $user['email'],
+                        'to' => $user['identification']['GP_Email'],
                         'moduleId' => $this->_moduleID,
                         'event' => 'editResend',
                         'type' => 'email',
@@ -692,8 +649,8 @@ class Order_IndexController extends Cible_Controller_Action
         $email = $this->_getParam('email');
         $validateNumber = $this->_getParam('validateNumber');
 
-        $profile = new MemberProfile();
-        $user = $profile->findMember(array('email' => $email));
+        $profile = new MemberProfilesObject();
+        $user = $profile->findData(array('GP_Email' => $email));
         $cart = new Cart();
         if ($cart->getTotalItem() >= 1)
         {
@@ -702,39 +659,16 @@ class Order_IndexController extends Cible_Controller_Action
 
         if ($user)
         {
-            if ($user['validatedEmail'] == '')
-            {
-                $url = Cible_FunctionsCategories::getPagePerCategoryView(0, 'list_collections', 14);
-                if ($user['status'] == 2)
-                    $this->_redirect ($url);
+            if ($user['MP_ValidateEmail'] == ''){
                 $this->view->assign('alreadyValide', true);
             }
-            elseif ($user['validatedEmail'] == $validateNumber)
+            elseif ($user['MP_ValidateEmail'] == $validateNumber)
             {
                 $this->view->assign('valide', true);
-                $profile->updateMember($user['member_id'], array('validatedEmail' => '', 'status' => '1'));
-                $this->_emailRenderData['emailHeader'] = $this->view->clientImage('logo.jpg', null, true);
-
-                $data = array(
-                    'firstName' => $user['firstName'],
-                    'lastName' => $user['lastName'],
-                    'email' => $user['email'],
-                    'language' => $user['language'],
-                    'NEWID' => $user['member_id']
-                    );
-                $options = array(
-                    'send' => true,
-                    'isHtml' => true,
-                    'moduleId' => $this->_moduleID,
-                    'event' => 'newAccount',
-                    'type' => 'email',
-                    'recipient' => 'admin',
-                    'data' => $data
-                );
-
-                $oNotification = new Cible_Notifications_Email($options);
-
-                $this->renderScript('index/become-client-thank-you.phtml');
+                $profile->save($user[$profile->getDataId()], array(
+                    'MP_ValidateEmail' => '', 'MP_Status' => 2),
+                    $user['identification']['GP_Language']);
+                $this->view->assign('valid', true);
             }
             else
             {
@@ -909,7 +843,25 @@ class Order_IndexController extends Cible_Controller_Action
         if ($orderParams['CP_ShippingFeesLimit'] >= 0){
             $addShipFee = $lt ? true : false;
         }
-
+        $country = $memberInfos['addressShipping']['A_CountryId'];
+        $inCountry = true;
+        switch($country)
+        {
+            case 52:
+                if ($orderParams['CP_ShipFeeUSA'] > 0){
+                    $orderParams['CP_ShippingFees'] = $orderParams['CP_ShipFeeUSA'];
+                }
+                $inCountry = false;
+                break;
+            case !in_array($country, array(7,52)):
+                if ($orderParams['CP_ShipFeeOther'] > 0){
+                    $orderParams['CP_ShippingFees'] = $orderParams['CP_ShipFeeOther'];
+                }
+                $inCountry = false;
+                break;
+            default:
+                break;
+        }
         if(isset($memberInfos['MP_NoFedTax']) && !$memberInfos['MP_NoFedTax'] && $session->stateId == 11)
         {
             foreach ($cartData['cartId'] as $key => $id)
@@ -938,7 +890,7 @@ class Order_IndexController extends Cible_Controller_Action
 
         }
 
-        if(isset($memberInfos['MP_NoProvTax']) && !$memberInfos['MP_NoProvTax'])
+        if(isset($memberInfos['MP_NoProvTax']) && !$memberInfos['MP_NoProvTax'] && $inCountry)
         {
             foreach ($cartData['cartId'] as $key => $id)
             {

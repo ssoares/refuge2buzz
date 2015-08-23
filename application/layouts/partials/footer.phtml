@@ -136,6 +136,41 @@ if ($config->searchbox->embeded)
     }
 
     function logout(){
-        createCookie("authentication",'',-1);
+        eraseCookie("authentication");
+    }
+    function toggleLostPassword(){
+        var lostPasswordPanel = $('#lostPasswordPanel');
+        if( lostPasswordPanel.css('display') == 'none' )
+        {
+            $('div#lostPasswordPanel .errors').css('display','none');
+            lostPasswordPanel.slideDown();
+        }
+        else
+        {
+            $('#lostPasswordEmail').val('');
+            lostPasswordPanel.slideUp();
+        }
+    }
+
+    function retrievePassword(){
+        var email = $('#lostPasswordEmail');
+        var emailRegEx = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+        $('div#lostPasswordPanel .errors').css('display','none');
+
+        if( email.val() == ''){
+            $('#emailValidatorEmpty').css('display','block');
+            email.focus();
+        } else if(!email.val().match(emailRegEx)) {
+            $('#emailValidatorError').css('display','block');
+            email.focus();
+        } else {
+            $.getJSON('<?php echo $this->baseUrl() ?>/default/index/ajax/actionAjax/lostPassword/email/' +email.val(), function(data){
+                if(data.result == 'fail')
+                    $('#systemError').text(data.message).css('display','block');
+                else
+                    $('#request-form').text(data.message).css('display','block');
+            });
+        }
     }
 </script>

@@ -132,7 +132,7 @@ class FormBecomeClient extends Cible_Form
             $lastNameMain->getName()), 'one-2');
         $profile->addElement($emailMain);
         $profile->setRowDecorator(array($emailMain->getName()), 'two');
-        if ((isset($options['from']) && $options['from'] != 'order')){
+        if (empty($options['from'])){
             $profile->addElement($password);
             $profile->addElement($passwordConfirmation);
             $profile->setRowDecorator(array($password->getName(), $passwordConfirmation->getName()), 'three');
@@ -162,7 +162,7 @@ class FormBecomeClient extends Cible_Form
         $submit->setLabel($submitLabel)
             ->setAttrib('class', 'link-button');
         $this->addElement($submit);
-        if (isset($options['from']) && $options['from'] != 'order'){
+        if ((!$this->_resume && empty($options['from'])) || (isset($options['from']) && $options['from'] != 'order')){
             $this->addDisplayGroup(array('captcha', 'refresh_captcha',
                 'CAT_CampaignId','submitAccount'), 'columnBottom');
             $this->getDisplayGroup('columnBottom')->setLegend(null)
@@ -195,6 +195,10 @@ class FormBecomeClient extends Cible_Form
         $isValid = parent::isValid($data);
 
         return $isValid;
+    }
+
+    public function populate(array $values){
+        parent::populate($values);
     }
 
     public function render(Zend_View_Interface $view = null)

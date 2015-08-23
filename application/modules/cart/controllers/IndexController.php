@@ -361,9 +361,9 @@ class Cart_IndexController extends Cible_Controller_Action
                     $tmp['taxeProv'] = 0;
                 }
             }
-            
-            $parameters = $params + $tmp;
 
+            $parameters = array_merge($params, $tmp);
+            
             if($hasBonus)
                 $parameters['nbPoint'] = $orderParams['CP_BonusPointDollar'];
 

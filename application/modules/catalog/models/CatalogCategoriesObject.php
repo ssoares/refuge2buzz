@@ -56,7 +56,7 @@ class CatalogCategoriesObject extends DataObject
      * @param Zend_Db_Select $query
      * @return void
      */
-    public function setQuery(Zend_Db_Select $query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
         $this->_query = $query;
         $this->_query->where('CC_Online = ?', 1);

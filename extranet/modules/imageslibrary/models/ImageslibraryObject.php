@@ -35,7 +35,7 @@ class ImageslibraryObject extends DataObject
     protected $_position        = 'IL_Seq';
     protected $_query;
 
-    public function setQuery( Zend_Db_Select $query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
         $this->_query = $query;
     }

@@ -73,13 +73,16 @@ class MemberProfilesObject extends DataObject
     public function save($id, $data, $langId)
     {
         $addrId = 0;
-        $this->setOGeneric();
-        $genData = $this->_oGeneric->findData(array($this->_oGeneric->getDataId() => $id));
-        if ($genData[0]['GP_Language'] != $langId){
-            $langId = $genData[0]['GP_Language'];
+        if (!empty($data['identification'])){
+            $this->setOGeneric();
+            $genData = $this->_oGeneric->findData(array($this->_oGeneric->getDataId() => $id));
+            if ($genData[0]['GP_Language'] != $langId){
+                $langId = $genData[0]['GP_Language'];
+            }
+            $this->_oGeneric->save($id, $data['identification'], $langId);
         }
-        $this->_oGeneric->save($id, $data['identification'], $langId);
-        $data = $this->_setAddressData($data, $langId, $data[$this->_addrField]);
+        $idAddr = isset($data[$this->_addrField])?$data[$this->_addrField]:null;
+        $data = $this->_setAddressData($data, $langId, $idAddr);
         if (!empty($data['MP_Password'])){
             $data['MP_Password'] = md5($data['MP_Password']);
         }else{
@@ -100,18 +103,21 @@ class MemberProfilesObject extends DataObject
             }
             $genericData = $oGeneric->populate($this->_profileId, 1);
             $langId = $genericData['GP_Language'];
+            $data = $this->populate($this->_profileId, 1);
         }
         else{
             $tmp = $oGeneric->findData($filters);
             $genericData = $tmp[0];
             $langId = Zend_Registry::get('languageID');
+            $filters = array($this->_foreignKey => $genericData[$oGeneric->getDataId()]);
+            $data = parent::findData($filters);
         }
 
-        $data = parent::findData($filters);
 
         if (!empty($data))
         {
-            $data = $data[0];
+            $selectedStates = array();
+            $data = isset($data[0])?$data[0]:$data;
             $data['identification'] = $genericData;
             $data['currentLanguage'] = $langId;
             $addrId = $data[$this->_addrField];
@@ -123,6 +129,7 @@ class MemberProfilesObject extends DataObject
                 $shipAddr = $oAddress->getAll($langId, true, $shipId);
                 $shipAddr = $shipAddr[0];
                 $shipAddr[$this->_addrShipField] = $shipId;
+                $selectedStates[1] = $shipAddr['A_StateId'];
             }
 
             if (!empty($addrId))
@@ -130,6 +137,7 @@ class MemberProfilesObject extends DataObject
                 $billAddr = $oAddress->getAll($langId, true, $addrId);
                 $billAddr = $billAddr[0];
                 $billAddr[$this->_addrField] = $addrId;
+                $selectedStates[0] = $billAddr['A_StateId'];
             }
 
             if (isset($shipAddr['A_Duplicate']) && !$shipAddr['A_Duplicate'])
@@ -137,6 +145,7 @@ class MemberProfilesObject extends DataObject
 
             $data[$this->_addrDataField] = $billAddr;
             $data[$this->_addrShipDataField] = $shipAddr;
+            $data['selectedState'] = !empty($selectedStates) ? implode('||', $selectedStates) : '';
         }
 
         return $data;

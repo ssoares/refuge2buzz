@@ -1058,8 +1058,9 @@ class Users_IndexController extends Cible_Extranet_Controller_Module_Action
                     if ($this->_isXmlHttpRequest)
                         echo json_encode ($del);
                 }
-                if (!$this->_isXmlHttpRequest)
+                if (!$this->_isXmlHttpRequest){
                     $this->_redirect($cancelUrl);
+                }
             }
             elseif ($id > 0)
             {

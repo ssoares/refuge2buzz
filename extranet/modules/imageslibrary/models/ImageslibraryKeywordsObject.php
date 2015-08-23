@@ -29,7 +29,7 @@ class ImageslibraryKeywordsObject extends DataObject
     protected $_foreignKey      = 'ILK_RefId';
     protected $_query;
 
-    public function setQuery( Zend_Db_Select $query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
         $this->_query = $query;
     }

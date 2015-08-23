@@ -32,7 +32,7 @@ class BannerFeaturedImageObject extends DataObject
     protected $_foreignKey      = '';
     protected $_query;
 
-    public function setQuery( Zend_Db_Select $query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
         $this->_query = $query;
     }

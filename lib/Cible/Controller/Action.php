@@ -955,7 +955,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                                 Zend_Registry::set('languageID', $cookie['language']);
                             }
                         }
-
+                        
 //                        $redirectUrl = Cible_View_Helper_LastVisited::getLastVisited(1);
                         if (empty($redirectUrl)) {
                             $homePage = Cible_FunctionsPages::getHomePageDetails();
@@ -1111,9 +1111,8 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                     $hash = md5(session_id());
                     $duration = 0;
 
-//                    $validatedEmail = Cible_FunctionsGeneral::generatePassword();
-//                    $formData['validatedEmail'] = $validatedEmail;
-                    $formData['identification']['validatedEmail'] = '';
+                    $validatedEmail = Cible_FunctionsGeneral::generatePassword();
+                    $formData['identification']['MP_ValidateEmail'] = $validatedEmail;
                     $formData['identification']['GP_Hash'] = $hash;
                     $formData['identification']['GP_Status'] = 2;
                     if (empty($formData['identification']['GP_Language'])){
@@ -1159,6 +1158,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                         'firstName' => $dataID['GP_FirstName'],
                         'lastName' => $dataID['GP_LastName'],
                         'email' => $dataID['GP_Email'],
+                        'validatedEmail' => $validatedEmail,
                         'language' => $dataID['GP_Language'],
                         'link' => $link,
                         'password' => $password,

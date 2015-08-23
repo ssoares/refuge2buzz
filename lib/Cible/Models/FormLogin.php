@@ -9,8 +9,6 @@
             parent::__construct($options);
             $baseDir = $this->getView()->baseUrl();
 
-            $this->getView()->headLink()->appendStylesheet("{$this->getView()->baseUrl()}/themes/default/css/login.css",'all');
-
             $this->setAttrib('class','login');
 
             $regexValidate = new Cible_Validate_Email();

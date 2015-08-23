@@ -124,7 +124,7 @@ $session = Zend_Session::namespaceGet('order');
                 </p>
                 <?php
                 $classInfo = '';
-                if ((bool)$session['order']['includeTaxs']):
+                if ((bool)$session['order']['includeTaxs'] && $session['order']['subTotProv'] > 0):
                     $classInfo = 'text-info';
                 ?>
                 <p id="subTotalLbl" class="col-lg-9 <?php echo $classInfo; ?>">
@@ -135,15 +135,19 @@ $session = Zend_Session::namespaceGet('order');
                 </p>
                 <?php endif; ?>
                 <p id="tvqLbl" class="col-lg-9 <?php echo $classInfo; ?>">
-                    <?php if ($this->parameters['taxeFed'] > 0): ?>
+                    <?php if (isset($this->parameters['taxeFed'])
+                        && $this->parameters['taxeFed'] > 0): ?>
                         <?php echo $this->getClientText('cart_tvq_label'); ?>
                     <?php else: ?>
                         <?php echo$this->parameters['taxeCode'];?>
                     <?php endif; ?>
                 </p>
+                <?php if ($session['order']['taxProv'] > 0): ?>
                 <p id="tvqValue"class="col-lg-3 number <?php echo $classInfo; ?>">
-                    <span><?php echo sprintf('%.2f', $session['order']['taxProv']); ?></span> $
+                    <span><?php echo sprintf('%.2f',
+$session['order']['taxProv']); ?></span> $
                 </p>
+                <?php endif; ?>
                 <?php if ($session['order']['taxFed'] > 0): ?>
                 <p id="tpsLbl" class="col-lg-9 <?php echo $classInfo; ?>">
                     <?php echo $this->getClientText('cart_tps_label'); ?>

@@ -87,13 +87,14 @@ class Cible_Notifications_Email extends Cible_Notifications
 
     private function _newAccountClient()
     {
-        $confirm_page = Zend_Registry::get('absolute_web_root') . "/"
+        $confirm_page = Zend_Registry::get('absolute_web_root')
                 . Cible_FunctionsCategories::getPagePerCategoryView(
                         0,
                         'confirm_email',
                         $this->_moduleId,
-                        $this->_data['language'])
-                . "/email/{$this->_data['email']}/validateNumber/{$this->_data['validatedEmail']}";
+                        $this->_data['language'],
+                    true)
+                . "/validate/email/{$this->_data['email']}/validateNumber/{$this->_data['validatedEmail']}";
 
         $this->_message = str_replace('##validated_email_link##', $confirm_page, $this->_message);
         $this->standardData();
@@ -101,7 +102,7 @@ class Cible_Notifications_Email extends Cible_Notifications
 
     private function _newAccountAdmin()
     {
-        $siteDomain = Zend_Registry::get('absolute_web_root');
+        $siteDomain = rtrim(Zend_Registry::get('absolute_web_root'), '/');
         $this->_message = str_replace('##siteDomain##', $siteDomain, $this->_message);
 
         foreach ($this->_data as $key => $value)

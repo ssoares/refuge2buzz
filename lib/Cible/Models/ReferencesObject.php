@@ -52,7 +52,7 @@ class ReferencesObject extends DataObject
     );
     protected $_query;
 
-    public function setQuery(Zend_Db_Select $query)
+    public function setQuery(Zend_Db_Select $query = null)
     {
         $this->_query = $query;
 
