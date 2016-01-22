@@ -147,12 +147,10 @@
     .nav-stacked {
         li {
             ul {
-                display:none;
+                margin:14px 0;
             }
-            &.active {
-                ul {
-                    display:block;
-                }
+            &.active > ul {
+                display:block;
             }
             a {
                 border-radius:0;
@@ -172,26 +170,28 @@
             ul {
                 list-style:none;
                 padding:0;
-                margin:14px 0;
+                margin:0;
+                display:none;
                 li {
                     a {
                         padding:0px 12px;
                         margin:2px 0;
                         .responsive-font(@font-size-base + 2);
                         text-transform:none;
-                        color:@text-color-inverted;
-                        background:@brand-grey;
+                        color:@link-color;
+                        background:none;
                         display:inline-block;
                         width: 100%;
                     }
+                    a.level-3{padding: 0 4px 0 20px;}
                     &:hover > a {
                         background:@brand-grey;
                         color:@text-color-inverted;
                     }
                     &.active > a,
                     & > a:hover {
-                        color:@link-color;
-                        background:none;
+                        color:@text-color-inverted;
+                        background:@brand-grey;
                     }
                 }
                 li+li {

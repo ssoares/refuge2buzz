@@ -712,10 +712,9 @@ abstract class Cible_FunctionsPages extends DataObject
         );
         $fieldImage = $typeArray[$type];
 
-        if (!empty($page[$fieldImage]))
+        if (!empty($page[$fieldImage])){
             $params = array('/page', $type, $page[$fieldImage]) ;
-        elseif (!empty($page['P_ParentID']))
-        {
+        }elseif (!empty($page['P_ParentID'])){
             $parentId = $page['P_ParentID'];
             $page = self::getPageDetails($parentId);
             if (!empty($page[$fieldImage]))
@@ -723,14 +722,14 @@ abstract class Cible_FunctionsPages extends DataObject
             else
                 $params = self::getPageImage($page, $type, $default, true);
         }
-        if(empty ($params) && !empty($default))
+        if(empty ($params) && !empty($default)){
             $params = array('/page', $type, $defaultImg);
-
-        if (!empty($params) && !$sub)
+        }
+        if (!empty($params) && !$sub){
             $path = implode('/',$params);
-        elseif($sub)
+        }elseif($sub){
             $path = $params;
-
+        }
         return $path;
 
     }

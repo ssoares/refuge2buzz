@@ -35,11 +35,6 @@ class ImageslibraryObject extends DataObject
     protected $_position        = 'IL_Seq';
     protected $_query;
 
-    public function setQuery(Zend_Db_Select $query = null)
-    {
-        $this->_query = $query;
-    }
-
     public function save($id, $data, $langId)
     {
         $oRef = new ImageslibraryKeywordsObject();
@@ -59,9 +54,9 @@ class ImageslibraryObject extends DataObject
             $field = $this->_description . '_' . $lang['L_ID'];
             $index[$this->_description] = $data[$field];
             parent::save($id, $index, $lang['L_ID']);
-            
+
             $field = $this->_link . '_' . $lang['L_ID'];
-            $index3[$this->_link] = $data[$field];            
+            $index3[$this->_link] = $data[$field];
             parent::save($id, $index3, $lang['L_ID']);
         }
     }
@@ -143,7 +138,7 @@ class ImageslibraryObject extends DataObject
 
     public function setIndexationData()
     {
- 
+
         return $this;
     }
 
