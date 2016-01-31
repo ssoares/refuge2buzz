@@ -29,7 +29,8 @@ elseif (in_array('dev', $host)||in_array('devld', $host)){
 elseif (in_array('staging', $host))
     $envVar = str_replace(array('csss-iugs'), array('c3s'), $host[0]) . '-staging';
 else
-    $envVar = str_replace(array('v2'), array('refugebuzz'), $host[0]);
+    $envVar = str_replace(array('v2', 'refugedebuzz'), array('refugebuzz', 'refugebuzz'), $host[0]);
+//    $envVar = str_replace(array('v2', 'refugebuzz'), array('refugebuzz', 'refugebuzz'), $host[0]);
 
 define('APPLICATION_ENV', $envVar);
 define('APPLICATION_PATH', $rootDir);

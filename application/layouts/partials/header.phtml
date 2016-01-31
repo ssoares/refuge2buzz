@@ -77,12 +77,13 @@ $lnkAccount = $this->baseUrl() . '/' . Cible_FunctionsCategories::getPagePerCate
                 <li><input type="hidden" id="search-url" value="<? echo ($this->baseUrl()."/".Cible_FunctionsCategories::getPagePerCategoryView(0,'index',10)."/words");?>"/><input type="text" id="search-box-terme" name="search-box-terme" value="" /><a id="searchLink" href="#"><?php echo $this->clientImage('btn-search-' . Zend_Registry::get("languageSuffix") . '.png') ?></a></li>
             </ul>-->
     </nav>
-    <div class="sign-in col-xs-12 col-md-2">
         <?php if ($user): ?>
+    <div class="sign-in logged col-xs-12 col-md-2">
         <?php echo $user['firstName'] . ' ' . $user['lastName']; ?><br>
         <?php echo $this->link($lnkAccount, 'Mon compte'); ?><br>
         <?php echo $this->link('javascript:logout();', $this->getClientText('account_logout_link'),array('class' => 'logout-btn')); ?>
         <?php else: ?>
+    <div class="sign-in col-xs-12 col-md-2">
         <?php echo $this->link('#', $this->getCibleText('button_authenticate'), array('class' => 'login-btn')); ?>
     <?php endif; ?>
     </div>

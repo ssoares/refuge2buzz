@@ -21,8 +21,8 @@
         <link rel="icon" type="image/png" href="<?php echo $this->absolute_web_root ?>/favicon.png" />
         <?php $this->jQuery()->addJavascriptFile($this->locateFile('modernizr.js')); ?>
         <?php echo $this->jQuery(); ?>
-        <script src="http://code.jquery.com/jquery-migrate-1.2.1.js"></script>
-        <script src="http://maps.google.com/maps/api/js?libraries=geometry,drawing&amp;sensor=true&amp;language=fr"></script>
+        <script src="https://code.jquery.com/jquery-migrate-1.2.1.js"></script>
+        <script src="https://maps.google.com/maps/api/js?libraries=geometry,drawing&amp;sensor=true&amp;language=fr"></script>
 
         <?php echo $this->headScript() ?>
 
@@ -30,8 +30,8 @@
 
         <?php echo $this->headStyle(); ?>
         <!-- Tag to force the AddThis thumbnail image
-        <link rel='image_src' href='<?php echo Zend_Registry::get('addThis') ?>' /> -->
-        <?php //echo $this->partial('partials/google.analytic.phtml'); ?>
+        <link rel='image_src' href='<?php // echo Zend_Registry::get('addThis') ?>' /> -->
+        <?php // echo $this->partial('partials/google.analytic.phtml'); ?>
         <?php // echo $this->partial('partials/' .  $this->currentSite . 'google.analytic.phtml'); ?>
         <?php
         if (Zend_Registry::isRegistered('bgStyle'))

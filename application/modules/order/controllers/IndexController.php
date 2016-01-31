@@ -19,6 +19,7 @@ class Order_IndexController extends Cible_Controller_Action
 
     public function init()
     {
+        $this->_isSecured = true;
         parent::init();
         $this->_lang = $this->_defaultEditLanguage;
         // Sets the called action name. This will be dispatched to the method
@@ -87,7 +88,7 @@ class Order_IndexController extends Cible_Controller_Action
         switch ($stepAction)
         {
             case 'resume-order':
-                if(empty($session->customer)||empty($authentication)){
+                if(empty($session->customer) && empty($authentication)){
                     $this->_redirect(Cible_FunctionsPages::getPageNameByID (1));
                 }
                 if (empty($memberInfos)){

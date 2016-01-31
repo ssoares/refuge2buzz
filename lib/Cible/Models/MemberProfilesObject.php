@@ -97,6 +97,7 @@ class MemberProfilesObject extends DataObject
         $shipAddr = array();
         $oAddress = new AddressObject();
         $oGeneric = new GenericProfilesObject();
+        $data = array();
         if ($this->_profileId > 0 || isset($filters[$this->_foreignKey])){
             if (!empty($filters[$this->_foreignKey])){
                 $this->_profileId = $filters[$this->_foreignKey];
@@ -107,10 +108,12 @@ class MemberProfilesObject extends DataObject
         }
         else{
             $tmp = $oGeneric->findData($filters);
-            $genericData = $tmp[0];
-            $langId = Zend_Registry::get('languageID');
-            $filters = array($this->_foreignKey => $genericData[$oGeneric->getDataId()]);
-            $data = parent::findData($filters);
+            if (!empty($tmp)){
+                $genericData = $tmp[0];
+                $langId = Zend_Registry::get('languageID');
+                $filters = array($this->_foreignKey => $genericData[$oGeneric->getDataId()]);
+                $data = parent::findData($filters);
+            }
         }
 
 

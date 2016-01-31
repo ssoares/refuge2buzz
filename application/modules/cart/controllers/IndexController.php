@@ -328,6 +328,8 @@ class Cart_IndexController extends Cible_Controller_Action
 //                    'noProvTax'   => $memberData['noProvTax'],
 //                    'noFedTax'    => $memberData['noFedTax'],
                 );
+//                var_dump($memberData['addressShipping']);
+//                exit;
                 if (!empty($memberData['addressShipping'])){
                     $country = $memberData['addressShipping']['A_CountryId'];
                     switch($country)
@@ -343,6 +345,7 @@ class Cart_IndexController extends Cible_Controller_Action
                             }
                             break;
                         default:
+                            $tmp['tpsFee'] = $orderParams['CP_ShippingFees'];
                             break;
                     }
                 }
@@ -363,7 +366,7 @@ class Cart_IndexController extends Cible_Controller_Action
             }
 
             $parameters = array_merge($params, $tmp);
-            
+
             if($hasBonus)
                 $parameters['nbPoint'] = $orderParams['CP_BonusPointDollar'];
 

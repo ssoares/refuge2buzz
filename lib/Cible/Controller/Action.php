@@ -946,6 +946,10 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
 
                         $memberProfile = new GenericProfilesObject();
                         $memberProfile->save($result['member_id'], array('GP_Hash' => $hash), Zend_Registry::get('languageID'));
+                        if ($this->_isXmlHttpRequest){
+                            echo true;
+                            exit;
+                        }
                         if ($this->_registry->isRegistered('pageID')) {
                             $pageId = $this->_registry->get('pageID');
                             $redirectUrl = $this->_request->getPathInfo();
@@ -955,7 +959,7 @@ abstract class Cible_Controller_Action extends Zend_Controller_Action implements
                                 Zend_Registry::set('languageID', $cookie['language']);
                             }
                         }
-                        
+
 //                        $redirectUrl = Cible_View_Helper_LastVisited::getLastVisited(1);
                         if (empty($redirectUrl)) {
                             $homePage = Cible_FunctionsPages::getHomePageDetails();

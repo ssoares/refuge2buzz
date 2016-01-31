@@ -1,6 +1,6 @@
 <?php $newAccountUrl = Cible_FunctionsCategories::getPagePerCategoryView(1, 'login', 17, null, false); ?>
 <?php $cartUrl = $this->baseUrl() . '/' . 'cart/index/ajax/'; ?>
-<?php // $loginUrl = $this->baseUrl() . '/' . 'catalog/index/login/'; ?>
+<?php $loginUrl = $this->baseUrl() . '/' . 'catalog/index/login/'; ?>
 <?php // $dispCartUrl = $this->baseUrl() . '/' . 'cart/index/cart/'; ?>
 <?php $baseUrl = $this->baseUrl(); ?>
 <?php $langId = Zend_Registry::get('languageID'); ?>
@@ -52,6 +52,25 @@
                 isProductLoading = true;
                 $('#login-cart').appendTo('body').modal('show');
             }
+        });
+        $('#login-cart').on('click', '#submit_login', function(e) {
+            e.preventDefault();
+            var data = $(this).parents('form').serialize();
+            $.post(
+                '<?php echo $loginUrl ?>',
+                data,
+                function(result) {
+                    if (result > 0) {
+                        $('#isLogIn').val(result);
+                        window.location.reload();
+//                        $('.modal-body, .modal-title').toggleClass('hidden');
+//                        $('.modal-dialog').removeClass('modal-lg');
+                    } else {
+                        $('.modal-body .modal-form .block').not(':hidden').html(result);
+                        $('.modal-dialog').addClass('modal-lg');
+                    }
+                }
+            );
         });
         $('.add-to-cart').click(function(e) {
             e.preventDefault();
