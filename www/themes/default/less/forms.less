@@ -5,6 +5,7 @@
 @import "variables/desktop-variables.less";
 
 .formsnewsletterfooter {
+    input[type=email],
     input[type=text] {
         margin:2px 0 26px 0;
         border:0;
@@ -117,7 +118,7 @@
 }
 
 //required field
-input[type=text], input[type=password]{
+input[type=text],input[type=email], input[type=password]{
     .required + &,
     &.required-field {
         background-image:data-uri('../images/backgrounds/required-field-background.png');
@@ -131,7 +132,7 @@ input[type=text], input[type=password]{
     .responsive-font(@font-size-base - 2);
 }
 #accountManagement{
-    input[type="text"], input[type="password"], input[type="search"] {
+    input[type="text"],input[type="email"], input[type="password"], input[type="search"] {
         height: 29px !important;
         line-height: 19px !important;
         margin-bottom: 12px;
@@ -153,6 +154,11 @@ input[type=text], input[type=password]{
         top: -46px;
         input{
             vertical-align: top;
+        }
+        @media @mq-phone {
+            left : 10px;
+            right: auto;
+            top: 30px;
         }
     }
     label{

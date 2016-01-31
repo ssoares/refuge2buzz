@@ -14,7 +14,7 @@
             $regexValidate = new Cible_Validate_Email();
             $regexValidate->setMessage($this->getView()->getCibleText('validation_message_emailAddressInvalid'), 'regexNotMatch');
 
-            $email = new Zend_Form_Element_Text('emailLogin');
+            $email = new Cible_Form_Element_Email('emailLogin');
             $email->setLabel($this->getView()->getCibleText('form_label_email'))
             ->setRequired(true)
             ->addFilter('StripTags')

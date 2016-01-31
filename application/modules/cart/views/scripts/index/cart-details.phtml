@@ -27,16 +27,16 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                     )
                 );
         ?>
-        <div id="product-list" class="">
-            <div class="headerProductList row">
-                <div class="col-lg-8">
-                    <p class="col-lg-2">&nbsp;</p>
-                    <p class="col-lg-10"><?php echo $this->getClientText('product_label'); ?></p>
+        <div id="product-list" class="product-list">
+            <div class="headerProductList row hidden-xs">
+                <div class="col-xs-8 col-lg-8">
+                    <p class="col-xs-2 col-lg-2">&nbsp;</p>
+                    <p class="col-xs-10 col-lg-10"><?php echo $this->getClientText('product_label'); ?></p>
                 </div>
-                <div class="col-lg-4">
-                    <p class="col-lg-4"><?php echo $this->getClientText('form_item_qty_label'); ?></p>
-                    <p class="col-lg-4"><?php echo $this->getClientText('unit_price_label'); ?></p>
-                    <p class="col-lg-4 text-right"><?php echo $this->getClientText('cart_item_total_label'); ?></p>
+                <div class="col-xs-4 col-lg-4">
+                    <p class="col-xs-4 col-lg-4"><?php echo $this->getClientText('form_item_qty_label'); ?></p>
+                    <p class="col-xs-4 col-lg-4"><?php echo $this->getClientText('unit_price_label'); ?></p>
+                    <p class="col-xs-4 col-lg-4 text-right"><?php echo $this->getClientText('cart_item_total_label'); ?></p>
                 </div>
             </div>
         <?php foreach ($this->productData as $cartId => $product):?>
@@ -51,8 +51,8 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                 $labelPromo = $promo > 0 ?$this->getClientText('alert_special_offer_item') : '';
             ?>
             <article class="row">
-                <div class="col-md-8">
-                    <div class="col-lg-2">
+                <div class="col-xs-12 col-md-8">
+                    <figure class="product-img col-xs-12 col-lg-2">
                         <?php
                         echo $this->moduleImage('catalog',
                             'products/' . $productId,
@@ -67,8 +67,8 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                                 )
                             );
                         ?>
-                    </div>
-                    <div class="product-description col-lg-10">
+                    </figure>
+                    <figcaption class="product-description col-xs-12 col-lg-10">
                         <p class="">
                             <span class="product-item-label"><?php echo $currProd['PI_Name'] . ' | ' . $currItem['II_Name'] ?></span>
                             <br /><span class="alertSpecial"><?php echo $labelPromo ; ?></span>
@@ -81,9 +81,9 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                                 'data-number-id'=> 'delete-'. $productId . '-' . $itemId . '-' . $cartId)
                             )
                         ?>
-                    </div>
+                    </figcaption>
                 </div>
-                <div class="col-lg-4">
+                <div class="col-xs-12 col-lg-4">
                     <?php echo $currItem['render']; ?>
                 </div>
             </article>
@@ -91,7 +91,7 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
         <?php endforeach;?>
         </div>
         <div class="totalSummary row">
-            <div class="info-data col-lg-7">
+            <div class="info-data col-xs-12 col-lg-7">
             <?php if($this->parameters['nbPoint']): ?>
                 <?php echo $this->getClientText('cart_label_bonus_points'); ?>
             <?php endif; ?>
@@ -116,46 +116,46 @@ $this->jQuery()->addJavascriptFile($this->locateFile('jquery.numeric.js','jquery
                 </p>
                 <?php endif; ?>
             </div>
-            <div class="col-lg-5 text-right">
-                <p id="zoneTitle" class="col-lg-12 force-right">
+            <div class="col-xs-12 col-lg-5 text-right">
+                <p id="zoneTitle" class="col-xs-12 col-lg-12 force-right">
                     <span class="bold-secondary">
                     <?php echo $this->getClientText('cart_summary_title'); ?>
                     </span>
                 </p>
-                <p id="subTotalLbl" class="col-lg-9">
+                <p id="subTotalLbl" class="col-xs-9 col-lg-9">
                     <?php echo $this->getClientText('cart_summary_subtotal'); ?>
                 </p>
-                <p id="subTotalValue" class="col-lg-3 number"><span>0</span> $</p>
-                <p id="transportLbl" class="col-lg-9">
+                <p id="subTotalValue" class="col-xs-3 col-lg-3 number"><span>0</span> $</p>
+                <p id="transportLbl" class="col-xs-9 col-lg-9">
                     <?php echo $this->getClientText('cart_transport_label'); ?>
                 </p>
-                <p id="transportValue" class="col-lg-3 number">
+                <p id="transportValue" class="col-xs-3 col-lg-3 number">
                 <span><?php echo $this->parameters['tpsFee']; ?></span> $
                 </p>
                 <?php if ($this->parameters['includeTaxs']): ?>
-                <p id="subTotalLbl-infoNoTax" class="col-lg-9 text-info">
+                <p id="subTotalLbl-infoNoTax" class="col-xs-9 col-lg-9 text-info">
                     <em><?php echo $this->getCibleText('cart_summary_subtotal_before_tax'); ?></em>
                 </p>
-                <p id="subTotalValue-infoTax" class="col-lg-3 text-info"><span>0</span> $</p>
+                <p id="subTotalValue-infoTax" class="col-xs-3 col-lg-3 text-info"><span>0</span> $</p>
                 <?php endif; ?>
-                <p id="tvqLbl" class="col-lg-9">
+                <p id="tvqLbl" class="col-xs-9 col-lg-9">
                     <?php if ($taxFed > 0): ?>
                         <?php echo $this->getClientText('cart_tvq_label'); ?>
                     <?php else: ?>
                         <?php echo $this->parameters['taxeCode']; ?>
                     <?php endif; ?>
                 </p>
-                <p id="tvqValue"class="col-lg-3 number"><span>0</span> $</p>
+                <p id="tvqValue"class="col-xs-3 col-lg-3 number"><span>0</span> $</p>
                 <?php if ($taxFed > 0): ?>
-                <p id="tpsLbl" class="col-lg-9">
+                <p id="tpsLbl" class="col-xs-9 col-lg-9">
                     <?php echo $this->getClientText('cart_tps_label'); ?>
                 </p>
-                <p id="tpsValue" class="col-lg-3 number"><span>0</span> $</p>
+                <p id="tpsValue" class="col-xs-3 col-lg-3 number"><span>0</span> $</p>
                 <?php endif; ?>
-                <p id="totalLbl" class="col-lg-9 bold-secondary">
+                <p id="totalLbl" class="col-xs-9 col-lg-9 bold-secondary">
                     <?php echo $this->getClientText('cart_total_label'); ?>
                 </p>
-                <p id="totalValue" class="col-lg-3 number bold-secondary"> </p>
+                <p id="totalValue" class="col-xs-3 col-lg-3 number bold-secondary"> </p>
             </div>
         </div>
 <!--        <form id="sendToPaypal" action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">

@@ -361,7 +361,12 @@ class Cart
             if (!is_null($unit))
                 $unitPrice = sprintf ('%.2f', $unit);
 
-            $html .= '<div id="price' . $suffixIds .'" class="col-lg-4">' . chr(13);
+            $html .= '<div class="col-xs-12 hidden-md hidden-lg">' . chr(13);
+            $html .= '<p class="col-xs-4 hidden-md hidden-lg">' . Cible_Translation::getClientText('form_item_qty_label') .'</p>' . chr(13);
+            $html .= '<p class="col-xs-4 hidden-md hidden-lg">' . Cible_Translation::getClientText('unit_price_label') .'</p>' . chr(13);
+            $html .= '<p class="col-xs-4 hidden-md hidden-lg text-rigth">' . Cible_Translation::getClientText('cart_item_total_label') .'</p>' . chr(13);
+            $html .= '</div>' . chr(13);
+            $html .= '<div id="price' . $suffixIds .'" class="col-xs-4 col-lg-4">' . chr(13);
             if($data['PromoId'])
             {
                 $html .= '    <p data-number-id="quantity' . $suffixIds .'" class="quantity qtyField">';
@@ -377,10 +382,10 @@ class Cart
             $html .= '    <input id="taxFed' . $suffixIds .'" class="taxFed" ';
             $html .= ' value="' . $taxFed . '" type="hidden" />' . chr(13);
             $html .= '</div>' . chr(13);
-            $html .= '<div id="unitPrice' . $suffixIds .'" class="sumLine  col-lg-4">' . chr(13);
+            $html .= '<div id="unitPrice' . $suffixIds .'" class="sumLine col-xs-4 col-lg-4">' . chr(13);
             $html .= ' <span class="unitPrice">'  . $unitPrice . '</span> $' . chr(13);
             $html .= '</div>' . chr(13);
-            $html .= '<div id="sumLine' . $suffixIds .'" class="sumLine col-lg-4 text-right">' . chr(13);
+            $html .= '<div id="sumLine' . $suffixIds .'" class="sumLine col-xs-4 col-lg-4 text-right">' . chr(13);
             $html .= '    <span>' . sprintf('%.2f', $data['Total']) . '</span> $' . chr(13);
             $html .= '</div>' . chr(13);
 //        }
@@ -420,8 +425,12 @@ class Cart
             $taxFed  = isset($itemData[0]['I_TaxFed'])?$itemData[0]['I_TaxFed']:1;
             if (!is_null($unit))
                 $unitPrice = sprintf ('%.2f', $unit);
-
-            $html .= '<div id="price' . $suffixIds .'" class="col-lg-4 text-center">';
+            $html .= '<div class="col-xs-12 hidden-md hidden-lg">' . chr(13);
+            $html .= '<p class="col-xs-4 hidden-md hidden-lg">' . Cible_Translation::getClientText('form_item_qty_label') .'</p>' . chr(13);
+            $html .= '<p class="col-xs-4 hidden-md hidden-lg">' . Cible_Translation::getClientText('unit_price_label') .'</p>' . chr(13);
+            $html .= '<p class="col-xs-4 hidden-md hidden-lg text-rigth">' . Cible_Translation::getClientText('cart_item_total_label') .'</p>' . chr(13);
+            $html .= '</div>' . chr(13);
+            $html .= '<div id="price' . $suffixIds .'" class="col-xs-4 col-lg-4 text-center">';
             $html .= '    <span id="quantity' . $suffixIds .'" class="quantity qtyField" >';
             $html .=  $data['Quantity'] . '</span>' . chr(13);
             $html .= '    <span id="taxProv' . $suffixIds .'" class="taxProv" ';
@@ -429,13 +438,13 @@ class Cart
             $html .= '    <span id="taxFed' . $suffixIds .'" class="taxFed" ';
             $html .= $taxFed . '</span>' . chr(13);
             $html .= '</div>';
-            $html .= '<div id="unitPrice' . $suffixIds .'" class="sumLine col-lg-4 text-right">' . chr(13);
+            $html .= '<div id="unitPrice' . $suffixIds .'" class="sumLine col-xs-4 col-lg-4 text-right">' . chr(13);
             if($pricePromo > 0)
                 $html .= ' <span class="unitPrice">'  . sprintf ('%.2f', $pricePromo) . '</span> $' . chr(13);
             else
                 $html .= ' <span class="unitPrice">'  . $unitPrice . '</span> $' . chr(13);
             $html .= '</div>';
-            $html .= '<div id="sumLine' . $suffixIds .'" class="sumLine col-lg-4 text-right">' . chr(13);
+            $html .= '<div id="sumLine' . $suffixIds .'" class="sumLine col-xs-4 col-lg-4 text-right">' . chr(13);
             $html .= '    <span>' . sprintf('%.2f', $data['Total']) . '</span> $';
             $html .= '</div>';
 //        }

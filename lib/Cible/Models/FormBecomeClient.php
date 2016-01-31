@@ -55,7 +55,7 @@ class FormBecomeClient extends Cible_Form
         $emailValid->setMessage($this->getView()->getCibleText('validation_message_emailAddressInvalid'), 'regexNotMatch');
         $emailNotFoundInDBValidator = new Zend_Validate_Db_NoRecordExists('GenericProfiles', 'GP_Email');
         $emailNotFoundInDBValidator->setMessage($this->getView()->getClientText('validation_message_email_already_exists'), 'recordFound');
-        $emailMain = new Zend_Form_Element_Text('GP_Email', array(
+        $emailMain = new Cible_Form_Element_Email('GP_Email', array(
             'label' => $this->getView()->getCibleText('form_label_email'),
             'required' => 'true',
             'class' => 'col-md-12',

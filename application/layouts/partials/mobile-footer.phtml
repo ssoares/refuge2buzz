@@ -60,7 +60,7 @@ $options = array('class' => 'displayStandard');
         })
         //ajoute une classe empty lorsqu'un champ est vide
         setInterval(function() {
-            $('input[type=text], textarea').each(function() {
+            $('input[type=text], input[type=email], textarea').each(function() {
                 $this = $(this);
                 $this.toggleClass('empty', ($this.val() == ""));
             });
