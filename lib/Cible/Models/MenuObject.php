@@ -319,12 +319,13 @@ class MenuObject {
     private function updatePosition($parentID, $pos, $obj) {
 
         $db = $this->_db;
-
-        $db->update('MenuItemData', array(
-            'MID_ParentID' => $parentID,
-            'MID_Position' => $pos
-                ), "MID_ID = {$obj['id']}"
-        );
+        if (!empty($obj['id'])){
+            $db->update('MenuItemData', array(
+                'MID_ParentID' => $parentID,
+                'MID_Position' => $pos
+                    ), "MID_ID = {$obj['id']}"
+            );
+        }
 
         if (!empty($obj['children'])) {
             foreach ($obj['children'] as $position => $object) {
