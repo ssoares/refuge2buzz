@@ -56,7 +56,7 @@
                     <div class="news-article-content content <?php echo $classTxt ?>">
                         <?php echo $this->decorateImage($news['NI_Text']); ?>
                     </div>
-                    <div class="news-article-navigation navigation">
+                    <div class="news-article-navigation navigation <?php echo $classTxt ?> text-center">
                         <?php echo $this->link($this->listall_page, $viewAllList, array('class' => 'link-button news-article-link-button', 'title' => $viewAllList)); ?>
                     </div>
                 </article>
